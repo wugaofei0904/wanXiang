@@ -1,24 +1,27 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
 import './App.css';
-import { Route, Link, Switch, HashRouter as Router} from 'react-router-dom';
-import Page1 from './pages/page1/index.js';
-import Page2 from './pages/page2/index.js';
-
-
+import { Route, Link, Switch, HashRouter as Router, withRouter } from 'react-router-dom';
+import ArticleManage from './pages/articleManage/index.js';
+import AnthorManage from './pages/anthorManage/index.js';
+import ActionHistory from './pages/actionHistory/index.js';
 class App extends Component {
   render() {
     return (
-          <Router>
-            <Switch>
-                  <Route exact path="/" component={Page1} />
-                  <Route exact path="/page2" component={Page2} />
-              <Route component={Page1} />
-            </Switch>
-          </Router>
+      <Router>
+        <Switch>
+          <Route exact path="/" component={ArticleManage} />
+          <Route exact path="/articleManage" component={ArticleManage} />
+          <Route exact path="/anthorManage" component={AnthorManage} />
+          <Route exact path="/actionHistory" component={ActionHistory} />
+          <Route component={ArticleManage} />
+        </Switch>
+      </Router>
     );
   }
 
 }
 
 export default App;
+
+// export default withRouter(App);
