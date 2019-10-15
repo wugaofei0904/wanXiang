@@ -1,26 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import { Button } from 'antd';
 import './App.css';
+import { Route, Link, Switch, HashRouter as Router} from 'react-router-dom';
+import Page1 from './pages/page1/index.js';
+import Page2 from './pages/page2/index.js';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends Component {
+  render() {
+    return (
+          <Router>
+            <Switch>
+                  <Route exact path="/" component={Page1} />
+                  <Route exact path="/page2" component={Page2} />
+              <Route component={Page1} />
+            </Switch>
+          </Router>
+    );
+  }
+
 }
 
 export default App;
