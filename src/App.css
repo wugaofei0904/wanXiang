@@ -1,5 +1,39 @@
 /* @import '~antd/dist/antd.css'; */
-
+body,ol,ul,h1,h2,h3,h4,h5,h6,p,th,td,dl,dd,form,fieldset,legend,input,textarea,select{margin:0;padding:0}
+body{font:12px"宋体","Arial Narrow",HELVETICA;background:#fff;-webkit-text-size-adjust:100%;}
+a{color:#2d374b;text-decoration:none}
+a:hover{color:#cd0200;text-decoration:underline}
+em{font-style:normal}
+li{list-style:none}
+img{border:0;vertical-align:middle}
+table{border-collapse:collapse;border-spacing:0}
+p{word-wrap:break-word}
 .App {
+  text-align: center;
+}
+.w_280{
+  width: 280px;
+  margin-right: 2px;
+}
+.w_180{
+  width: 180px;
+  /* background: #f3f3f3; */
+  margin-right: 2px;
+}
+.w_160{
+  width: 160px;
+  /* background: #f3f3f3; */
+  margin-right: 2px;
+}
+.m_t_4{
+  margin-top: 4px;
+}
+.m_b_4{
+  margin-bottom: 4px;
+}
+.m_t_16{
+  margin-top: 16px;
+}
+.t_c{
   text-align: center;
 }

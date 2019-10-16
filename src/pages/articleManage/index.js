@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
-import { Button, Row, Col, Select, Input, DatePicker } from 'antd';
+import { Button, Row, Col, Select, Input, DatePicker,Pagination  } from 'antd';
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
+import ArticleItem from './components/articleItem/index'
+
+
 const { Option } = Select;
-
-
 const { MonthPicker, RangePicker } = DatePicker;
 const dateFormat = 'YYYY/MM/DD';
 const monthFormat = 'YYYY/MM';
 const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
 
 class AnthorManage extends Component {
+  onChange(pageNumber) {
+    console.log('Page: ', pageNumber);
+  }
+
   handleChange = (value) => {
     console.log(`selected ${value}`);
   }
@@ -62,9 +67,12 @@ class AnthorManage extends Component {
             <div className="articleTable_header_text w_160">操作</div>
           </div>
           <div className="articleTable_table_list">
-
+            <ArticleItem />
+            <ArticleItem />
+            <ArticleItem />
           </div>
-        </div> 
+          <Pagination showQuickJumper defaultCurrent={2} total={500} onChange={this.onChange} />
+        </div>
       </div>
     );
   }
