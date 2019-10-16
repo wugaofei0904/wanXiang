@@ -12,15 +12,13 @@ const monthFormat = 'YYYY/MM';
 const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
 
 class AnthorManage extends Component {
-
-
   handleChange = (value) => {
     console.log(`selected ${value}`);
   }
 
   render() {
     return (
-      <div className="App">
+      <div className="appPage">
         <HeaderTabbar current='article' />
         <div className="fiter-list">
           <Row className="row" type="flex">
@@ -54,6 +52,19 @@ class AnthorManage extends Component {
             <Col ><Button type="primary">发布文章</Button></Col>
           </Row>
         </div>
+        <div className="articleTable">
+          <div className="articleTable_header">
+            <div className="articleTable_header_text w_280">共20条</div>
+            <div className="articleTable_header_text w_180">封面图</div>
+            <div className="articleTable_header_text w_160">作者</div>
+            <div className="articleTable_header_text w_160">状态</div>
+            <div className="articleTable_header_text w_160">时间</div>
+            <div className="articleTable_header_text w_160">操作</div>
+          </div>
+          <div className="articleTable_table_list">
+
+          </div>
+        </div> 
       </div>
     );
   }

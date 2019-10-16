@@ -1,9 +1,13 @@
-.fiter-list{
+.appPage{
     width: 100%;
     max-width: 1190px;
+    margin: 0 auto;
+}
+.fiter-list{
+    width: 100%;
     height: 60px;
     border-bottom: 1px solid rgba(0,0,0,0.1);
-    margin: 0 auto;
+
     display: flex;
     align-items: center;
 }
@@ -18,3 +22,34 @@
 /* .fiter-list .row{
 height: 100%;
 } */
+.articleTable{
+    width: 100%;
+}
+.articleTable_header{
+    width: 100%;
+    display: flex;
+    height: 60px;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.1)
+}
+.articleTable_header_text{
+    /* height: 60px; */
+}
+
+.w_280{
+    width: 280px;
+    margin-right: 2px;
+}
+.w_180{
+    width: 180px;
+    /* background: #f3f3f3; */
+    margin-right: 2px;
+}
+.w_160{
+    width: 160px;
+    /* background: #f3f3f3; */
+    margin-right: 2px;
+}
+.articleTable_table_list{
+    width: 100%;
+}
