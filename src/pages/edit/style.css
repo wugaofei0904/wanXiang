@@ -1,0 +1,68 @@
+.appPage{
+    padding-bottom: 100px;
+}
+.flex_hc{
+    display: flex;
+    align-items: center;
+}
+.color_red{
+    color: #ff552e;
+    font-weight: 600;
+}
+.edit_header{
+    margin-bottom: 30px;
+}
+
+.edit_title{
+    font-weight: 400;
+    color: #000000;
+    font-size: 16px;
+    margin-top: 8px;
+}
+.margin_b_12{
+    margin: 0 0 12px 0;
+}
+.color_hui{
+    color: rgba(0,0,0,0.6)
+}
+.w_300{
+    width: 300px;
+}
+.fmt_container{
+    margin-top: 24px;
+}
+.edit_title{
+    font-weight: 600;
+    color: #333333;
+    margin: 24px 0 12px;
+    font-size: 14px;
+}
+
+.fmt_container_tips{
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(0,0,0,0.3);
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    line-height: 40px;
+    margin-top: 30px;
+}
+.hxgd_container{
+
+}
+.addBq_container{
+    width: 100%;
+}
+.bq_list{
+    height: 100px;
+}
+.submit_btn{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px;
+}
+.font_color_grid{
+    color: rgba(0,0,0,0.3);
+}

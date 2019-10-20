@@ -5,6 +5,8 @@ import { Route, Link, Switch, HashRouter as Router, withRouter } from 'react-rou
 import ArticleManage from './pages/articleManage/index.js';
 import AnthorManage from './pages/anthorManage/index.js';
 import ActionHistory from './pages/actionHistory/index.js';
+import EditPage from './pages/edit/index.js';
+
 class App extends Component {
   render() {
     return (
@@ -14,6 +16,7 @@ class App extends Component {
           <Route exact path="/articleManage" component={ArticleManage} />
           <Route exact path="/anthorManage" component={AnthorManage} />
           <Route exact path="/actionHistory" component={ActionHistory} />
+          <Route exact path="/editPage" component={EditPage} />
           <Route component={ArticleManage} />
         </Switch>
       </Router>
