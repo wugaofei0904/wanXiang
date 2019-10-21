@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Row, Col, Select, Input, DatePicker,Pagination  } from 'antd';
+import { Button, Row, Col, Select, Input, DatePicker, Pagination } from 'antd';
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
 import ArticleItem from './components/articleItem/index'
-
+import { withRouter } from 'react-router-dom';
 
 const { Option } = Select;
 const { MonthPicker, RangePicker } = DatePicker;
@@ -19,6 +19,10 @@ class AnthorManage extends Component {
 
   handleChange = (value) => {
     console.log(`selected ${value}`);
+  }
+
+  fabuwenzhang = () => {
+    this.props.history.push('editPage')
   }
 
   render() {
@@ -54,7 +58,7 @@ class AnthorManage extends Component {
               />
             </Col>
             <Col className="mr-12"><Button>查找</Button></Col>
-            <Col ><Button type="primary">发布文章</Button></Col>
+            <Col ><Button onClick={this.fabuwenzhang} type="primary">发布文章</Button></Col>
           </Row>
         </div>
         <div className="articleTable">
@@ -78,4 +82,4 @@ class AnthorManage extends Component {
   }
 }
 
-export default AnthorManage;
+export default withRouter(AnthorManage);

@@ -3,6 +3,7 @@ import { Button, Row, Col, Select, Input, DatePicker, Pagination, Radio, Form, I
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
+import cs from 'classnames';
 // import ActionItem from './ActionItem/index'
 
 import Ueditor from './components/ueditor';
@@ -33,6 +34,7 @@ class EditForm extends Component {
     state = {
         value: 1,
         textAreavalue: '',
+        showAnthorMsg: false
     };
 
     onTextAreaChange = ({ target: { value } }) => {
