@@ -7,6 +7,7 @@ import AnthorManage from './pages/anthorManage/index.js';
 import ActionHistory from './pages/actionHistory/index.js';
 import EditPage from './pages/edit/index.js';
 import LoginPage from './pages/login/index.js';
+import CreateAnthor from './pages/createAnthor/index.js';
 
 class App extends Component {
   render() {
@@ -19,6 +20,7 @@ class App extends Component {
           <Route exact path="/actionHistory" component={ActionHistory} />
           <Route exact path="/editPage" component={EditPage} />
           <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/createAnthor" component={CreateAnthor} />
           <Route component={ArticleManage} />
         </Switch>
       </Router>
