@@ -33,10 +33,32 @@ class LoginPageForm extends Component {
         // debugger
         this.props.form.validateFields((err, values) => {
 
-            this.props.history.push('articleManage');
+            let { username, password } = values;
+            var formdata = new FormData();
+            formdata.append("username", username);
+            formdata.append("password", password);
+            let _this = this;
 
+            if (username != '' && password != '') {
+                fetch(`http://open.suwenyj.xyz:8080/login`, {
+                    method: 'post',
+                    body: formdata,
+                })
+                    .then(function (response) {
+                        return response.json()
+                    }).then(function (json) {
+                        if(json.success){
+                            _this.props.history.push('articleManage');
+                        }           
+                    }).catch(function (ex) {
+                        console.log('parsing failed', ex)
+                    })
+            }
+
+            console.log(values)
+
+            // this.props.history.push('articleManage');
             // this.showModal();
-
             if (!err) {
                 console.log('Received values of form: ', values);
             }

@@ -7,6 +7,8 @@ import cs from 'classnames';
 // import ActionItem from './ActionItem/index'
 
 import Ueditor from './components/ueditor';
+import AnthorToast from './../../components/anthorToast'
+
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -52,11 +54,16 @@ class EditForm extends Component {
         });
     }
 
+    changeAnthor = ()=>{
+        this.refs['anthorToast'].showModal();
+    }
+
     render() {
 
         let { textAreavalue } = this.state;
         return (
             <div className="appPage">
+                <AnthorToast ref='anthorToast' />
                 <h1>编辑器</h1>
                 <div className="edit_header">
                     <Row className="row" type="flex">
@@ -65,7 +72,7 @@ class EditForm extends Component {
                             发布作者：肥罗大电影
                         </Col>
                         <Col className="mr-12">
-                            <Button size="default" type="primary">更换</Button>
+                            <Button onClick={this.changeAnthor} size="default" type="primary">更换</Button>
                         </Col>
                     </Row>
                     <div className="edit_title">谁改为无锡事故买奥术大师多但？</div>

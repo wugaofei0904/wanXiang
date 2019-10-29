@@ -7,7 +7,7 @@
 .article_item_head{
     display: flex;
 }
-.item_title{
+.article_item_title{
     font-weight: 600;
     font-size: 16px;
     color: #000;

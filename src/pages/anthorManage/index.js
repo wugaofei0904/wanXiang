@@ -4,12 +4,14 @@ import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
 import fetchJsonp from 'fetch-jsonp';
-import { authorList, tagList } from './../../utils/fetchApi';
+import { authorList, tagList, authorEdit } from './../../utils/fetchApi';
 
 import GetTagList from './../hooks/useGetTagList';
 import { async } from 'q';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
+import { withRouter } from 'react-router-dom';
+
 
 const { Option } = Select;
 const { MonthPicker, RangePicker } = DatePicker;
@@ -116,12 +118,14 @@ class ArticleManage extends Component {
       {
         title: '作者名',
         dataIndex: 'name',
-        // width: '30%',
-        // editable: true,
       },
       {
         title: '封禁',
         dataIndex: 'status',
+        render: (text, record) =>
+          <div>
+            {text == 1 ? '否' : '是'}
+          </div>
       },
       {
         title: '发布文章数',
@@ -130,6 +134,31 @@ class ArticleManage extends Component {
       {
         title: '等级',
         dataIndex: 'rank',
+        render: (text, record) => {
+          let _text = '';
+          switch (text) {
+            case '1':
+              _text = '一级';
+              break
+            case '2':
+              _text = '二级';
+              break
+            case '3':
+              _text = '三级';
+              break
+            case '4':
+              _text = '四级';
+              break
+            case '5':
+              _text = '五级';
+              break
+          }
+          return (
+            <div>
+              {_text}
+            </div>
+          )
+        }
       },
       {
         title: '领域',
@@ -142,46 +171,62 @@ class ArticleManage extends Component {
       {
         title: '文章更新时间',
         dataIndex: 'updateTime',
+        render: (text, record) =>
+          <div>
+            {text.split('T')[0]}
+            &nbsp;
+            {text.split('T')[1].split('.')[0]}
+          </div>
       },
       {
         title: '创建时间',
         dataIndex: 'createTime',
+        render: (text, record) =>
+          <div>
+            {text.split('T')[0]}
+            &nbsp;
+            {text.split('T')[1].split('.')[0]}
+          </div>
       },
       {
         title: '操作',
         dataIndex: 'operation',
-        render: (text, record) =>
-          this.state.dataSource.length >= 1 ? (
-            <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
-              <a>Delete</a>
-            </Popconfirm>
-          ) : null,
+        render: (text, record) => {
+          console.log(record)
+
+          if (record.status == 1) {
+            return <div>
+              <Button onClick={this.jumpCreate} className="m_r_12" type="primary">编辑</Button>
+              <Popconfirm title="确认删除?" onConfirm={() => this.authorEditFuc(record.id)}>
+                <Button type="danger">删除</Button>
+              </Popconfirm>
+            </div>
+          } else {
+            return <div>
+              <Button onClick={this.jumpCreate} className="m_r_12" type="primary">编辑</Button>
+              <Popconfirm title="确认还原?" onConfirm={() => this.authorEditFuc(record.id)}>
+                <Button type="primary">还原</Button>
+              </Popconfirm>
+            </div>
+          }
+
+        }
+
       },
     ];
 
     this.state = {
-      dataSource: [{
-        "id": 1,
-        "name": "测试",
-        "settledState": "0",      //0 未入驻，1以入驻
-        "status": "1",               //0 封禁，1正常
-        "articleNum": 0,          //发表文章数
-        "rank": "1",	 //等级
-        "tagId": 3,                 // 标签号
-        "tagName": "综合",    //标签名
-        "remark": "xx",         //备注
-        "updateTime": "2019-10-22T05:00:00.000+0000",  //文章更新时间
-        "createTime": "2019-10-22T18:59:11.000+0000",    //作者创建时间
-        "headImg": "头像",
-        "wxId": "微信号",
-      }],
+      pageSize: 20,
+      pageNumber: 1,
       count: 2,
       anthorName: '',
       rank: '',
       tagId: '',
       startTime: '',
       endTime: '',
-      tagIdList: []  //领域list
+      tagIdList: [],  //领域list
+      anthorList: [],  //作者list
+      total: 0,
     };
   }
 
@@ -204,6 +249,40 @@ class ArticleManage extends Component {
     });
   };
 
+
+  jumpCreate = () => {
+    this.props.history.push('createAnthor')
+  }
+
+  authorEditFuc = id => {
+    let { anthorList } = this.state;
+
+    let _newList = [...anthorList];
+    _newList.map(item => {
+      if (id == item.id) {
+        item.status = item.status == '0' ? '1' : '0'
+      }
+    })
+
+    fetch(`${authorEdit}?id=${id}`)
+      .then(function (response) {
+        return response.json()
+      }).then(function (json) {
+        if (json.success) {
+          console.log(anthorList)
+          //更新当前列表
+          this.setState({
+            anthorList: _newList
+          })
+        }
+
+      }).catch(function (ex) {
+        console.log('parsing failed', ex)
+      })
+
+  }
+
+
   handleSave = row => {
     const newData = [...this.state.dataSource];
     const index = newData.findIndex(item => row.key === item.key);
@@ -216,18 +295,59 @@ class ArticleManage extends Component {
   };
 
 
-  requestListData = () => {
+  requestListData = pageNumber => {
+    let { anthorName, rank, tagId, startTime, endTime, pageSize } = this.state;
+    // console.log(anthorName, rank, tagId, startTime, endTime)
     let _this = this;
-    fetch('http://open.suwenyj.xyz:8080/author/list-page?pageSize=10&pageNum=1&rank=1&tagId=1')
+    // debugger
+    fetch(`${authorList}?pageNum=${pageNumber}&pageSize=${pageSize}&name=${anthorName}&rank=${rank}&tagId=${tagId}&startTime=${startTime}&endTime=${endTime}`)
       .then(function (response) {
         return response.json()
-      }).then(function (json) {
+      }).then(function (_json) {
 
-        console.log(json)
+        let json = {
+          "data": [{
+            "id": 1,
+            "name": "测试",
+            "settledState": "0",      //0 未入驻，1以入驻
+            "status": "1",               //0 封禁，1正常
+            "articleNum": 0,          //发表文章数
+            "rank": "1",	 //等级
+            "tagId": 3,                 // 标签号
+            "tagName": "综合",    //标签名
+            "remark": "xx",         //备注
+            "updateTime": "2019-10-22T05:00:00.000+0000",  //文章更新时间
+            "createTime": "2019-10-22T18:59:11.000+0000",   //作者创建时间
+            "headImg": "头像",
+            "wxId": "微信号"
+          },
+          {
+            "id": 2,
+            "name": "测试222",
+            "settledState": "0",      //0 未入驻，1以入驻
+            "status": "0",               //0 封禁，1正常
+            "articleNum": 0,          //发表文章数
+            "rank": "1",	 //等级
+            "tagId": 3,                 // 标签号
+            "tagName": "综合12",    //标签名
+            "remark": "xx",         //备注
+            "updateTime": "2019-10-22T05:00:00.000+0000",  //文章更新时间
+            "createTime": "2019-10-22T18:59:11.000+0000",   //作者创建时间
+            "headImg": "头像12",
+            "wxId": "微信号21"
+          }
+          ],
+          "total": 1,
+          "success": true,
+          "msg": "成功"
+        }
+        if (json.success) {
+          _this.setState({
+            anthorList: json.data,
+            total: json.total
+          })
+        }
 
-        _this.setState({
-          dataSource: json.data
-        })
       }).catch(function (ex) {
         console.log('parsing failed', ex)
       })
@@ -246,7 +366,8 @@ class ArticleManage extends Component {
   }
 
   onChange(pageNumber) {
-    console.log('Page: ', pageNumber);
+    this.requestListData(pageNumber);
+    // console.log('Page: ', pageNumber);
   }
 
   handleChange = (value) => {
@@ -255,13 +376,7 @@ class ArticleManage extends Component {
 
   search = () => {
 
-
-    let { anthorName, rank, tagId, startTime, endTime } = this.state;
-
-    console.log(anthorName, rank, tagId, startTime, endTime)
-
-    this.requestListData();
-
+    this.requestListData(1);
   }
 
   nameChange = (e) => {
@@ -292,7 +407,7 @@ class ArticleManage extends Component {
   }
 
   render() {
-    const { dataSource, tagIdList } = this.state;
+    const { dataSource, tagIdList, anthorList, total } = this.state;
     const components = {
       body: {
         row: EditableFormRow,
@@ -341,9 +456,9 @@ class ArticleManage extends Component {
             <Col className="mr-12">
               <Select defaultValue="0" style={{ width: 120 }} onChange={this.taghandleChange}>
                 <Option value="0">全部</Option>
-                {tagIdList.map(item => {
+                {/* {tagIdList.map(item => {
                   return <Option value={item.id}>{item.tagName}</Option>
-                })}
+                })} */}
               </Select>
             </Col>
 
@@ -367,16 +482,16 @@ class ArticleManage extends Component {
               components={components}
               rowClassName={() => 'editable-row'}
               bordered
-              dataSource={dataSource}
+              dataSource={anthorList}
               columns={columns}
               pagination={false}
             />
           </div>
-          <Pagination showQuickJumper defaultCurrent={2} total={500} onChange={this.onChange} />
+          <Pagination showQuickJumper defaultCurrent={1} total={total} onChange={this.onChange} />
         </div>
       </div>
     );
   }
 }
 
-export default ArticleManage;
+export default withRouter(ArticleManage);
