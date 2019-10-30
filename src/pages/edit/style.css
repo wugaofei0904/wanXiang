@@ -15,9 +15,41 @@
 
 .edit_title{
     font-weight: 400;
+    width: 500px;
     color: #000000;
-    font-size: 16px;
-    margin-top: 8px;
+    font-size: 18px;
+    margin-top: 2px;
+}
+.hx_box{
+    position: relative;
+    width: 600px;
+}
+.hx_box_num{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 80px;
+    height: 30px;
+    z-index: 999;
+    text-align: center;
+}
+.hx_box_num.color_red{
+    color: #ff552e;
+}
+.bq_list_item{
+    height: 34px;
+    padding:0 12px;
+    text-align: center;
+    line-height: 34px;
+    border: 1px solid rgba(0,0,0,0.2);
+    margin-right: 12px;
+    /* float: left; */
+    border-radius: 4px;
+}
+
+.hxText{
+    width: 600px;
+    /* height: 100px; */
 }
 .margin_b_12{
     margin: 0 0 12px 0;
@@ -55,6 +87,7 @@
 }
 .bq_list{
     height: 100px;
+    display: flex;
 }
 .submit_btn{
     width: 100%;

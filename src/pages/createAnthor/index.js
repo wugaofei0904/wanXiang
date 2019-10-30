@@ -4,8 +4,8 @@ import './style.css';
 import GetTagList from './../hooks/useGetTagList';
 
 import ImgCropper from './../../components/imgCropper'
-
 import { withRouter } from 'react-router-dom';
+import { createAuthor, imgUpload } from './../../utils/fetchApi'
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -105,7 +105,7 @@ class CreateAnthor extends Component {
         var formdata = new FormData();
         formdata.append("file", this.dataURLtoFile(imgdata, `img_${_randomString}.png`));
         let _this = this;
-        fetch('http://open.suwenyj.xyz:8080/author/headImg', {
+        fetch(`${imgUpload}`, {
             method: 'post',
             body: formdata,
         })
@@ -193,7 +193,7 @@ class CreateAnthor extends Component {
         console.log(rank, anthorName, shenfenText, wxName, tagId, resultImg);
 
         let _this = this;
-        fetch(`http://open.suwenyj.xyz:8080/author/create?name=${anthorName}&rank=${rank}&tagId=${tagId}&remark=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
+        fetch(`${createAuthor}?name=${anthorName}&rank=${rank}&tagId=${tagId}&remark=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
             .then(function (response) {
                 return response.json()
             }).then(function (json) {

@@ -128,7 +128,7 @@ class toastComponent extends React.Component {
 
     componentDidMount() {
 
-        // this.isgetTagList();
+        this.isgetTagList();
 
     }
 

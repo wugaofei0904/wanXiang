@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import { Modal, Button, Input } from 'antd';
 import './../toastComponent/style.css';
-import getAnthorList from './../../pages/hooks/useGetAnthor';
+import getAuthorList from '../../pages/hooks/useGetAnthor';
 
 import cs from 'classnames';
 
+import { authorListNoPage } from '../../utils/fetchApi';
+
 const { Search } = Input;
 
-class AnthorToast extends React.Component {
+class AuthorToast extends React.Component {
     state = {
         visible: false,
-        tagIdList: [],
-        tagIdList2: [],
+        authorList: [], //作者列表
+        // tagIdList2: [],
         showTag2: false,
         searchTagList: [],
         showsearchTagList: false,
@@ -50,11 +52,11 @@ class AnthorToast extends React.Component {
         });
     };
 
-    isgetTagList = async () => {
-        let tagList = await getAnthorList();
+    isGetAuthorList = async () => {
+        let tagList = await getAuthorList();
         // debugger
         this.setState({
-            tagIdList: tagList.data
+            authorList: tagList.data
         })
     }
 
@@ -84,6 +86,7 @@ class AnthorToast extends React.Component {
     }
 
     blurSearch = () => {
+        debugger
         this.setState({
             showsearchTagList: false,
             searchTagList: []
@@ -94,7 +97,7 @@ class AnthorToast extends React.Component {
     //搜索all标签
     searchAllTag = (value) => {
         let _this = this;
-        fetch(`http://open.suwenyj.xyz:8080/author/list?name=测试`)
+        fetch(`${authorListNoPage}?name=测试`)
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
@@ -115,7 +118,6 @@ class AnthorToast extends React.Component {
     cheackBq1 = () => {
         this.setState({
             showTag2: false
-
         })
     }
 
@@ -128,16 +130,22 @@ class AnthorToast extends React.Component {
         this.searchAllTag(e.target.value)
     }
 
+    chooseAuthor = (item) => {
+        console.log(item)
+        this.handleCancel();
+        this.props.changeAuthor(item);
+    }
+
     componentDidMount() {
 
-        this.isgetTagList();
+        this.isGetAuthorList();
 
     }
 
     render() {
 
         let _this = this;
-        let { tagIdList, showsearchTagList, searchTagList } = this.state;
+        let { tagIdList, showsearchTagList, searchTagList, authorList } = this.state;
         return (
             <div>
                 <Modal
@@ -151,7 +159,7 @@ class AnthorToast extends React.Component {
                         <div className={cs("search_list_box", { "show": showsearchTagList })}>
                             {
                                 searchTagList.map(item => {
-                                    return <div className="search_tag_item">#{item.tagName}#</div>
+                                    return <div className="search_tag_item">#1212{item.tagName}#</div>
                                 })
                             }
                             <div onClick={this.closeSearch} className="close_search_list_box">关闭</div>
@@ -165,8 +173,8 @@ class AnthorToast extends React.Component {
                     </div>
 
                     <div className="tag_list">
-                        {tagIdList.map((item) => {
-                            return <div className="tag_item">{item.name}</div>
+                        {authorList.map((item) => {
+                            return <div onClick={this.chooseAuthor.bind(null, item)} className="tag_item">{item.name}</div>
                         })}
                     </div>
 
@@ -177,4 +185,4 @@ class AnthorToast extends React.Component {
     }
 }
 
-export default AnthorToast;
+export default AuthorToast;

@@ -32,7 +32,6 @@ class ArticleManage extends Component {
       startTime: '',
       endTime: '',
       total: 0,
-      pageNumber: 1,
       pageSize: 20,
       listData: []
     };

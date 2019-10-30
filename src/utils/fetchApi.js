@@ -6,8 +6,17 @@ export const domain = '';
 //文章列表
 export const articleList = domain + '/article/list-page';
 
-//作者列表页
+//作者列表页 分页
 export const authorList = domain + '/author/list-page';
+
+//作者列表页 不分页
+export const authorListNoPage = domain + '/author/list';
+
+//创建作者
+export const createAuthor = domain + '/author/create';
+
+//图片上传
+export const imgUpload = domain + '/author/headImg';
 
 //标签列表
 export const tagList = domain + '/tag/list';
