@@ -1,6 +1,3 @@
-/**
- * Created by GuoMiaomiao on 2018/4/18.
- */
 import React from 'react';
 // import UE from '../ueditor/ueditor.all';
 const UE = window.UE;

@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { Button, Row, Col, Select, Input, DatePicker, Pagination, Radio, Form, Icon, Divider } from 'antd';
+import { Modal, Button, Row, Col, Select, Input, DatePicker, Pagination, Radio, Form, Icon, Divider } from 'antd';
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
 import cs from 'classnames';
 // import ActionItem from './ActionItem/index'
-
+import ImgCropper from './../../components/imgCropper'
 import Ueditor from './components/ueditor';
 import AuthorToast from './../../components/authorToast'
 import ToastComponent from './../../components/toastComponent';
+
+import Editor from 'react-umeditor';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -33,8 +35,51 @@ class EditForm extends Component {
             textNumber: 0,
             textAreavalue: '',  //核心
             tagList: [],
-        };
+            content: '',
+            imgModelVisible: false,
+            baseImgList: [
+                'http://pic1.58cdn.com.cn/p1/big/n_v2066985acab204602b8e156ee453fb3f7_7fa21218dfb7b68c.jpg',
+                'http://pic1.58cdn.com.cn/p1/big/n_v2066985acab204602b8e156ee453fb3f7_7fa21218dfb7b68c.jpg',
+                'http://pic1.58cdn.com.cn/p1/big/n_v2066985acab204602b8e156ee453fb3f7_7fa21218dfb7b68c.jpg',
+            ],
+            baseImgChecked: 0,
 
+        };
+    }
+
+    handleChange(content) {
+        this.setState({
+            content: content
+        })
+    }
+    getIcons() {
+        var icons = [
+            "source | undo redo | bold italic underline strikethrough fontborder emphasis | ",
+            "paragraph fontfamily fontsize | superscript subscript | ",
+            "forecolor backcolor | removeformat | insertorderedlist insertunorderedlist | selectall | ",
+            "cleardoc  | indent outdent | justifyleft justifycenter justifyright | touppercase tolowercase | ",
+            "horizontal date time  | image emotion spechars | inserttable"
+        ]
+        return icons;
+    }
+    getQiniuUploader() {
+        return {
+            url: 'http://upload.qiniu.com',
+            type: 'qiniu',
+            name: "file",
+            request: "image_src",
+            qiniu: {
+                app: {
+                    Bucket: "liuhong1happy",
+                    AK: "l9vEBNTqrz7H03S-SC0qxNWmf0K8amqP6MeYHNni",
+                    SK: "eizTTxuA0Kq1YSe2SRdOexJ-tjwGpRnzztsSrLKj"
+                },
+                domain: "http://o9sa2vijj.bkt.clouddn.com",
+                genKey: function (options) {
+                    return options.file.type + "-" + options.file.size + "-" + options.file.lastModifiedDate.valueOf() + "-" + new Date().valueOf() + "-" + options.file.name;
+                }
+            }
+        }
     }
 
 
@@ -75,13 +120,19 @@ class EditForm extends Component {
 
 
     handleSubmit() {
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                console.log('Received values of form: ', values);
-                values.content1 = this.refs.content1.getVal();
-                console.log(values);
-            }
-        });
+
+
+        let { content } = this.state;
+        console.log(content)
+
+
+        // this.props.form.validateFields((err, values) => {
+        //     if (!err) {
+        //         console.log('Received values of form: ', values);
+        //         values.content1 = this.refs.content1.getVal();
+        //         console.log(values);
+        //     }
+        // });
     }
 
     changeAnthor = () => {
@@ -116,15 +167,88 @@ class EditForm extends Component {
         this.refs['tagToast'].initModal();
     }
 
+
+    showImgChooseModel = () => {
+
+        this.imgModelOk();
+    }
+
+    imgModelOk = () => {
+        this.setState({ imgModelVisible: true });
+    }
+
+    imgModelCancel = () => {
+        this.setState({ imgModelVisible: false });
+    }
+
+    getCropData = (imgdata) => {
+        debugger
+        // console.log('截取图片...');
+        let _randomString = this.randomString();
+
+        var formdata = new FormData();
+        formdata.append("file", this.dataURLtoFile(imgdata, `img_${_randomString}.png`));
+        let _this = this;
+        // fetch(`${imgUpload}`, {
+        //     method: 'post',
+        //     body: formdata,
+        // })
+        //     .then(function (response) {
+        //         return response.json()
+        //     }).then(function (json) {
+        //         _this.setState({
+        //             resultImg: json.data
+        //         })
+
+        //         //隐藏弹窗
+        //         _this.handleCancel();
+
+        //     }).catch(function (ex) {
+        //         console.log('parsing failed', ex)
+        //     })
+    }
+
     render() {
 
-        let { textAreavalue, authorName, showAuthorMsg, authorRadioValue, textNumber, tagList } = this.state;
+        let editConfig = {
+
+        };
+
+
+        let { baseImgChecked, baseImgList, imgModelVisible, textAreavalue, authorName, showAuthorMsg, authorRadioValue, textNumber, tagList } = this.state;
         return (
             <div className="appPage">
+
+                <Modal
+                    className="img_modal"
+                    visible={imgModelVisible}
+                    title="选择封面图"
+                    onOk={this.imgModelOk}
+                    onCancel={this.imgModelCancel}
+                    footer={null}
+                >
+                    <div className="img_list_container">
+                        <div className="img_scroll_box">
+                            {
+                                baseImgList.map((item, index) => {
+                                    return <div className={cs("toast_img_box", { "checked": baseImgChecked == index })}>
+                                        <img src={item} />
+                                    </div>
+                                })
+                            }
+                        </div>
+                    </div>
+                    <div className="bottom_btn_list">
+                        <Button size="default" type="primary">另选图片</Button>
+                        <Button size="default" type="primary">下一步</Button>
+                    </div>
+                    <ImgCropper getCropData={this.getCropData} src={baseImgList[0]} />
+                </Modal>
+
                 <AuthorToast changeAuthor={this.updateAuthor} ref='authorToast' />
                 <ToastComponent getTagid={this.getTagid} ref='tagToast' />
-                {/* <h1 className="m_t_16">编辑器</h1> */}
-                {/* <div className="edit_header">
+                <h1 className="m_t_16">编辑器</h1>
+                <div className="edit_header">
                     <Row className="row" type="flex">
                         <Col className="mr-12 flex_hc color_red">
                             发布作者：{authorName}
@@ -150,26 +274,27 @@ class EditForm extends Component {
                             </Col>
                         }
                     </Row>
-                </div> */}
-                <Ueditor id="content1" height="1000" ref="content1" />
+                </div>
+                <Ueditor config={editConfig} id="content1" height="1000" ref="content1" />
                 <Button type={'primary'} onClick={this.handleSubmit.bind(this)}>保存</Button>
-                {/* <div className="fmt_container">
+                <div className="fmt_container">
                     <div className="fmt_container_title edit_title">封面图(必填项)</div>
                     <Row className="row color_hui flex_hc" type="flex">
-                        <Col className="mr-12">
-                            <img src="http://pic3.58cdn.com.cn/p1/big/n_v2fbe4cbab39c747d58320b506c0f37719_3f83a4486744d165.jpg" />
+                        <Col onClick={this.showImgChooseModel} className="mr-12">
+                            <div className="img_add_box">+</div>
+
                         </Col>
-                        <Col className="mr-12">
-                            <img src="http://pic3.58cdn.com.cn/p1/big/n_v2fbe4cbab39c747d58320b506c0f37719_3f83a4486744d165.jpg" />
+                        <Col onClick={this.showImgChooseModel} className="mr-12">
+                            <div className="img_add_box">+</div>
                         </Col>
-                        <Col className="mr-12">
-                            <img src="http://pic3.58cdn.com.cn/p1/big/n_v2fbe4cbab39c747d58320b506c0f37719_3f83a4486744d165.jpg" />
+                        <Col onClick={this.showImgChooseModel} className="mr-12">
+                            <div className="img_add_box">+</div>
                         </Col>
                     </Row>
                     <div className="fmt_container_tips">图片最低尺寸要求 450像素*270像素</div>
-                </div> */}
+                </div>
 
-                {/* <div className="hxgd_container">
+                <div className="hxgd_container">
                     <div className="fmt_container_title edit_title">核心观点 <span className="font_color_grid">(推荐填写，有助于提升阅读量和点赞，不少于50字)</span></div>
                     <div className="hx_box">
                         <TextArea
@@ -182,9 +307,9 @@ class EditForm extends Component {
                         />
                         <div className={cs("hx_box_num", { "color_red": textNumber > 140 })}>{textNumber}/140</div>
                     </div>
-                </div> */}
+                </div>
 
-                {/* <div className="addBq_container">
+                <div className="addBq_container">
                     <div className="fmt_container_title edit_title">添加标签 <span className="font_color_grid">文章审核通过后不可再修改关联话题。</span></div>
                     <div className="bq_list">
                         {
@@ -195,8 +320,7 @@ class EditForm extends Component {
 
                         <Button onClick={this.showBqToast} > + 添加标签</Button>
                     </div>
-                </div> */}
-
+                </div>
                 <div className="submit_btn">
                     <Button size="large" type="primary">发布</Button>
                 </div>

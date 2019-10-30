@@ -99,7 +99,6 @@ class CreateAnthor extends Component {
 
     getCropData = (imgdata) => {
         // console.log('截取图片...');
-
         let _randomString = this.randomString();
 
         var formdata = new FormData();
