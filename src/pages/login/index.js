@@ -47,6 +47,7 @@ class LoginPageForm extends Component {
                     .then(function (response) {
                         return response.json()
                     }).then(function (json) {
+
                         if(json.success){
                             _this.props.history.push('articleManage');
                         }else{

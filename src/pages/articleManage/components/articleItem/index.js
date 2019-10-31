@@ -32,19 +32,31 @@ class ArticleItem extends Component {
 
     //文章编辑 删除、还原   type 1还原 2删除
     articleEditFunc = item => {
+        // debugger
         let _this = this;
-        let { itemData } = this.state;  
-        fetch(`${articleEdit}?id=${item.id}`)
+        let { itemData } = this.state;
+        let _status = item.status == 1 ? 2 : 1;
+        fetch(`${articleEdit}?id=${item.id}&status=${_status}`)
             .then(function (response) {
                 return response.json()
-            }).then(function (_json) {
+            }).then(function (json) {
 
-                let json = {
-                    "data": null,
-                    "total": null,
-                    "success": true,
-                    "msg": "成功"
-                }
+                // let json = {
+                //     "data": null,
+                //     "total": null,
+                //     "success": true,
+                //     "msg": "成功"
+                // }
+                // if (json.success) {
+                //     _this.setState({
+                //         itemData: {
+                //             ...itemData,
+                //             status: itemData.status == '1' ? '2' : '1'
+                //         }
+                //     })
+                // }
+
+
                 if (json.success) {
                     _this.setState({
                         itemData: {
@@ -52,7 +64,10 @@ class ArticleItem extends Component {
                             status: itemData.status == '1' ? '2' : '1'
                         }
                     })
+                } else if (json.msg == '未登录') {
+                    window.initLogin();
                 }
+
             }).catch(function (ex) {
                 console.log('parsing failed', ex)
             })

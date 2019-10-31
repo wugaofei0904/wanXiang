@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Button, Row, Col, Select, Input, DatePicker, Pagination, Radio, Form, Icon, Divider } from 'antd';
+import { Switch, Modal, Button, Row, Col, Select, Input, DatePicker, Pagination, Radio, Form, Icon, Divider, message } from 'antd';
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
@@ -9,9 +9,9 @@ import ImgCropperTwo from './../../components/imgCropperTwo'
 import Ueditor from './components/ueditor';
 import AuthorToast from './../../components/authorToast'
 import ToastComponent from './../../components/toastComponent';
-import { createAuthor, imgUpload } from './../../utils/fetchApi'
-import Editor from 'react-umeditor';
-
+import { createAuthor, imgUpload, postArticle } from './../../utils/fetchApi'
+// import Editor from 'react-umeditor';
+import { withRouter } from 'react-router-dom';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const { Option } = Select;
@@ -49,7 +49,8 @@ class EditForm extends Component {
             ],
             editImgIdx: 0,
             baseImgChecked: 0,
-            imgTwoVisible: false
+            imgTwoVisible: false,
+            qingwuzhuanzai: false
 
         };
     }
@@ -126,20 +127,22 @@ class EditForm extends Component {
 
 
 
+
+
     handleSubmit() {
+        // let { content } = this.state;
+        // console.log(content)
 
-
-        let { content } = this.state;
-        console.log(content)
-
-
-        // this.props.form.validateFields((err, values) => {
-        //     if (!err) {
-        //         console.log('Received values of form: ', values);
-        //         values.content1 = this.refs.content1.getVal();
-        //         console.log(values);
-        //     }
-        // });
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                // console.log('Received values of form: ', values);
+                values.content1 = this.refs.content1.getVal();
+                console.log(values);
+                this.setState({
+                    content: values
+                })
+            }
+        });
     }
 
     changeAnthor = () => {
@@ -235,13 +238,19 @@ class EditForm extends Component {
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
-                lastImgList[editImgIdx] = json.data;
-                _this.setState({
-                    lastImgList: [...lastImgList]
-                })
-                //隐藏弹窗
-                _this.imgModelCancel();
-                _this.imgTwoCancel();
+
+                if (json.success) {
+                    lastImgList[editImgIdx] = json.data;
+                    _this.setState({
+                        lastImgList: [...lastImgList]
+                    })
+                    //隐藏弹窗
+                    _this.imgModelCancel();
+                    _this.imgTwoCancel();
+                } else if (json.msg == '未登录') {
+                    window.initLogin();
+                }
+
 
             }).catch(function (ex) {
                 console.log('parsing failed', ex)
@@ -272,6 +281,104 @@ class EditForm extends Component {
     chooseFmImg = idx => {
         this.setState({
             baseImgChecked: idx
+        })
+    }
+
+
+    checkForm = () => {
+
+        let { authorMsg, author, authorName, content, articleTitle, lastImgList, tagList } = this.state;
+        let _msg = '';
+        if (authorName == '无') {
+            _msg = '请选择作者';
+            message.error(_msg);
+            return false
+        }
+
+        if (articleTitle == '') {
+            _msg = '请输入文章标题';
+            message.error(_msg);
+            return false
+        }
+
+
+        if (JSON.stringify(lastImgList) == '["","",""]') {
+            _msg = '请选择封面图';
+            message.error(_msg);
+            return false
+        }
+
+        if (tagList.length == 0) {
+            _msg = '请选择文章标签';
+            message.error(_msg);
+            return false
+        }
+
+        if (content == '') {
+            _msg = '请输入文章内容';
+            message.error(_msg);
+            return false
+        }
+
+        return true
+
+    }
+
+    submitAllData = () => {
+        if (!this.checkForm()) return;
+
+
+
+        let { authorMsg, authorRadioValue, author, authorName, content, articleTitle, lastImgList, tagList, textAreavalue, qingwuzhuanzai } = this.state;
+
+        let _arr = [];
+        tagList.map(item => {
+            _arr.push(item.id);
+        })
+
+
+        // debugger
+        var formdata = new FormData();
+        formdata.append("title", articleTitle);
+        formdata.append("picUrl", lastImgList[0]);
+
+        formdata.append("tags", _arr.join(','));
+        formdata.append("body", content);
+        formdata.append("authorId", author.id);
+
+        formdata.append("isOwn", authorRadioValue);
+        formdata.append("otherAuthorName", authorMsg);
+        formdata.append("otherImg", '');
+
+
+        let _this = this;
+        fetch(`${postArticle}`, {
+            method: 'post',
+            body: formdata,
+        })
+            .then(function (response) {
+                return response.json()
+            }).then(function (json) {
+
+                if (json.success) {
+                    message.success('发布成功！')
+                    setTimeout(() => {
+                        _this.props.history.push('articleManage')
+                    }, 1500)
+                } else if (json.msg == '未登录') {
+                    window.initLogin();
+                }
+
+            }).catch(function (ex) {
+                console.log('parsing failed', ex)
+            })
+
+        // console.log(2)
+    }
+
+    switchChange = value => {
+        this.setState({
+            qingwuzhuanzai: value
         })
     }
 
@@ -314,6 +421,7 @@ class EditForm extends Component {
                         visible={this.state.imgTwoVisible}
                         onOk={this.imgTwoOk}
                         onCancel={this.imgTwoCancel}
+                        footer={null}
                     >
                         <ImgCropperTwo getCropData={this.getCropData} src={baseImgList[baseImgChecked]} />
                     </Modal>
@@ -395,8 +503,13 @@ class EditForm extends Component {
                         <Button onClick={this.showBqToast} > + 添加标签</Button>
                     </div>
                 </div>
+
+                <div className="qingwuzhuanzai">
+                    <Switch onChange={this.switchChange} /> 请勿转载
+                </div>
+
                 <div className="submit_btn">
-                    <Button size="large" type="primary">发布</Button>
+                    <Button onClick={this.submitAllData} size="large" type="primary">发布</Button>
                 </div>
 
 
@@ -407,4 +520,4 @@ class EditForm extends Component {
 
 const EditPage = Form.create()(EditForm);
 
-export default EditPage;
+export default withRouter(EditPage);

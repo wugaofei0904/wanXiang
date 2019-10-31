@@ -6,6 +6,9 @@ export const domain = '';
 //文章列表
 export const articleList = domain + '/article/list-page';
 
+//文章发布
+export const postArticle = domain + '/article/create';
+
 //作者列表页 分页
 export const authorList = domain + '/author/list-page';
 

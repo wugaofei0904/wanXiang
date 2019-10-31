@@ -96,10 +96,14 @@ class toastComponent extends React.Component {
         fetch(`http://open.suwenyj.xyz:8080/tag/searchTag?tagName=${value}`)
             .then(function (response) {
                 return response.json()
-            }).then(function (json) {
-                _this.setState({
-                    searchTagList: json.data
-                })
+            }).then(function (json) {            
+                if (json.success) {
+                    _this.setState({
+                        searchTagList: json.data
+                    })
+                } else if (json.msg == '未登录') {
+                   window.initLogin();
+                }
 
                 //隐藏弹窗
                 // _this.handleCancel();

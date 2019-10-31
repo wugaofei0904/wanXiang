@@ -173,9 +173,10 @@ class ArticleManage extends Component {
         dataIndex: 'updateTime',
         render: (text, record) =>
           <div>
-            {text.split('T')[0]}
+            {/* {text.split('T')[0]}
             &nbsp;
-            {text.split('T')[1].split('.')[0]}
+            {text.split('T')[1].split('.')[0]} */}
+            {text}
           </div>
       },
       {
@@ -183,9 +184,10 @@ class ArticleManage extends Component {
         dataIndex: 'createTime',
         render: (text, record) =>
           <div>
-            {text.split('T')[0]}
+            {/* {text.split('T')[0]}
             &nbsp;
-            {text.split('T')[1].split('.')[0]}
+            {text.split('T')[1].split('.')[0]} */}
+            {text}
           </div>
       },
       {
@@ -197,14 +199,14 @@ class ArticleManage extends Component {
           if (record.status == 1) {
             return <div>
               <Button onClick={this.jumpCreate} className="m_r_12" type="primary">编辑</Button>
-              <Popconfirm title="确认删除?" onConfirm={() => this.authorEditFuc(record.id)}>
+              <Popconfirm title="确认删除?" onConfirm={() => this.authorEditFuc(record.id, '0')}>
                 <Button type="danger">删除</Button>
               </Popconfirm>
             </div>
           } else {
             return <div>
               <Button onClick={this.jumpCreate} className="m_r_12" type="primary">编辑</Button>
-              <Popconfirm title="确认还原?" onConfirm={() => this.authorEditFuc(record.id)}>
+              <Popconfirm title="确认还原?" onConfirm={() => this.authorEditFuc(record.id, '1')}>
                 <Button type="primary">还原</Button>
               </Popconfirm>
             </div>
@@ -254,27 +256,44 @@ class ArticleManage extends Component {
     this.props.history.push('createAnthor')
   }
 
-  authorEditFuc = id => {
+  authorEditFuc = (id, type) => {
+    let _this = this;
     let { anthorList } = this.state;
 
-    let _newList = [...anthorList];
-    _newList.map(item => {
-      if (id == item.id) {
-        item.status = item.status == '0' ? '1' : '0'
-      }
-    })
 
-    fetch(`${authorEdit}?id=${id}`)
+    for (var i = 0; i < anthorList.length; i++) {
+      if(anthorList[i].id == id){
+        // debugger
+        // console.log(anthorList[i].status)
+        // console.log(type)
+        anthorList[i].status = type
+      }
+    }
+
+    // console.log(anthorList)
+    // console.log(_newList)
+
+    fetch(`${authorEdit}?id=${id}&status=${type}`)
       .then(function (response) {
         return response.json()
       }).then(function (json) {
+
         if (json.success) {
-          console.log(anthorList)
           //更新当前列表
-          this.setState({
-            anthorList: _newList
+          _this.setState({
+            anthorList: [...anthorList]
           })
+        } else if (json.msg == '未登录') {
+          window.initLogin();
         }
+
+
+        // if (json.success) {      
+        //   //更新当前列表
+        //   this.setState({
+        //     anthorList: _newList
+        //   })
+        // }
 
       }).catch(function (ex) {
         console.log('parsing failed', ex)
@@ -303,50 +322,62 @@ class ArticleManage extends Component {
     fetch(`${authorList}?pageNum=${pageNumber}&pageSize=${pageSize}&name=${anthorName}&rank=${rank}&tagId=${tagId}&startTime=${startTime}&endTime=${endTime}`)
       .then(function (response) {
         return response.json()
-      }).then(function (_json) {
+      }).then(function (json) {
 
-        let json = {
-          "data": [{
-            "id": 1,
-            "name": "测试",
-            "settledState": "0",      //0 未入驻，1以入驻
-            "status": "1",               //0 封禁，1正常
-            "articleNum": 0,          //发表文章数
-            "rank": "1",	 //等级
-            "tagId": 3,                 // 标签号
-            "tagName": "综合",    //标签名
-            "remark": "xx",         //备注
-            "updateTime": "2019-10-22T05:00:00.000+0000",  //文章更新时间
-            "createTime": "2019-10-22T18:59:11.000+0000",   //作者创建时间
-            "headImg": "头像",
-            "wxId": "微信号"
-          },
-          {
-            "id": 2,
-            "name": "测试222",
-            "settledState": "0",      //0 未入驻，1以入驻
-            "status": "0",               //0 封禁，1正常
-            "articleNum": 0,          //发表文章数
-            "rank": "1",	 //等级
-            "tagId": 3,                 // 标签号
-            "tagName": "综合12",    //标签名
-            "remark": "xx",         //备注
-            "updateTime": "2019-10-22T05:00:00.000+0000",  //文章更新时间
-            "createTime": "2019-10-22T18:59:11.000+0000",   //作者创建时间
-            "headImg": "头像12",
-            "wxId": "微信号21"
-          }
-          ],
-          "total": 1,
-          "success": true,
-          "msg": "成功"
-        }
+        // let json = {
+        //   "data": [{
+        //     "id": 1,
+        //     "name": "测试",
+        //     "settledState": "0",      //0 未入驻，1以入驻
+        //     "status": "1",               //0 封禁，1正常
+        //     "articleNum": 0,          //发表文章数
+        //     "rank": "1",	 //等级
+        //     "tagId": 3,                 // 标签号
+        //     "tagName": "综合",    //标签名
+        //     "remark": "xx",         //备注
+        //     "updateTime": "2019-10-22T05:00:00.000+0000",  //文章更新时间
+        //     "createTime": "2019-10-22T18:59:11.000+0000",   //作者创建时间
+        //     "headImg": "头像",
+        //     "wxId": "微信号"
+        //   },
+        //   {
+        //     "id": 2,
+        //     "name": "测试222",
+        //     "settledState": "0",      //0 未入驻，1以入驻
+        //     "status": "0",               //0 封禁，1正常
+        //     "articleNum": 0,          //发表文章数
+        //     "rank": "1",	 //等级
+        //     "tagId": 3,                 // 标签号
+        //     "tagName": "综合12",    //标签名
+        //     "remark": "xx",         //备注
+        //     "updateTime": "2019-10-22T05:00:00.000+0000",  //文章更新时间
+        //     "createTime": "2019-10-22T18:59:11.000+0000",   //作者创建时间
+        //     "headImg": "头像12",
+        //     "wxId": "微信号21"
+        //   }
+        //   ],
+        //   "total": 1,
+        //   "success": true,
+        //   "msg": "成功"
+        // }
+
+
         if (json.success) {
           _this.setState({
             anthorList: json.data,
             total: json.total
           })
+        } else if (json.msg == '未登录') {
+          window.initLogin();
         }
+
+
+        // if (json.success) {
+        //   _this.setState({
+        //     anthorList: json.data,
+        //     total: json.total
+        //   })
+        // }
 
       }).catch(function (ex) {
         console.log('parsing failed', ex)
@@ -365,7 +396,7 @@ class ArticleManage extends Component {
     this.isgetTagList();
   }
 
-  onChange(pageNumber) {
+  onChange = (pageNumber) => {
     this.requestListData(pageNumber);
     // console.log('Page: ', pageNumber);
   }

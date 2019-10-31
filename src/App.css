@@ -44,3 +44,7 @@ p{word-wrap:break-word}
 /* .ant-menu{
   background: #cd0200!important;
 } */
+
+#root{
+  background: #fafafa;
+}

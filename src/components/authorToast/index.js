@@ -101,10 +101,14 @@ class AuthorToast extends React.Component {
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
-                debugger
-                _this.setState({
-                    searchTagList: json.data
-                })
+
+                if (json.success) {
+                    _this.setState({
+                        searchTagList: json.data
+                    })
+                } else if (json.msg == '未登录') {
+                   window.initLogin();
+                }
 
                 //隐藏弹窗
                 // _this.handleCancel();

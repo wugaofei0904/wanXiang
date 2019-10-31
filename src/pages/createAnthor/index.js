@@ -104,6 +104,7 @@ class CreateAnthor extends Component {
         var formdata = new FormData();
         formdata.append("file", this.dataURLtoFile(imgdata, `img_${_randomString}.png`));
         let _this = this;
+        message.loading('图片上传中...');
         fetch(`${imgUpload}`, {
             method: 'post',
             body: formdata,
@@ -111,9 +112,19 @@ class CreateAnthor extends Component {
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
-                _this.setState({
-                    resultImg: json.data
-                })
+                message.success('上传成功！');
+
+                if (json.success) {
+                    _this.setState({
+                        resultImg: json.data
+                    })
+                } else if (json.msg == '未登录') {
+                    window.initLogin();
+                }
+
+                // _this.setState({
+                //     resultImg: json.data
+                // })
 
                 //隐藏弹窗
                 _this.handleCancel();
@@ -196,11 +207,15 @@ class CreateAnthor extends Component {
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
-                message.success('创建成功！即将返回列表页');
 
-                setTimeout(() => {
-                    _this.props.history.push('anthorManage')
-                }, 1500)
+                if (json.success) {
+                    message.success('创建成功！即将返回列表页');
+                    setTimeout(() => {
+                        _this.props.history.push('anthorManage')
+                    }, 1500)
+                } else if (json.msg == '未登录') {
+                    window.initLogin();
+                }
 
             }).catch(function (ex) {
                 console.log('parsing failed', ex)
@@ -223,7 +238,6 @@ class CreateAnthor extends Component {
                     {/* <img src={localImg} /> */}
 
                     <ImgCropper getCropData={this.getCropData} src={localImg} />
-
                 </Modal>
                 <h1 className="page_title">创建作者</h1>
                 <div className="form_item">
