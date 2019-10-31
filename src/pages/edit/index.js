@@ -5,11 +5,11 @@ import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
 import cs from 'classnames';
 // import ActionItem from './ActionItem/index'
-import ImgCropper from './../../components/imgCropper'
+import ImgCropperTwo from './../../components/imgCropperTwo'
 import Ueditor from './components/ueditor';
 import AuthorToast from './../../components/authorToast'
 import ToastComponent from './../../components/toastComponent';
-
+import { createAuthor, imgUpload } from './../../utils/fetchApi'
 import Editor from 'react-umeditor';
 
 const FormItem = Form.Item;
@@ -38,11 +38,18 @@ class EditForm extends Component {
             content: '',
             imgModelVisible: false,
             baseImgList: [
-                'http://pic1.58cdn.com.cn/p1/big/n_v2066985acab204602b8e156ee453fb3f7_7fa21218dfb7b68c.jpg',
-                'http://pic1.58cdn.com.cn/p1/big/n_v2066985acab204602b8e156ee453fb3f7_7fa21218dfb7b68c.jpg',
-                'http://pic1.58cdn.com.cn/p1/big/n_v2066985acab204602b8e156ee453fb3f7_7fa21218dfb7b68c.jpg',
+                './../../img/test1.jpg',
+                './../../img/test2.jpg',
+                './../../img/test3.jpg',
+                // 'http://pic1.58cdn.com.cn/p1/big/n_v2066985acab204602b8e156ee453fb3f7_7fa21218dfb7b68c.jpg',
+                // 'http://pic1.58cdn.com.cn/p1/big/n_v2066985acab204602b8e156ee453fb3f7_7fa21218dfb7b68c.jpg',
             ],
+            lastImgList: [
+                '', '', ''
+            ],
+            editImgIdx: 0,
             baseImgChecked: 0,
+            imgTwoVisible: false
 
         };
     }
@@ -168,8 +175,10 @@ class EditForm extends Component {
     }
 
 
-    showImgChooseModel = () => {
-
+    showImgChooseModel = idx => {
+        this.setState({
+            editImgIdx: idx
+        })
         this.imgModelOk();
     }
 
@@ -181,31 +190,89 @@ class EditForm extends Component {
         this.setState({ imgModelVisible: false });
     }
 
+
+    //生成随机字符串
+    randomString = (len) => {
+        len = len || 32;
+        var _chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+        var maxPos = _chars.length;
+        var pwd = '';
+        for (var i = 0; i < len; i++) {
+            pwd += _chars.charAt(Math.floor(Math.random() * maxPos));
+        }
+        return pwd;
+    }
+
+
+    //将base64码转化为FILE格式
+    dataURLtoFile(dataurl, filename) {
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, { type: mime });
+    }
+
     getCropData = (imgdata) => {
-        debugger
-        // console.log('截取图片...');
+
+        // let {}
+
+        let { lastImgList, editImgIdx } = this.state;
+
         let _randomString = this.randomString();
 
         var formdata = new FormData();
         formdata.append("file", this.dataURLtoFile(imgdata, `img_${_randomString}.png`));
         let _this = this;
-        // fetch(`${imgUpload}`, {
-        //     method: 'post',
-        //     body: formdata,
-        // })
-        //     .then(function (response) {
-        //         return response.json()
-        //     }).then(function (json) {
-        //         _this.setState({
-        //             resultImg: json.data
-        //         })
+        fetch(`${imgUpload}`, {
+            method: 'post',
+            body: formdata,
+        })
+            .then(function (response) {
+                return response.json()
+            }).then(function (json) {
+                lastImgList[editImgIdx] = json.data;
+                _this.setState({
+                    lastImgList: [...lastImgList]
+                })
+                //隐藏弹窗
+                _this.imgModelCancel();
+                _this.imgTwoCancel();
 
-        //         //隐藏弹窗
-        //         _this.handleCancel();
+            }).catch(function (ex) {
+                console.log('parsing failed', ex)
+            })
+    }
 
-        //     }).catch(function (ex) {
-        //         console.log('parsing failed', ex)
-        //     })
+
+    handleCancel = () => {
+
+
+    }
+
+    imgTwoOk = () => {
+        this.setState({
+            imgTwoVisible: true
+        })
+    }
+    imgTwoCancel = () => {
+        this.setState({
+            imgTwoVisible: false
+        })
+    }
+
+    nextCjImg = () => {
+
+    }
+
+    chooseFmImg = idx => {
+        this.setState({
+            baseImgChecked: idx
+        })
     }
 
     render() {
@@ -215,7 +282,7 @@ class EditForm extends Component {
         };
 
 
-        let { baseImgChecked, baseImgList, imgModelVisible, textAreavalue, authorName, showAuthorMsg, authorRadioValue, textNumber, tagList } = this.state;
+        let { lastImgList, baseImgChecked, baseImgList, imgModelVisible, textAreavalue, authorName, showAuthorMsg, authorRadioValue, textNumber, tagList } = this.state;
         return (
             <div className="appPage">
 
@@ -231,7 +298,7 @@ class EditForm extends Component {
                         <div className="img_scroll_box">
                             {
                                 baseImgList.map((item, index) => {
-                                    return <div className={cs("toast_img_box", { "checked": baseImgChecked == index })}>
+                                    return <div onClick={this.chooseFmImg.bind(null, index)} className={cs("toast_img_box", { "checked": baseImgChecked == index })}>
                                         <img src={item} />
                                     </div>
                                 })
@@ -240,9 +307,16 @@ class EditForm extends Component {
                     </div>
                     <div className="bottom_btn_list">
                         <Button size="default" type="primary">另选图片</Button>
-                        <Button size="default" type="primary">下一步</Button>
+                        <Button onClick={this.imgTwoOk} size="default" type="primary">下一步</Button>
                     </div>
-                    <ImgCropper getCropData={this.getCropData} src={baseImgList[0]} />
+                    <Modal
+                        title="裁剪图片"
+                        visible={this.state.imgTwoVisible}
+                        onOk={this.imgTwoOk}
+                        onCancel={this.imgTwoCancel}
+                    >
+                        <ImgCropperTwo getCropData={this.getCropData} src={baseImgList[baseImgChecked]} />
+                    </Modal>
                 </Modal>
 
                 <AuthorToast changeAuthor={this.updateAuthor} ref='authorToast' />
@@ -280,16 +354,16 @@ class EditForm extends Component {
                 <div className="fmt_container">
                     <div className="fmt_container_title edit_title">封面图(必填项)</div>
                     <Row className="row color_hui flex_hc" type="flex">
-                        <Col onClick={this.showImgChooseModel} className="mr-12">
-                            <div className="img_add_box">+</div>
-
-                        </Col>
-                        <Col onClick={this.showImgChooseModel} className="mr-12">
-                            <div className="img_add_box">+</div>
-                        </Col>
-                        <Col onClick={this.showImgChooseModel} className="mr-12">
-                            <div className="img_add_box">+</div>
-                        </Col>
+                        {
+                            lastImgList.map((item, idx) =>
+                                <Col onClick={this.showImgChooseModel.bind(null, idx)} className="mr-12">
+                                    {
+                                        item === '' ? <div className="img_add_box">+</div> :
+                                            <img className="last_img_item" src={item} />
+                                    }
+                                </Col>
+                            )
+                        }
                     </Row>
                     <div className="fmt_container_tips">图片最低尺寸要求 450像素*270像素</div>
                 </div>

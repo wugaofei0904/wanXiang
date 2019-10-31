@@ -10,6 +10,15 @@ import LoginPage from './pages/login/index.js';
 import CreateAnthor from './pages/createAnthor/index.js';
 
 class App extends Component {
+
+
+  componentDidMount = () => {
+    window.initLogin = () => {
+      alert('用户登陆失效，请重新登陆！');
+      window.location.href = '#';
+    }
+  }
+
   render() {
     return (
       <Router>

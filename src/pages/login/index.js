@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Modal, Form, Icon, Input, Button, Checkbox ,message} from 'antd';
 import { withRouter } from 'react-router-dom';
 import './style.css';
 
@@ -49,6 +49,8 @@ class LoginPageForm extends Component {
                     }).then(function (json) {
                         if(json.success){
                             _this.props.history.push('articleManage');
+                        }else{
+                            message.error(json.msg);
                         }           
                     }).catch(function (ex) {
                         console.log('parsing failed', ex)
