@@ -19,7 +19,7 @@
 	 * 因此，UEditor提供了针对不同页面的编辑器可单独配置的根路径，具体来说，在需要实例化编辑器的页面最顶部写上如下代码即可。当然，需要令此处的URL等于对应的配置。
 	 * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
 	 */
-	window.UEDITOR_HOME_URL = "http://open.suwenyj.xyz:8080/static/UE/";
+	window.UEDITOR_HOME_URL = "/public/ueditor/";
 	var URL = window.UEDITOR_HOME_URL || getUEBasePath();
 
 	/**
@@ -252,7 +252,7 @@
 		//,elementPathEnabled : true
 
 		//wordCount
-		//,wordCount:true          //是否开启字数统计
+		,wordCount:false          //是否开启字数统计
 		//,maximumWords:10000       //允许的最大字符数
 		//字数统计提示，{#count}代表当前字数，{#leave}代表还可以输入多少字符数,留空支持多语言自动切换，否则按此配置显示
 		//,wordCountMsg:''   //当前已输入 {#count} 个字符，您还可以输入{#leave} 个字符

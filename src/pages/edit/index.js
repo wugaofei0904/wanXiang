@@ -50,7 +50,7 @@ class EditForm extends Component {
             editImgIdx: 0,
             baseImgChecked: 0,
             imgTwoVisible: false,
-            qingwuzhuanzai: false
+            qingwuzhuanzai: 1
 
         };
     }
@@ -90,7 +90,6 @@ class EditForm extends Component {
         }
     }
 
-
     authorRadioChange = e => {
         console.log(e.target.value)
         this.setState({
@@ -128,18 +127,38 @@ class EditForm extends Component {
 
 
 
+    getImgurl = (item) => {
+        let imgReg = /<img.*?(?:>|\/>)/gi //匹配图片中的img标签
+        let srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
+        let str = item.content
+        let arr = str.match(imgReg)  //筛选出所有的img
+        let srcArr = []
+        for (let i = 0; i < arr.length; i++) {
+            let src = arr[i].match(srcReg)
+            // 获取图片地址
+            srcArr.push(src[1])
+        }
+        // item.dataValues.imgList = srcArr
+        console.log(srcArr);
+        return srcArr;
+        // this.baseImgList
+    }
+
+
 
     handleSubmit() {
         // let { content } = this.state;
         // console.log(content)
-
+        let _this = this;
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                // console.log('Received values of form: ', values);
-                values.content1 = this.refs.content1.getVal();
+                values.content = this.refs.content1.getVal();
                 console.log(values);
+                console.log(_this.getImgurl(values));
+                // _this.getImgurl(values)
                 this.setState({
-                    content: values
+                    content: values,
+                    baseImgList: _this.getImgurl(values)
                 })
             }
         });
@@ -221,8 +240,6 @@ class EditForm extends Component {
     }
 
     getCropData = (imgdata) => {
-
-        // let {}
 
         let { lastImgList, editImgIdx } = this.state;
 
@@ -327,8 +344,6 @@ class EditForm extends Component {
     submitAllData = () => {
         if (!this.checkForm()) return;
 
-
-
         let { authorMsg, authorRadioValue, author, authorName, content, articleTitle, lastImgList, tagList, textAreavalue, qingwuzhuanzai } = this.state;
 
         let _arr = [];
@@ -350,6 +365,9 @@ class EditForm extends Component {
         formdata.append("otherAuthorName", authorMsg);
         formdata.append("otherImg", '');
 
+        formdata.append("corePoint", textAreavalue);
+        formdata.append("isReprint", qingwuzhuanzai);
+
 
         let _this = this;
         fetch(`${postArticle}`, {
@@ -359,7 +377,6 @@ class EditForm extends Component {
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
-
                 if (json.success) {
                     message.success('发布成功！')
                     setTimeout(() => {
@@ -368,18 +385,40 @@ class EditForm extends Component {
                 } else if (json.msg == '未登录') {
                     window.initLogin();
                 }
-
             }).catch(function (ex) {
                 console.log('parsing failed', ex)
             })
-
         // console.log(2)
+    }
+
+    deleteTag = (idx) => {
+        let { tagList } = this.state;
+        tagList.splice(idx, 1);
+        this.setState({
+            tagList
+        })
+
     }
 
     switchChange = value => {
         this.setState({
-            qingwuzhuanzai: value
+            qingwuzhuanzai: value ? 1 : 0
         })
+    }
+
+    componentDidMount() {
+        Array.prototype.indexOf = function (val) {
+            for (var i = 0; i < this.length; i++) {
+                if (this[i] == val) return i;
+            }
+            return -1;
+        };
+        Array.prototype.remove = function (val) {
+            var index = this.indexOf(val);
+            if (index > -1) {
+                this.splice(index, 1);
+            }
+        };
     }
 
     render() {
@@ -387,7 +426,6 @@ class EditForm extends Component {
         let editConfig = {
 
         };
-
 
         let { lastImgList, baseImgChecked, baseImgList, imgModelVisible, textAreavalue, authorName, showAuthorMsg, authorRadioValue, textNumber, tagList } = this.state;
         return (
@@ -495,8 +533,8 @@ class EditForm extends Component {
                     <div className="fmt_container_title edit_title">添加标签 <span className="font_color_grid">文章审核通过后不可再修改关联话题。</span></div>
                     <div className="bq_list">
                         {
-                            tagList.map(item => {
-                                return <div className="bq_list_item">{item.name}</div>
+                            tagList.map((item, idx) => {
+                                return <div className="bq_list_item"><span onClick={this.deleteTag.bind(null, idx)} className="cancle_btn"></span> {item.name}</div>
                             })
                         }
 

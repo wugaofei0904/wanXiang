@@ -171,31 +171,43 @@ class ArticleManage extends Component {
       {
         title: '文章更新时间',
         dataIndex: 'updateTime',
-        render: (text, record) =>
-          <div>
-            {/* {text.split('T')[0]}
-            &nbsp;
-            {text.split('T')[1].split('.')[0]} */}
-            {text}
+        render: (text, record) => {
+
+
+          let _text1 = record.createTime.split('T')[0]
+          let _text2 = record.createTime.split('T')[1].split('.')[0]
+          return <div>
+            <p>
+              {_text1}
+            </p>
+            {/* &nbsp; */}
+            {_text2}
           </div>
+
+        }
+
+
       },
       {
         title: '创建时间',
         dataIndex: 'createTime',
-        render: (text, record) =>
-          <div>
-            {/* {text.split('T')[0]}
-            &nbsp;
-            {text.split('T')[1].split('.')[0]} */}
-            {text}
+        render: (text, record) => {
+          let _text1 = record.createTime.split('T')[0]
+          let _text2 = record.createTime.split('T')[1].split('.')[0]
+          return <div>
+            <p>
+              {_text1}
+            </p>
+            {/* &nbsp; */}
+            {_text2}
           </div>
+        }
       },
       {
         title: '操作',
         dataIndex: 'operation',
+        width: 180,
         render: (text, record) => {
-          console.log(record)
-
           if (record.status == 1) {
             return <div>
               <Button onClick={this.jumpCreate} className="m_r_12" type="primary">编辑</Button>
@@ -262,7 +274,7 @@ class ArticleManage extends Component {
 
 
     for (var i = 0; i < anthorList.length; i++) {
-      if(anthorList[i].id == id){
+      if (anthorList[i].id == id) {
         // debugger
         // console.log(anthorList[i].status)
         // console.log(type)
@@ -286,14 +298,6 @@ class ArticleManage extends Component {
         } else if (json.msg == '未登录') {
           window.initLogin();
         }
-
-
-        // if (json.success) {      
-        //   //更新当前列表
-        //   this.setState({
-        //     anthorList: _newList
-        //   })
-        // }
 
       }).catch(function (ex) {
         console.log('parsing failed', ex)
@@ -394,6 +398,8 @@ class ArticleManage extends Component {
 
   componentDidMount() {
     this.isgetTagList();
+
+    this.requestListData(1);
   }
 
   onChange = (pageNumber) => {
@@ -408,6 +414,10 @@ class ArticleManage extends Component {
   search = () => {
 
     this.requestListData(1);
+  }
+
+  addAuthor = () => {
+    this.props.history.push('createAnthor')
   }
 
   nameChange = (e) => {
@@ -487,9 +497,9 @@ class ArticleManage extends Component {
             <Col className="mr-12">
               <Select defaultValue="0" style={{ width: 120 }} onChange={this.taghandleChange}>
                 <Option value="0">全部</Option>
-                {/* {tagIdList.map(item => {
+                {tagIdList.map(item => {
                   return <Option value={item.id}>{item.tagName}</Option>
-                })} */}
+                })}
               </Select>
             </Col>
 
@@ -504,7 +514,7 @@ class ArticleManage extends Component {
               </LocaleProvider>
             </Col>
             <Col className="mr-12"><Button onClick={this.search}>搜索</Button></Col>
-            <Col ><Button type="primary">添加作者</Button></Col>
+            <Col ><Button onClick={this.addAuthor} type="primary">添加作者</Button></Col>
           </Row>
         </div>
         <div className="articleTable m_t_16">
@@ -518,7 +528,7 @@ class ArticleManage extends Component {
               pagination={false}
             />
           </div>
-          <Pagination showQuickJumper defaultCurrent={1} total={total} onChange={this.onChange} />
+          <Pagination showQuickJumper defaultPageSize={20} defaultCurrent={1} total={total} onChange={this.onChange} />
         </div>
       </div>
     );

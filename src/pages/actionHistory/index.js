@@ -56,7 +56,13 @@ class ActionHistory extends Component {
     })
   }
 
-  searchDta = (pageNumber = 1) => {
+
+  componentDidMount(){
+    this.searchData(1);
+  }
+
+
+  searchData = (pageNumber = 1) => {
     let { actionType, people, startTime, endTime, pageSize } = this.state;
     let _this = this;
     // fetch(`http://open.suwenyj.xyz:8080/article/list-page?pageSize=10&pageNum=${pageNumber}&status=${articleStatus}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}&articleName=${articleName}`)
@@ -133,7 +139,7 @@ class ActionHistory extends Component {
                 onChange={this.rangePickeronChange}
               />
             </Col>
-            <Col className="mr-12"><Button onClick={this.searchDta.bind(null, 1)}  >查找</Button></Col>
+            <Col className="mr-12"><Button onClick={this.searchData.bind(null, 1)}  >查找</Button></Col>
           </Row>
         </div>
         <div className="articleTable">
@@ -151,7 +157,7 @@ class ActionHistory extends Component {
               })
             }
           </div>
-          <Pagination showQuickJumper defaultCurrent={1} total={total} onChange={this.onChange} />
+          <Pagination showQuickJumper defaultPageSize={20} defaultCurrent={1} total={total} onChange={this.onChange} />
         </div>
       </div>
     );

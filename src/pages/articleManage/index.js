@@ -151,6 +151,12 @@ class ArticleManage extends Component {
 
   }
 
+
+  componentDidMount() {
+    this.searchList(1);
+  }
+
+
   render() {
     let { total, listData } = this.state;
     return (
@@ -199,7 +205,7 @@ class ArticleManage extends Component {
               })
             }
           </div>
-          <Pagination showQuickJumper defaultCurrent={2} total={total} onChange={this.onChange} />
+          <Pagination showQuickJumper defaultPageSize={20} defaultCurrent={1} total={total} onChange={this.onChange} />
         </div>
       </div>
     );
