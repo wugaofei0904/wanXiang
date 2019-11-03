@@ -71,21 +71,6 @@ class ActionHistory extends Component {
         return response.json()
       }).then(function (json) {
 
-        // let json = {
-        //   "data": [{
-        //     "desc": "测试",        //操作描述
-        //     "id": 1,
-        //     "userId": "用户id",             //操作人编号
-        //     "type": "1",               //0作者创建，1作者编辑2作者删除3文章发布4文章代发5文章删除
-        //     "createTime": "2019-10-23T15:42:07.000+0000",  // 创建时间
-        //     "remark": "123123",                              //备注
-        //   }],
-        //   "total": 1,
-        //   "success": true,
-        //   "msg": "成功"
-        // }
-
-
         if (json.success) {
           _this.setState({
             actionList: json.data,

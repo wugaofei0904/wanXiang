@@ -94,7 +94,7 @@ class toastComponent extends React.Component {
     searchAllTag = (value) => {
         let _this = this;
         // fetch(`http://open.suwenyj.xyz:8080/tag/searchTag?tagName=${value}`)
-        fetch(`/tag/searchTag?tagName=${value}`)
+        fetch(`/open/tag/searchTag?tagName=${value}`)
             .then(function (response) {
                 return response.json()
             }).then(function (json) {            

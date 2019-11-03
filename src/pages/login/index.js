@@ -51,7 +51,7 @@ class LoginPageForm extends Component {
 
         if (username != '' && password != '') {
             // fetch(`http://open.suwenyj.xyz:8080/login`, {
-            fetch(`/login`, {
+            fetch(`/open/login`, {
                 method: 'post',
                 body: formdata,
             })
