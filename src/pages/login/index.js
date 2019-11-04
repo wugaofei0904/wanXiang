@@ -50,7 +50,7 @@ class LoginPageForm extends Component {
         formdata.append("password", password);
         let _this = this;
 
-        if (username != '' && password != '') {
+        if (username !== '' && password !== '') {
             fetch(login, {
                 method: 'post',
                 body: formdata,

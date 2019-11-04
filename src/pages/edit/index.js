@@ -38,9 +38,9 @@ class EditForm extends Component {
             content: '',
             imgModelVisible: false,
             baseImgList: [
-                './../../img/test1.jpg',
-                './../../img/test2.jpg',
-                './../../img/test3.jpg',
+                // './../../img/test1.jpg',
+                // './../../img/test2.jpg',
+                // './../../img/test3.jpg',
                 // 'http://pic1.58cdn.com.cn/p1/big/n_v2066985acab204602b8e156ee453fb3f7_7fa21218dfb7b68c.jpg',
                 // 'http://pic1.58cdn.com.cn/p1/big/n_v2066985acab204602b8e156ee453fb3f7_7fa21218dfb7b68c.jpg',
             ],
@@ -50,7 +50,8 @@ class EditForm extends Component {
             editImgIdx: 0,
             baseImgChecked: 0,
             imgTwoVisible: false,
-            qingwuzhuanzai: 1
+            qingwuzhuanzai: 1,
+            localImgValue: ''
 
         };
     }
@@ -131,7 +132,7 @@ class EditForm extends Component {
         let imgReg = /<img.*?(?:>|\/>)/gi //匹配图片中的img标签
         let srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
         let str = item.content
-        let arr = str.match(imgReg)  //筛选出所有的img
+        let arr = str.match(imgReg) || [];  //筛选出所有的img
         let srcArr = []
         for (let i = 0; i < arr.length; i++) {
             let src = arr[i].match(srcReg)
@@ -153,12 +154,13 @@ class EditForm extends Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 values.content = this.refs.content1.getVal();
-                console.log(values);
-                console.log(_this.getImgurl(values));
+                // console.log(values);
+                // console.log(_this.getImgurl(values));
                 // _this.getImgurl(values)
                 this.setState({
-                    content: values,
-                    baseImgList: _this.getImgurl(values)
+                    content: values.content,
+                    baseImgList: _this.getImgurl(values),
+                    // baseImgList: ['./../../img/test1.jpg','./../../img/test2.jpg']
                 })
             }
         });
@@ -348,9 +350,10 @@ class EditForm extends Component {
 
         let _arr = [];
         tagList.map(item => {
-            _arr.push(item.id);
-        })
+            // _arr.push(item.id);
+            _arr.push(item.name);
 
+        })
 
         // debugger
         var formdata = new FormData();
@@ -407,6 +410,7 @@ class EditForm extends Component {
     }
 
     componentDidMount() {
+
         Array.prototype.indexOf = function (val) {
             for (var i = 0; i < this.length; i++) {
                 if (this[i] == val) return i;
@@ -419,6 +423,36 @@ class EditForm extends Component {
                 this.splice(index, 1);
             }
         };
+
+    }
+
+    imgChange(e) {
+        console.log(e.target.value)
+        let _this = this;
+
+        let { baseImgList } = this.state;
+
+        let file_head = e.target;
+        let picture = e.target.value;
+        if (!picture.match(/.jpg|.gif|.png|.bmp/i)) {
+            alert("您上传的图片格式不正确，请重新选择！")
+            _this.setState({
+                localImgValue: ''
+            })
+            return false
+        }
+        if (file_head.files && file_head.files[0]) {
+            var a = window.navigator.userAgent.indexOf("Chrome") >= 1 || window.navigator.userAgent.indexOf("Safari") >= 1 ? window.webkitURL.createObjectURL(file_head.files[0]) : window.URL.createObjectURL(file_head.files[0]);
+            // console.log(a)
+            // debugger
+            baseImgList.push(a);
+            _this.setState({
+                localImgValue: a,
+                baseImgList: baseImgList
+            }, () => {
+                _this.imgTwoOk();
+            })
+        }
     }
 
     render() {
@@ -427,7 +461,7 @@ class EditForm extends Component {
 
         };
 
-        let { lastImgList, baseImgChecked, baseImgList, imgModelVisible, textAreavalue, authorName, showAuthorMsg, authorRadioValue, textNumber, tagList } = this.state;
+        let { localImgValue, lastImgList, baseImgChecked, baseImgList, imgModelVisible, textAreavalue, authorName, showAuthorMsg, authorRadioValue, textNumber, tagList } = this.state;
         return (
             <div className="appPage">
 
@@ -451,7 +485,13 @@ class EditForm extends Component {
                         </div>
                     </div>
                     <div className="bottom_btn_list">
-                        <Button size="default" type="primary">另选图片</Button>
+
+                        <div className="sc_btn">
+                            <Input onChange={this.imgChange.bind(this)} className="hidden_input" type="file" placeholder="Basic usage" />
+                            <Button type="primary">另选图片</Button>
+                        </div>
+
+                        {/* <Button onClick={this.getLocalImg} size="default" type="primary">另选图片</Button> */}
                         <Button onClick={this.imgTwoOk} size="default" type="primary">下一步</Button>
                     </div>
                     <Modal

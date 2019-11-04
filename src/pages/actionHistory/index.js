@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Button, Row, Col, Select, Input, DatePicker, Pagination } from 'antd';
+import { LocaleProvider, Button, Row, Col, Select, Input, DatePicker, Pagination } from 'antd';
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
 import ActionItem from './ActionItem/index'
 
 import { recordList } from './../../utils/fetchApi';
+
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import 'moment/locale/zh-cn';
 
 const { Option } = Select;
 const { MonthPicker, RangePicker } = DatePicker;
@@ -32,12 +35,15 @@ class ActionHistory extends Component {
 
 
   onChange(pageNumber) {
-    console.log('Page: ', pageNumber);
+    // console.log('Page: ', pageNumber);
     this.searchDta(pageNumber);
   }
 
   handleChange = (value) => {
-    console.log(`selected ${value}`);
+    // console.log(`selected ${value}`);
+    this.setState({
+      actionType: value
+    })
   }
 
   actionPeople = (e) => {
@@ -45,7 +51,6 @@ class ActionHistory extends Component {
       people: e.target.value
     })
     console.log(e.target.value)
-
   }
 
   rangePickeronChange = (date, dateString) => {
@@ -57,7 +62,7 @@ class ActionHistory extends Component {
   }
 
 
-  componentDidMount(){
+  componentDidMount() {
     this.searchData(1);
   }
 
@@ -70,22 +75,6 @@ class ActionHistory extends Component {
       .then(function (response) {
         return response.json()
       }).then(function (json) {
-
-        // let json = {
-        //   "data": [{
-        //     "desc": "测试",        //操作描述
-        //     "id": 1,
-        //     "userId": "用户id",             //操作人编号
-        //     "type": "1",               //0作者创建，1作者编辑2作者删除3文章发布4文章代发5文章删除
-        //     "createTime": "2019-10-23T15:42:07.000+0000",  // 创建时间
-        //     "remark": "123123",                              //备注
-        //   }],
-        //   "total": 1,
-        //   "success": true,
-        //   "msg": "成功"
-        // }
-
-
         if (json.success) {
           _this.setState({
             actionList: json.data,
@@ -94,15 +83,6 @@ class ActionHistory extends Component {
         } else if (json.msg == '未登录') {
           window.initLogin();
         }
-
-        // if (json.success) {
-        //   _this.setState({
-        //     actionList: json.data,
-        //     total: json.total
-        //   })
-        // } else {
-        //   console.log(json.msg)
-        // }
       }).catch(function (ex) {
         console.log('parsing failed', ex)
       })
@@ -133,11 +113,9 @@ class ActionHistory extends Component {
             </Col>
             <Col >操作时间： </Col>
             <Col className="mr-12">
-              <RangePicker
-                defaultValue={[moment('2019/01/01', dateFormat), moment('2019/01/01', dateFormat)]}
-                format={dateFormat}
-                onChange={this.rangePickeronChange}
-              />
+              <LocaleProvider locale={zh_CN}>
+                <RangePicker onChange={this.rangePickeronChange} />
+              </LocaleProvider>
             </Col>
             <Col className="mr-12"><Button onClick={this.searchData.bind(null, 1)}  >查找</Button></Col>
           </Row>

@@ -53,7 +53,7 @@ class ArticleManage extends Component {
 
   statusChange = (value) => {
     this.setState({
-      articleStatus: value
+      articleStatus: value == 0 ? '' : value
     })
   }
   rangePickeronChange = (date, dateString) => {
@@ -84,56 +84,6 @@ class ArticleManage extends Component {
       .then(function (response) {
         return response.json()
       }).then(function (json) {
-        // let json = {
-        //   "data": [{
-        //     "authorName": "测试",        //作者名
-        //     "id": 1,
-        //     "title": "测试",             //标题
-        //     "picUrl": "https://pic1.58cdn.com.cn/p1/big/n_v23cf6f2ae504647439794262d726cbb50_7faa7fd2b3f39c22.jpg?w=300&h=150&crop=1",   //封面图片
-        //     "readNum": 1,                //阅读数量
-        //     "likeNum": 1,                //点赞数
-        //     "tags": "综合,游戏",         //标签，多个逗号隔开
-        //     "status": "1",               //1 发布 2 删除
-        //     "createTime": "2019-10-23T15:42:07.000+0000",
-        //     "updateTime": "2019-10-23T15:42:14.000+0000",
-        //     "body": "123123",                              //正文
-        //     "authorId": 1,                                 //作者号
-        //     "isOwn": "1",                                  //是否原创  1原创，2非原创
-        //     "otherAuthorName": null,                        //转载作家名称
-        //     "publishTime": "2019-10-23T05:00:00.000+0000",   //首次发布时间
-        //     "otherImg": ""                                   //正文图片，多个用逗号隔开
-        //   },
-        //   {
-        //     "authorName": "测试",        //作者名
-        //     "id": 1,
-        //     "title": "测试",             //标题
-        //     "picUrl": "https://pic1.58cdn.com.cn/p1/big/n_v23cf6f2ae504647439794262d726cbb50_7faa7fd2b3f39c22.jpg?w=300&h=150&crop=1",   //封面图片
-        //     "readNum": 1,                //阅读数量
-        //     "likeNum": 1,                //点赞数
-        //     "tags": "综合,游戏",         //标签，多个逗号隔开
-        //     "status": "2",               //1 发布 2 删除
-        //     "createTime": "2019-10-23T15:42:07.000+0000",
-        //     "updateTime": "2019-10-23T15:42:14.000+0000",
-        //     "body": "123123",                              //正文
-        //     "authorId": 1,                                 //作者号
-        //     "isOwn": "1",                                  //是否原创  1原创，2非原创
-        //     "otherAuthorName": null,                        //转载作家名称
-        //     "publishTime": "2019-10-23T05:00:00.000+0000",   //首次发布时间
-        //     "otherImg": ""                                   //正文图片，多个用逗号隔开
-        //   }],
-        //   "total": 1,
-        //   "success": true,
-        //   "msg": "成功"
-        // }
-        // if (json.success) {
-        //   //更新当前列表
-        //   _this.setState({
-        //     total: json.total,
-        //     listData: json.data
-        //   })
-        // }
-
-
         if (json.success) {
           //更新当前列表
           _this.setState({
@@ -154,6 +104,18 @@ class ArticleManage extends Component {
 
   componentDidMount() {
     this.searchList(1);
+    Array.prototype.indexOf = function (val) {
+      for (var i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+      }
+      return -1;
+    };
+    Array.prototype.remove = function (val) {
+      var index = this.indexOf(val);
+      if (index > -1) {
+        this.splice(index, 1);
+      }
+    };
   }
 
 
@@ -201,7 +163,7 @@ class ArticleManage extends Component {
           <div className="articleTable_table_list">
             {
               listData.map(item => {
-                return <ArticleItem data={item} />
+                return <ArticleItem key={item.id} data={item} />
               })
             }
           </div>

@@ -162,7 +162,7 @@ class ArticleManage extends Component {
       },
       {
         title: '领域',
-        dataIndex: 'tagId',
+        dataIndex: 'tagName',
       },
       {
         title: '备注',
@@ -210,14 +210,14 @@ class ArticleManage extends Component {
         render: (text, record) => {
           if (record.status == 1) {
             return <div>
-              <Button onClick={this.jumpCreate} className="m_r_12" type="primary">编辑</Button>
+              <Button onClick={this.jumpCreate.bind(this, 1, record)} className="m_r_12" type="primary">编辑</Button>
               <Popconfirm title="确认删除?" onConfirm={() => this.authorEditFuc(record.id, '0')}>
                 <Button type="danger">删除</Button>
               </Popconfirm>
             </div>
           } else {
             return <div>
-              <Button onClick={this.jumpCreate} className="m_r_12" type="primary">编辑</Button>
+              <Button onClick={this.jumpCreate.bind(this, 1, record)} className="m_r_12" type="primary">编辑</Button>
               <Popconfirm title="确认还原?" onConfirm={() => this.authorEditFuc(record.id, '1')}>
                 <Button type="primary">还原</Button>
               </Popconfirm>
@@ -264,14 +264,22 @@ class ArticleManage extends Component {
   };
 
 
-  jumpCreate = () => {
-    this.props.history.push('createAnthor')
+  jumpCreate = (type, data) => {
+    let _edit = 1;
+    let _data = JSON.stringify(data);
+    this.props.history.push({
+      pathname: '/createAnthor', state: {
+        edit: _edit,
+        data: _data
+      }
+    })
+    // this.props.history.push({pathname:"/createAnthor/" + _edit +'/'+ _data});
+    // this.props.history.push('createAnthor?edit=1&data=' + _data)
   }
 
   authorEditFuc = (id, type) => {
     let _this = this;
     let { anthorList } = this.state;
-
 
     for (var i = 0; i < anthorList.length; i++) {
       if (anthorList[i].id == id) {
@@ -281,9 +289,6 @@ class ArticleManage extends Component {
         anthorList[i].status = type
       }
     }
-
-    // console.log(anthorList)
-    // console.log(_newList)
 
     fetch(`${authorEdit}?id=${id}&status=${type}`)
       .then(function (response) {
@@ -327,45 +332,6 @@ class ArticleManage extends Component {
       .then(function (response) {
         return response.json()
       }).then(function (json) {
-
-        // let json = {
-        //   "data": [{
-        //     "id": 1,
-        //     "name": "测试",
-        //     "settledState": "0",      //0 未入驻，1以入驻
-        //     "status": "1",               //0 封禁，1正常
-        //     "articleNum": 0,          //发表文章数
-        //     "rank": "1",	 //等级
-        //     "tagId": 3,                 // 标签号
-        //     "tagName": "综合",    //标签名
-        //     "remark": "xx",         //备注
-        //     "updateTime": "2019-10-22T05:00:00.000+0000",  //文章更新时间
-        //     "createTime": "2019-10-22T18:59:11.000+0000",   //作者创建时间
-        //     "headImg": "头像",
-        //     "wxId": "微信号"
-        //   },
-        //   {
-        //     "id": 2,
-        //     "name": "测试222",
-        //     "settledState": "0",      //0 未入驻，1以入驻
-        //     "status": "0",               //0 封禁，1正常
-        //     "articleNum": 0,          //发表文章数
-        //     "rank": "1",	 //等级
-        //     "tagId": 3,                 // 标签号
-        //     "tagName": "综合12",    //标签名
-        //     "remark": "xx",         //备注
-        //     "updateTime": "2019-10-22T05:00:00.000+0000",  //文章更新时间
-        //     "createTime": "2019-10-22T18:59:11.000+0000",   //作者创建时间
-        //     "headImg": "头像12",
-        //     "wxId": "微信号21"
-        //   }
-        //   ],
-        //   "total": 1,
-        //   "success": true,
-        //   "msg": "成功"
-        // }
-
-
         if (json.success) {
           _this.setState({
             anthorList: json.data,
@@ -374,15 +340,6 @@ class ArticleManage extends Component {
         } else if (json.msg == '未登录') {
           window.initLogin();
         }
-
-
-        // if (json.success) {
-        //   _this.setState({
-        //     anthorList: json.data,
-        //     total: json.total
-        //   })
-        // }
-
       }).catch(function (ex) {
         console.log('parsing failed', ex)
       })
@@ -428,14 +385,13 @@ class ArticleManage extends Component {
 
   rankhandleChange = value => {
     this.setState({
-      rank: value
+      rank: value == 0 ? '' : value
     })
-
   }
 
   taghandleChange = value => {
     this.setState({
-      tagId: value
+      tagId: value == 0 ? '' : value
     })
   }
 

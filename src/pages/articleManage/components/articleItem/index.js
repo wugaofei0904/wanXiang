@@ -12,7 +12,7 @@ class ArticleItem extends Component {
         this.state = {
             itemData: this.props.data,
             status: 1,  //1 已发布 2 已删除
-            tagList: ['生活', '生活', '生活', '生活']  //领域list
+            tagList: this.props.data.tags.split(',') || []  //领域list
         };
     }
 
@@ -22,12 +22,38 @@ class ArticleItem extends Component {
 
 
     getTagid = (tag) => {
-        let newtagList = this.state.tagList;
-        newtagList.push(tag.name)
-        this.setState({
-            tagList: newtagList
-        })
+        // debugger
+        // let newtagList = this.state.tagList;
+        // newtagList.push(tag.name)
+        this.addOrDelTag(tag.name,1);
         this.refs['toast'].initModal();
+    }
+
+    //文章标签添加删除
+    addOrDelTag = (item, type) => {
+        let { itemData, tagList } = this.state;
+        if (type == 0) {
+            tagList.remove(item);
+        } else {
+            tagList.push(item);
+        }
+        let _this = this;
+        let _tags = tagList.join(',');
+        fetch(`${articleEdit}?id=${itemData.id}&tags=${_tags}`)
+            .then(function (response) {
+                return response.json()
+            }).then(function (json) {
+                if (json.success) {
+                    console.log('操作成功')
+                    _this.setState({
+                        tagList: tagList
+                    })
+                } else if (json.msg == '未登录') {
+                    window.initLogin();
+                }
+            }).catch(function (ex) {
+                console.log('parsing failed', ex)
+            })
     }
 
     //文章编辑 删除、还原   type 1还原 2删除
@@ -40,22 +66,6 @@ class ArticleItem extends Component {
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
-
-                // let json = {
-                //     "data": null,
-                //     "total": null,
-                //     "success": true,
-                //     "msg": "成功"
-                // }
-                // if (json.success) {
-                //     _this.setState({
-                //         itemData: {
-                //             ...itemData,
-                //             status: itemData.status == '1' ? '2' : '1'
-                //         }
-                //     })
-                // }
-
 
                 if (json.success) {
                     _this.setState({
@@ -74,8 +84,10 @@ class ArticleItem extends Component {
     }
 
     render() {
-        let { itemData } = this.state;
+
+        let { itemData, tagList } = this.state;
         // let { data } = this.props;
+        // debugger
         let _tagList = itemData.tags.split(',');
         // console.log(data)
         return (
@@ -106,8 +118,11 @@ class ArticleItem extends Component {
                 </div>
                 <div className="article_item_bq_list m_t_16">
                     {
-                        _tagList.map((item) => {
-                            return <div className="article_item_bq_list_item">{item}</div>
+                        tagList.map((item) => {
+                            return <div className="article_item_bq_list_item">
+                                {item}
+                                <div onClick={this.addOrDelTag.bind(null, item, 0)} className="tags_close_btn"></div>
+                            </div>
                         })
                     }
                     <div onClick={this.addTag} className="article_item_bq_list_item">+添加标签</div>

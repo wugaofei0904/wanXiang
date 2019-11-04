@@ -14,14 +14,12 @@ class CreateAnthor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // count: 2,        
             rank: '',
+        
             anthorName: '',
             shenfenText: '',
-            tagId: '',
+            tagId: '综合',
             wxName: '',
-            // startTime: '',
-            // endTime: '',
             modalVisible: false,
             localImg: '',
             imgValue: '',
@@ -69,6 +67,26 @@ class CreateAnthor extends Component {
 
 
     componentDidMount() {
+        let _this = this;
+
+        try {
+            let { data, edit } = _this.props.location.state;
+            if (edit) {
+                let _data = JSON.parse(data);
+                console.log(_data);
+                _this.setState({
+                    rank: _data.rank,
+                    anthorName: _data.name,
+                    shenfenText: _data.remark,
+                    tagId: _data.tagId,
+                    wxName: _data.wxId,
+                    resultImg: _data.headImg
+                })
+            }
+        } catch (err) {
+
+        }
+
         this.isgetTagList();
     }
 
@@ -226,7 +244,9 @@ class CreateAnthor extends Component {
 
 
     render() {
-        let { tagIdList, localImg, imgValue, resultImg } = this.state;
+        // debugger
+        let { rank, tagId, wxName, shenfenText, tagIdList, localImg, imgValue, resultImg, anthorName } = this.state;
+        console.log(rank, tagId, wxName, shenfenText, tagIdList, localImg, imgValue, resultImg, anthorName)
         return (
             <div className="create_anthor_Page">
                 <Modal
@@ -235,8 +255,6 @@ class CreateAnthor extends Component {
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
                 >
-                    {/* <img src={localImg} /> */}
-
                     <ImgCropper getCropData={this.getCropData} src={localImg} />
                 </Modal>
                 <h1 className="page_title">创建作者</h1>
@@ -244,9 +262,10 @@ class CreateAnthor extends Component {
                     <div className="item_title">领域</div>
                     <div className="item_content">
                         <Select defaultValue="0" style={{ width: 120 }} onChange={this.tagHandleChange}>
-                            <Option value="0">综合</Option>
+                            <Option value={tagId}>综合</Option>
                             {tagIdList.map(item => {
-                                return <Option value={item.id}>{item.tagName}</Option>
+                                // return <Option value={item.id}>{item.tagName}</Option>
+                                return <Option key={item.id} value={item.id}>{item.tagName}</Option>
                             })}
                         </Select>
                     </div>
@@ -254,14 +273,14 @@ class CreateAnthor extends Component {
                 <div className="form_item">
                     <div className="item_title"><span className="red_color">*</span>作者名</div>
                     <div className="item_content">
-                        <Input className="w_300" onChange={this.nameChange} placeholder="请输入作者名" />
+                        <Input className="w_300" defaultValue={anthorName} onChange={this.nameChange} placeholder="请输入作者名" />
                     </div>
                 </div>
 
                 <div className="form_item">
                     <div className="item_title"><span className="red_color">*</span>身份介绍</div>
                     <div className="item_content">
-                        <TextArea onChange={this.textAreaChange} placeholder="请准确描述作者擅长领域" className="w_300" rows={4} />
+                        <TextArea defaultValue={shenfenText} onChange={this.textAreaChange} placeholder="请准确描述作者擅长领域" className="w_300" rows={4} />
                     </div>
                 </div>
 
@@ -283,7 +302,7 @@ class CreateAnthor extends Component {
                 <div className="form_item">
                     <div className="item_title">作者等級</div>
                     <div className="item_content">
-                        <Select defaultValue="1" style={{ width: 120 }} onChange={this.rankHandleChange} >
+                        <Select defaultValue={rank} style={{ width: 120 }} onChange={this.rankHandleChange} >
                             <Option value="1">一级</Option>
                             <Option value="2">二级</Option>
                             <Option value="3">三级</Option>
@@ -295,7 +314,7 @@ class CreateAnthor extends Component {
                 <div className="form_item">
                     <div className="item_title">微信公众号</div>
                     <div className="item_content">
-                        <Input className="w_300" onChange={this.wxNameChange} placeholder="请输入微信公众号" />
+                        <Input defaultValue={wxName} className="w_300" onChange={this.wxNameChange} placeholder="请输入微信公众号" />
                     </div>
                 </div>
 
