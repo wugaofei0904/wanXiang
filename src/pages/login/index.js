@@ -89,7 +89,7 @@ class LoginPageForm extends Component {
 
         return (
             <div className="loginPage">
-                <img className="bg_img" alt="" src="./img/login_bg.jpg" />
+                <img className="bg_img" alt="" src="/open/public/img/login_bg.jpg" />
                 <Modal
                     title="错误"
                     visible={this.state.visible}

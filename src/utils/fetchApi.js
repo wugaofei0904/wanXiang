@@ -1,7 +1,7 @@
 // http://open.suwenyj.xyz:8080/author/list-page?pageSize=10&pageNum=1&rank=1&tagId=1
 // export const domain = 'http://open.suwenyj.xyz:8080';
-// export const domain = '/open';
-export const domain = '';
+export const domain = '/open';
+// export const domain = '';
 //登陆
 export const login = domain + '/login';
 
