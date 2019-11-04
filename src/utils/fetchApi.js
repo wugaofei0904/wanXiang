@@ -1,7 +1,9 @@
 // http://open.suwenyj.xyz:8080/author/list-page?pageSize=10&pageNum=1&rank=1&tagId=1
-export const domain = 'http://open.suwenyj.xyz:8080';
+// export const domain = 'http://open.suwenyj.xyz:8080';
+export const domain = '';
 
-// export const domain = '';
+//登陆
+export const login = domain + '/login';
 
 //文章列表
 export const articleList = domain + '/article/list-page';
@@ -24,6 +26,10 @@ export const imgUpload = domain + '/author/headImg';
 //标签列表
 export const tagList = domain + '/tag/list';
 
+//搜索所有标签
+export const searchTagList = domain + '/tag/searchTag';
+
+
 //操作记录
 export const recordList = domain + '/record/list';
 
@@ -32,4 +38,3 @@ export const authorEdit = domain + '/author/edit';
 
 //文章编辑 删除.还原
 export const articleEdit = domain + '/article/edit';
-

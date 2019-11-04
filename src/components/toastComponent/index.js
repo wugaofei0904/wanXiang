@@ -4,6 +4,7 @@ import './style.css';
 import GetTagList from './../../pages/hooks/useGetTagList';
 
 import cs from 'classnames';
+import { searchTagList } from './../../utils/fetchApi'
 
 const { Search } = Input;
 
@@ -93,16 +94,16 @@ class toastComponent extends React.Component {
     //搜索all标签
     searchAllTag = (value) => {
         let _this = this;
-        fetch(`http://open.suwenyj.xyz:8080/tag/searchTag?tagName=${value}`)
+        fetch(searchTagList + `?tagName=${value}`)
             .then(function (response) {
                 return response.json()
-            }).then(function (json) {            
+            }).then(function (json) {
                 if (json.success) {
                     _this.setState({
                         searchTagList: json.data
                     })
                 } else if (json.msg == '未登录') {
-                   window.initLogin();
+                    window.initLogin();
                 }
 
                 //隐藏弹窗

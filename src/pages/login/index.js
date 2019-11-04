@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Form, Icon, Input, Button, Checkbox, message } from 'antd';
 import { withRouter } from 'react-router-dom';
 import './style.css';
+import { login } from './../../utils/fetchApi';
 
 
 class LoginPageForm extends Component {
@@ -50,7 +51,7 @@ class LoginPageForm extends Component {
         let _this = this;
 
         if (username != '' && password != '') {
-            fetch(`http://open.suwenyj.xyz:8080/login`, {
+            fetch(login, {
                 method: 'post',
                 body: formdata,
             })
@@ -67,48 +68,6 @@ class LoginPageForm extends Component {
                     console.log('parsing failed', ex)
                 })
         }
-
-        // if (!err) {
-        //     console.log('Received values of form: ', values);
-        // }
-
-
-
-        // console.log(name, pass)
-
-        // e.preventDefault();
-        // debugger
-        // this.props.form.validateFields((err, values) => {
-
-        //     let { username, password } = values;
-        //     var formdata = new FormData();
-        //     formdata.append("username", username);
-        //     formdata.append("password", password);
-        //     let _this = this;
-
-        //     if (username != '' && password != '') {
-        //         fetch(`http://open.suwenyj.xyz:8080/login`, {
-        //             method: 'post',
-        //             body: formdata,
-        //         })
-        //             .then(function (response) {
-        //                 return response.json()
-        //             }).then(function (json) {
-
-        //                 if (json.success) {
-        //                     _this.props.history.push('articleManage');
-        //                 } else {
-        //                     message.error(json.msg);
-        //                 }
-        //             }).catch(function (ex) {
-        //                 console.log('parsing failed', ex)
-        //             })
-        //     }
-
-        //     if (!err) {
-        //         console.log('Received values of form: ', values);
-        //     }
-        // });
     };
 
 
@@ -130,7 +89,7 @@ class LoginPageForm extends Component {
 
         return (
             <div className="loginPage">
-                <img className="bg_img" src="./../../img/login_bg.jpg" />
+                <img className="bg_img" alt="" src="./img/login_bg.jpg" />
                 <Modal
                     title="错误"
                     visible={this.state.visible}
