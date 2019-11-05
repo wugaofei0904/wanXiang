@@ -5,7 +5,7 @@ import GetTagList from './../hooks/useGetTagList';
 
 import ImgCropper from './../../components/imgCropper'
 import { withRouter } from 'react-router-dom';
-import { createAuthor, imgUpload } from './../../utils/fetchApi'
+import { createAuthor, imgUpload, authorEdit } from './../../utils/fetchApi'
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -14,11 +14,13 @@ class CreateAnthor extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            edit: false,
+            id: '',
             rank: '',
-        
             anthorName: '',
             shenfenText: '',
-            tagId: '综合',
+            tagId: '',
+            tagName: '综合',
             wxName: '',
             modalVisible: false,
             localImg: '',
@@ -69,8 +71,10 @@ class CreateAnthor extends Component {
     componentDidMount() {
         let _this = this;
 
+        this.isgetTagList();
         try {
             let { data, edit } = _this.props.location.state;
+            // debugger
             if (edit) {
                 let _data = JSON.parse(data);
                 console.log(_data);
@@ -79,15 +83,17 @@ class CreateAnthor extends Component {
                     anthorName: _data.name,
                     shenfenText: _data.remark,
                     tagId: _data.tagId,
+                    tagName: _data.tagName,
                     wxName: _data.wxId,
-                    resultImg: _data.headImg
+                    resultImg: _data.headImg,
+                    edit: true,
+                    id: _data.id
                 })
             }
         } catch (err) {
 
         }
 
-        this.isgetTagList();
     }
 
     //将base64码转化为FILE格式
@@ -139,11 +145,6 @@ class CreateAnthor extends Component {
                 } else if (json.msg == '未登录') {
                     window.initLogin();
                 }
-
-                // _this.setState({
-                //     resultImg: json.data
-                // })
-
                 //隐藏弹窗
                 _this.handleCancel();
 
@@ -216,37 +217,61 @@ class CreateAnthor extends Component {
 
     submitData = () => {
 
-        let { rank, anthorName, shenfenText, wxName, tagId, resultImg } = this.state;
-
-        console.log(rank, anthorName, shenfenText, wxName, tagId, resultImg);
-
+        let { id,edit, rank, anthorName, shenfenText, wxName, tagId, resultImg } = this.state;
         let _this = this;
-        fetch(`${createAuthor}?name=${anthorName}&rank=${rank}&tagId=${tagId}&remark=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
-            .then(function (response) {
-                return response.json()
-            }).then(function (json) {
+        // console.log(rank, anthorName, shenfenText, wxName, tagId, resultImg);
+        console.log(anthorName, '123');
 
-                if (json.success) {
-                    message.success('创建成功！即将返回列表页');
-                    setTimeout(() => {
-                        _this.props.history.push('anthorManage')
-                    }, 1500)
-                } else if (json.msg == '未登录') {
-                    window.initLogin();
-                }
+        if (edit) {
+            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&remark=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
+                .then(function (response) {
+                    return response.json()
+                }).then(function (json) {
 
-            }).catch(function (ex) {
-                console.log('parsing failed', ex)
-            })
+                    if (json.success) {
+                        message.success('编辑成功！即将返回列表页');
+                        setTimeout(() => {
+                            _this.props.history.push('anthorManage')
+                        }, 1500)
+                    } else if (json.msg == '未登录') {
+                        window.initLogin();
+                    }
 
+                }).catch(function (ex) {
+                    console.log('parsing failed', ex)
+                })
+        } else {
+            fetch(`${createAuthor}?name=${anthorName}&rank=${rank}&tagId=${tagId}&remark=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
+                .then(function (response) {
+                    return response.json()
+                }).then(function (json) {
+
+                    if (json.success) {
+                        message.success('创建成功！即将返回列表页');
+                        setTimeout(() => {
+                            _this.props.history.push('anthorManage')
+                        }, 1500)
+                    } else if (json.msg == '未登录') {
+                        window.initLogin();
+                    }
+
+                }).catch(function (ex) {
+                    console.log('parsing failed', ex)
+                })
+        }
+    }
+
+    onClose = () => {
+        this.props.history.push('anthorManage')
     }
 
 
 
     render() {
         // debugger
-        let { rank, tagId, wxName, shenfenText, tagIdList, localImg, imgValue, resultImg, anthorName } = this.state;
+        let { tagName, rank, tagId, wxName, shenfenText, tagIdList, localImg, imgValue, resultImg, anthorName } = this.state;
         console.log(rank, tagId, wxName, shenfenText, tagIdList, localImg, imgValue, resultImg, anthorName)
+
         return (
             <div className="create_anthor_Page">
                 <Modal
@@ -261,8 +286,8 @@ class CreateAnthor extends Component {
                 <div className="form_item">
                     <div className="item_title">领域</div>
                     <div className="item_content">
-                        <Select defaultValue="0" style={{ width: 120 }} onChange={this.tagHandleChange}>
-                            <Option value={tagId}>综合</Option>
+                        <Select value={tagId} style={{ width: 120 }} onChange={this.tagHandleChange}>
+                            {/* <Option value='3'>综合</Option> */}
                             {tagIdList.map(item => {
                                 // return <Option value={item.id}>{item.tagName}</Option>
                                 return <Option key={item.id} value={item.id}>{item.tagName}</Option>
@@ -273,7 +298,7 @@ class CreateAnthor extends Component {
                 <div className="form_item">
                     <div className="item_title"><span className="red_color">*</span>作者名</div>
                     <div className="item_content">
-                        <Input className="w_300" defaultValue={anthorName} onChange={this.nameChange} placeholder="请输入作者名" />
+                        <Input className="w_300" value={anthorName} onChange={this.nameChange} placeholder="请输入作者名" />
                     </div>
                 </div>
 
@@ -302,7 +327,7 @@ class CreateAnthor extends Component {
                 <div className="form_item">
                     <div className="item_title">作者等級</div>
                     <div className="item_content">
-                        <Select defaultValue={rank} style={{ width: 120 }} onChange={this.rankHandleChange} >
+                        <Select value={rank} style={{ width: 120 }} onChange={this.rankHandleChange} >
                             <Option value="1">一级</Option>
                             <Option value="2">二级</Option>
                             <Option value="3">三级</Option>
@@ -314,13 +339,13 @@ class CreateAnthor extends Component {
                 <div className="form_item">
                     <div className="item_title">微信公众号</div>
                     <div className="item_content">
-                        <Input defaultValue={wxName} className="w_300" onChange={this.wxNameChange} placeholder="请输入微信公众号" />
+                        <Input value={wxName} className="w_300" onChange={this.wxNameChange} placeholder="请输入微信公众号" />
                     </div>
                 </div>
 
                 <div className="btn_container">
                     <Button onClick={this.submitData} className="m_r_24" type="primary">保存</Button>
-                    <Button >取消</Button>
+                    <Button onClick={this.onClose} >取消</Button>
                 </div>
 
             </div>

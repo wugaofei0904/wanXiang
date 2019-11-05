@@ -7,15 +7,18 @@ class Ueditor extends React.Component {
     config: {},
   }
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      content:'',
-      editor:'',
+      content: '',
+      editor: '',
+      hasInit: false
     };
   }
 
-  componentDidMount(){
+  componentDidMount() {
+
+    // let defaultData = this.props.defaultData;
     this.initEditor()
   }
 
@@ -25,6 +28,7 @@ class Ueditor extends React.Component {
   }
 
   initEditor() {
+    let _this = this;
     /*初始化编辑器*/
     const { id, config } = this.props;
     const ueEditor = UE.getEditor(this.props.id, config);
@@ -37,21 +41,56 @@ class Ueditor extends React.Component {
       }
     });
     let editor = ueEditor;
-    this.setState({editor});
+    this.setState({
+      editor,
+      hasInit: true
+    });
   }
-  getVal(){
+  getVal() {
     /*获取编辑器内容函数*/
-    let {editor} = this.state;
+    let { editor } = this.state;
     let content = editor.getContent();
     return content;
   }
-  render(){
-    let { content,id } = this.props;
+
+
+  // componentWillReceiveProps(nextProps) {
+  //   if (this.props.defaultValue !== nextProps.defaultValue) {
+  //     this.setState({
+  //       defaultValue
+  //     })
+  //   }
+  // }
+
+
+  setVal(data) {
+    /*获取编辑器内容函数*/
+    //赋值
+    let { hasInit } = this.state;
+
+    if (hasInit) {
+      let { editor } = this.state;
+      editor.setContent(data);
+    }else{
+      setTimeout(()=>{
+        this.setVal(data);
+      },1000)
+    }
+    // setTimeout(() => {
+    //   let { editor } = this.state;
+    //   // console.log(editor)
+    //   editor.setContent(data);
+    // }, 2000)
+  }
+
+
+  render() {
+    let { content, id } = this.props;
     return (
       <div >
         <textarea id={id}
-                  defaultValue={content}
-                  onChange={this.getVal}/>
+          defaultValue={content}
+          onChange={this.getVal} />
       </div>
     )
   }

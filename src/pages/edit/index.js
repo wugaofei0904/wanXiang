@@ -9,7 +9,7 @@ import ImgCropperTwo from './../../components/imgCropperTwo'
 import Ueditor from './components/ueditor';
 import AuthorToast from './../../components/authorToast'
 import ToastComponent from './../../components/toastComponent';
-import { createAuthor, imgUpload, postArticle } from './../../utils/fetchApi'
+import { createAuthor, imgUpload, postArticle, articleEdit } from './../../utils/fetchApi'
 // import Editor from 'react-umeditor';
 import { withRouter } from 'react-router-dom';
 const FormItem = Form.Item;
@@ -26,6 +26,7 @@ class EditForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id: '',
             author: {},
             authorName: '无',  //作者名
             articleTitle: '',  //文章title
@@ -50,8 +51,10 @@ class EditForm extends Component {
             editImgIdx: 0,
             baseImgChecked: 0,
             imgTwoVisible: false,
-            qingwuzhuanzai: 1,
-            localImgValue: ''
+            qingwuzhuanzai: false,
+            // qingwuzhuanzai: true,
+            localImgValue: '',
+            isEdit: false
 
         };
     }
@@ -98,9 +101,7 @@ class EditForm extends Component {
         })
     }
 
-    componentDidMount() {
 
-    }
 
     titleChange = e => {
         console.log(e.target.value)
@@ -171,6 +172,7 @@ class EditForm extends Component {
     }
 
     updateAuthor = item => {
+        // debugger
         this.setState({
             author: item,
             authorName: item.name,
@@ -191,6 +193,7 @@ class EditForm extends Component {
     getTagid = (tag) => {
         console.log(tag)
         let newtagList = this.state.tagList;
+        // debugger
         newtagList.push(tag)
         this.setState({
             tagList: newtagList
@@ -346,7 +349,7 @@ class EditForm extends Component {
     submitAllData = () => {
         if (!this.checkForm()) return;
 
-        let { authorMsg, authorRadioValue, author, authorName, content, articleTitle, lastImgList, tagList, textAreavalue, qingwuzhuanzai } = this.state;
+        let { id, isEdit, authorMsg, authorRadioValue, author, authorName, content, articleTitle, lastImgList, tagList, textAreavalue, qingwuzhuanzai } = this.state;
 
         let _arr = [];
         tagList.map(item => {
@@ -371,26 +374,50 @@ class EditForm extends Component {
         formdata.append("corePoint", textAreavalue);
         formdata.append("isReprint", qingwuzhuanzai);
 
-
         let _this = this;
-        fetch(`${postArticle}`, {
-            method: 'post',
-            body: formdata,
-        })
-            .then(function (response) {
-                return response.json()
-            }).then(function (json) {
-                if (json.success) {
-                    message.success('发布成功！')
-                    setTimeout(() => {
-                        _this.props.history.push('articleManage')
-                    }, 1500)
-                } else if (json.msg == '未登录') {
-                    window.initLogin();
-                }
-            }).catch(function (ex) {
-                console.log('parsing failed', ex)
+        if (isEdit) {
+            formdata.append("id", id);
+            fetch(`${articleEdit}`, {
+                method: 'post',
+                body: formdata,
             })
+                .then(function (response) {
+                    return response.json()
+                }).then(function (json) {
+                    if (json.success) {
+                        message.success('编辑成功！')
+                        setTimeout(() => {
+                            _this.props.history.push('/articleManage')
+                        }, 1500)
+                    } else if (json.msg == '未登录') {
+                        window.initLogin();
+                    }
+                }).catch(function (ex) {
+                    console.log('parsing failed', ex)
+                })
+
+        } else {
+            fetch(`${postArticle}`, {
+                method: 'post',
+                body: formdata,
+            })
+                .then(function (response) {
+                    return response.json()
+                }).then(function (json) {
+                    if (json.success) {
+                        message.success('发布成功！')
+                        setTimeout(() => {
+                            _this.props.history.push('/articleManage')
+                        }, 1500)
+                    } else if (json.msg == '未登录') {
+                        window.initLogin();
+                    }
+                }).catch(function (ex) {
+                    console.log('parsing failed', ex)
+                })
+        }
+
+
         // console.log(2)
     }
 
@@ -404,12 +431,56 @@ class EditForm extends Component {
     }
 
     switchChange = value => {
+        // debugger
         this.setState({
-            qingwuzhuanzai: value ? 1 : 0
+            qingwuzhuanzai: value
         })
     }
 
     componentDidMount() {
+        console.log(this.props.match.params.edit)
+
+        if (this.props.match.params.edit == 1) {
+            //回填数据
+            let _data = JSON.parse(localStorage.getItem('edit_article'));
+            console.log(_data)
+
+
+            let _list = _data.tags.split(',')
+            let new_list = []
+            for (var i = 0; i < _list.length; i++) {
+                new_list.push({
+                    name: _list[i]
+                })
+            }
+
+            // debugger
+            // console.log([_data.picUrl])
+            
+            this.setState({
+                id: _data.id,
+                isEdit: !!1,
+                authorName: _data.authorName,
+                articleTitle: _data.title,
+                authorRadioValue: _data.isOwn == '1' ? 1 : 2,
+                textAreavalue: _data.corePoint,
+                tagList: new_list,
+                content: _data.body,
+                lastImgList: [_data.picUrl],
+                baseImgList: [_data.picUrl],
+                // baseImgList: ['https://pic7.58cdn.com.cn/p1/big/n_v23efc0ca43c7645c0b01e30ead7b93b78_06b3edb661442446.jpg'],
+                // baseImgChecked: 0,
+                author: {
+                    name: _data.authorName,
+                    id: _data.authorId,
+                },
+                authorMsg: _data.otherAuthorName,
+                qingwuzhuanzai: _data.isReprint == '1' ? false : true,
+            })
+
+            this.setdefaultContent(_data.body);
+
+        }
 
         Array.prototype.indexOf = function (val) {
             for (var i = 0; i < this.length; i++) {
@@ -423,6 +494,12 @@ class EditForm extends Component {
                 this.splice(index, 1);
             }
         };
+
+    }
+
+    setdefaultContent = (data) => {
+
+        this.refs['content1'].setVal(data)
 
     }
 
@@ -461,7 +538,10 @@ class EditForm extends Component {
 
         };
 
-        let { localImgValue, lastImgList, baseImgChecked, baseImgList, imgModelVisible, textAreavalue, authorName, showAuthorMsg, authorRadioValue, textNumber, tagList } = this.state;
+        let { content, qingwuzhuanzai, authorMsg, articleTitle, localImgValue, lastImgList, baseImgChecked, baseImgList, imgModelVisible, textAreavalue, authorName, showAuthorMsg, authorRadioValue, textNumber, tagList } = this.state;
+       
+        console.log(baseImgList[baseImgChecked],'.0.0.0.0')
+       
         return (
             <div className="appPage">
 
@@ -517,7 +597,7 @@ class EditForm extends Component {
                             <Button onClick={this.changeAnthor} size="default" type="primary">更换</Button>
                         </Col>
                     </Row>
-                    <Input onChange={this.titleChange} className="edit_title" placeholder="请输入文章标题（谁改为无锡事故买奥术大师多但？)" />
+                    <Input value={articleTitle} onChange={this.titleChange} className="edit_title" placeholder="请输入文章标题（谁改为无锡事故买奥术大师多但？)" />
                     <Row className="row color_hui flex_hc" type="flex">
                         <Col className="mr-12 flex_hc">
                             请选择：
@@ -530,12 +610,12 @@ class EditForm extends Component {
                         </Col>
                         {
                             authorRadioValue == 2 && <Col className="mr-12 w_300 flex_hc">
-                                <Input onChange={this.authorMsgChange} width="200" placeholder="1-10字 示例：厉以宁经济学教授" />
+                                <Input value={authorMsg} onChange={this.authorMsgChange} width="200" placeholder="1-10字 示例：厉以宁经济学教授" />
                             </Col>
                         }
                     </Row>
                 </div>
-                <Ueditor config={editConfig} id="content1" height="1000" ref="content1" />
+                <Ueditor defaultData={content} config={editConfig} id="content1" height="1000" ref="content1" />
                 <Button type={'primary'} onClick={this.handleSubmit.bind(this)}>保存</Button>
                 <div className="fmt_container">
                     <div className="fmt_container_title edit_title">封面图(必填项)</div>
@@ -583,7 +663,7 @@ class EditForm extends Component {
                 </div>
 
                 <div className="qingwuzhuanzai">
-                    <Switch onChange={this.switchChange} /> 请勿转载
+                    <Switch checked={qingwuzhuanzai} onChange={this.switchChange} /> 请勿转载
                 </div>
 
                 <div className="submit_btn">

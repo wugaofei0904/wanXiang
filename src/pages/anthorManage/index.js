@@ -173,20 +173,29 @@ class ArticleManage extends Component {
         dataIndex: 'updateTime',
         render: (text, record) => {
 
-
-          let _text1 = record.createTime.split('T')[0]
-          let _text2 = record.createTime.split('T')[1].split('.')[0]
-          return <div>
-            <p>
-              {_text1}
-            </p>
-            {/* &nbsp; */}
-            {_text2}
-          </div>
+          if (text) {
+            let _text1 = record.updateTime.split('T')[0]
+            let _text2 = record.updateTime.split('T')[1].split('.')[0]
+            return <div>
+              <p>
+                {_text1}
+              </p>
+              {/* &nbsp; */}
+              {_text2}
+            </div>
+          } else {
+            let _text1 = record.createTime.split('T')[0]
+            let _text2 = record.createTime.split('T')[1].split('.')[0]
+            return <div>
+              <p>
+                {_text1}
+              </p>
+              {/* &nbsp; */}
+              {_text2}
+            </div>
+          }
 
         }
-
-
       },
       {
         title: '创建时间',

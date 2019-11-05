@@ -32,9 +32,13 @@ class toastComponent extends React.Component {
     }
 
     showModal = () => {
+
         this.setState({
             visible: true,
+        },()=>{
+            this.isgetTagList();
         });
+        
     };
 
     handleOk = e => {
@@ -133,7 +137,7 @@ class toastComponent extends React.Component {
 
     componentDidMount() {
 
-        this.isgetTagList();
+       
 
     }
 

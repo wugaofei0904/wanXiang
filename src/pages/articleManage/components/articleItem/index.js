@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Button } from 'antd';
 import './style.css';
 
+import { withRouter } from 'react-router-dom';
+
 import ToastComponent from './../../../../components/toastComponent';
 import { articleEdit } from './../../../../utils/fetchApi';
 
@@ -25,7 +27,7 @@ class ArticleItem extends Component {
         // debugger
         // let newtagList = this.state.tagList;
         // newtagList.push(tag.name)
-        this.addOrDelTag(tag.name,1);
+        this.addOrDelTag(tag.name, 1);
         this.refs['toast'].initModal();
     }
 
@@ -83,8 +85,24 @@ class ArticleItem extends Component {
             })
     }
 
+    editArticle = (data) => {
+
+        localStorage.setItem('edit_article', JSON.stringify(data))
+
+
+        this.props.history.push({pathname:"/editPage/" + 1});
+
+        // this.props.history.push({
+        //     pathname: '/editPage', state: {
+        //         edit: 1
+        //     }
+        // })
+    }
+
     render() {
 
+        // console.log(this.props.data, '23')
+        let { data } = this.props;
         let { itemData, tagList } = this.state;
         // let { data } = this.props;
         // debugger
@@ -109,7 +127,7 @@ class ArticleItem extends Component {
                     </div>
                     <div className="articleTable_header_text w_160">
                         <div className="m_b_4">
-                            <Button>编辑</Button>
+                            <Button onClick={this.editArticle.bind(null, data)} className="edit_article_btn">编辑</Button>
                         </div>
                         {
                             itemData.status == 1 ? <div><Button onClick={this.articleEditFunc.bind(null, itemData)} type="danger">删除</Button></div> : <Button onClick={this.articleEditFunc.bind(null, itemData)} type="primary">还原</Button>
@@ -132,4 +150,4 @@ class ArticleItem extends Component {
     }
 }
 
-export default ArticleItem;
+export default withRouter(ArticleItem);

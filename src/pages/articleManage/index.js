@@ -98,7 +98,6 @@ class ArticleManage extends Component {
         console.log('parsing failed', ex)
       })
 
-
   }
 
 

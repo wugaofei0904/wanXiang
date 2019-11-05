@@ -28,6 +28,7 @@ class App extends Component {
           <Route exact path="/anthorManage" component={AnthorManage} />
           <Route exact path="/actionHistory" component={ActionHistory} />
           <Route exact path="/editPage" component={EditPage} />
+          <Route exact path='/editPage/:edit' component={EditPage} />
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/createAnthor" component={CreateAnthor} />
           {/* <Route exact path="/createAnthor/:edit/:data" component={CreateAnthor} /> */}
