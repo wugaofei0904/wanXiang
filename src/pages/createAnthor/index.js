@@ -279,6 +279,7 @@ class CreateAnthor extends Component {
                     visible={this.state.visible}
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
+                    footer={null}
                 >
                     <ImgCropper getCropData={this.getCropData} src={localImg} />
                 </Modal>

@@ -70,7 +70,7 @@ export default class ImgCropper extends React.Component {
                     />
                 </div>
                 <div>
-                    <Button type="primary" size="large" onClick={this.cropImage} style={{ marginTop: '10px' }}>
+                    <Button className="cj_btn" type="primary" size="large" onClick={this.cropImage} style={{ marginTop: '10px' }}>
                         确认裁剪
                     </Button>
                 </div>

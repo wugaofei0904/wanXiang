@@ -86,7 +86,7 @@ class AuthorToast extends React.Component {
     }
 
     blurSearch = () => {
-        debugger
+        // debugger
         this.setState({
             showsearchTagList: false,
             searchTagList: []
@@ -157,6 +157,7 @@ class AuthorToast extends React.Component {
                     visible={this.state.visible}
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
+                    footer={null}
                 >
                     <div className="search_container">
                         <Search onFocus={this.searchFocus} placeholder="搜索作者" onInput={this.searchInput} onSearch={value => console.log(value)} enterButton />
@@ -169,12 +170,12 @@ class AuthorToast extends React.Component {
                             <div onClick={this.closeSearch} className="close_search_list_box">关闭</div>
                         </div>
                     </div>
-                    <div className="table_header">
+                    {/* <div className="table_header">
                         <div className="table_header_item"></div>
                         <div className="table_header_item"></div>
                         <div className="table_header_item"></div>
                         <div className="table_header_item bg_red_color">关闭</div>
-                    </div>
+                    </div> */}
 
                     <div className="tag_list">
                         {authorList.map((item) => {

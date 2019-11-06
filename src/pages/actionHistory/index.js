@@ -34,9 +34,9 @@ class ActionHistory extends Component {
 
 
 
-  onChange(pageNumber) {
+  onChange = (pageNumber) => {
     // console.log('Page: ', pageNumber);
-    this.searchDta(pageNumber);
+    this.searchData(pageNumber);
   }
 
   handleChange = (value) => {
@@ -131,7 +131,7 @@ class ActionHistory extends Component {
           <div className="articleTable_table_list">
             {
               actionList.map(item => {
-                return <ActionItem data={item} />
+                return <ActionItem key={item.id} data={item} />
               })
             }
           </div>

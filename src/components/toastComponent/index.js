@@ -13,6 +13,7 @@ class toastComponent extends React.Component {
         visible: false,
         tagIdList: [],
         tagIdList2: [],
+        checkText1: '一级标签',
         showTag2: false,
         searchTagList: [],
         showsearchTagList: false,
@@ -28,6 +29,7 @@ class toastComponent extends React.Component {
             showTag2: false,
             searchTagList: [],
             showsearchTagList: false,
+            checkText1: '一级标签',
         });
     }
 
@@ -35,10 +37,10 @@ class toastComponent extends React.Component {
 
         this.setState({
             visible: true,
-        },()=>{
+        }, () => {
             this.isgetTagList();
         });
-        
+
     };
 
     handleOk = e => {
@@ -49,10 +51,7 @@ class toastComponent extends React.Component {
     };
 
     handleCancel = e => {
-        console.log(e);
-        this.setState({
-            visible: false,
-        });
+        this.initModal()
     };
 
     isgetTagList = async () => {
@@ -70,14 +69,17 @@ class toastComponent extends React.Component {
         })
     }
 
-    chhooseTag1 = (id) => {
+    chhooseTag1 = (item) => {
+        // debugger
         this.setState({
-            showTag2: true
+            showTag2: true,
+            checkText1: item.tagName
         })
-        this.isgetTagList2(id);
+        this.isgetTagList2(item.id);
     }
 
     chhooseTag2 = (id) => {
+        // debugger
         this.props.getTagid(id);
     }
 
@@ -131,20 +133,27 @@ class toastComponent extends React.Component {
     }
 
     searchInput = (e) => {
+        if (e.target.value != '') {
+            this.searchAllTag(e.target.value)
+        } else {
+            this.setState({
+                searchTagList: []
+            })
+        }
         // console.log(e.target.value)
-        this.searchAllTag(e.target.value)
+
     }
 
     componentDidMount() {
 
-       
+
 
     }
 
     render() {
 
         let _this = this;
-        let { tagIdList, tagIdList2, showTag2, searchTagList, showsearchTagList } = this.state;
+        let { checkText1, tagIdList, tagIdList2, showTag2, searchTagList, showsearchTagList } = this.state;
 
         return (
             <div>
@@ -153,12 +162,13 @@ class toastComponent extends React.Component {
                     visible={this.state.visible}
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
+                    footer={null}
                 >
                     <div className="search_container">
                         <Search onFocus={this.searchFocus} placeholder="搜索标签" onInput={this.searchInput} onSearch={value => console.log(value)} enterButton />
                         <div className={cs("search_list_box", { "show": showsearchTagList })}>
                             {
-                                searchTagList.length && searchTagList.map(item => {
+                                searchTagList.length > 0 && searchTagList.map(item => {
                                     return <div onClick={_this.chhooseTag2.bind(null, item)} className="search_tag_item">#{item.tagName}#</div>
                                 })
                             }
@@ -166,17 +176,17 @@ class toastComponent extends React.Component {
                         </div>
                     </div>
                     <div className="table_header">
-                        <div onClick={this.cheackBq1} className={cs("table_header_item", { "checked": !showTag2 })}>一级标签</div>
+                        <div onClick={this.cheackBq1} className={cs("table_header_item", { "checked": !showTag2 })}>{checkText1}</div>
                         <div className={cs("table_header_item", { "checked": showTag2 })}>二级标签</div>
                         <div className="table_header_item"></div>
-                        <div className="table_header_item bg_red_color">关闭</div>
+
                     </div>
 
                     {
                         !showTag2 && <div className="tag_list">
                             {
                                 tagIdList.length && tagIdList.map((item) => {
-                                    return <div onClick={this.chhooseTag1.bind(null, item.id)} className="tag_item">{item.tagName}</div>
+                                    return <div onClick={this.chhooseTag1.bind(null, item)} className="tag_item">{item.tagName}</div>
                                 })}
                         </div>
                     }

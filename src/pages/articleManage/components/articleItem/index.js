@@ -27,7 +27,7 @@ class ArticleItem extends Component {
         // debugger
         // let newtagList = this.state.tagList;
         // newtagList.push(tag.name)
-        this.addOrDelTag(tag.name, 1);
+        this.addOrDelTag(tag.name || tag.tagName, 1);
         this.refs['toast'].initModal();
     }
 
