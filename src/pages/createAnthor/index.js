@@ -223,7 +223,7 @@ class CreateAnthor extends Component {
         console.log(anthorName, '123');
 
         if (edit) {
-            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&remark=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
+            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
                 .then(function (response) {
                     return response.json()
                 }).then(function (json) {

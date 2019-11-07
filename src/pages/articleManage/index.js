@@ -39,8 +39,9 @@ class ArticleManage extends Component {
 
 
 
-  onChange(pageNumber) {
-    console.log('Page: ', pageNumber);
+  onChange = (pageNumber)=> {
+    this.searchList(pageNumber);
+    // console.log('Page: ', pageNumber);
   }
 
   handleChange = (value) => {

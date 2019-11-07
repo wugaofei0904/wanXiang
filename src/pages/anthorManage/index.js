@@ -108,8 +108,6 @@ class EditableCell extends React.Component {
 }
 
 
-
-
 class ArticleManage extends Component {
 
   constructor(props) {
@@ -165,8 +163,13 @@ class ArticleManage extends Component {
         dataIndex: 'tagName',
       },
       {
+        title: '简介',
+        dataIndex: 'detail',
+      },
+      {
         title: '备注',
         dataIndex: 'remark',
+        editable: true,
       },
       {
         title: '文章更新时间',
@@ -254,12 +257,12 @@ class ArticleManage extends Component {
   }
 
   handleDelete = key => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
+    const anthorList = [...this.state.anthorList];
+    this.setState({ anthorList: anthorList.filter(item => item.key !== key) });
   };
 
   handleAdd = () => {
-    const { count, dataSource } = this.state;
+    const { count, anthorList } = this.state;
     const newData = {
       key: count,
       name: `Edward King ${count}`,
@@ -267,7 +270,7 @@ class ArticleManage extends Component {
       address: `London, Park Lane no. ${count}`,
     };
     this.setState({
-      dataSource: [...dataSource, newData],
+      anthorList: [...anthorList, newData],
       count: count + 1,
     });
   };
@@ -316,19 +319,44 @@ class ArticleManage extends Component {
       }).catch(function (ex) {
         console.log('parsing failed', ex)
       })
+  }
+
+
+  authorEditRemark = (id, remark) => {
+    let _this = this;
+    let { anthorList } = this.state;
+
+    fetch(`${authorEdit}?id=${id}&remark=${remark}`)
+      .then(function (response) {
+        return response.json()
+      }).then(function (json) {
+        if (json.success) {
+          debugger
+          //更新当前列表
+          // _this.setState({
+          //   anthorList: [...anthorList]
+          // })
+        } else if (json.msg == '未登录') {
+          window.initLogin();
+        }
+
+      }).catch(function (ex) {
+        console.log('parsing failed', ex)
+      })
 
   }
 
 
   handleSave = row => {
-    const newData = [...this.state.dataSource];
+    const newData = [...this.state.anthorList];
     const index = newData.findIndex(item => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
       ...row,
     });
-    this.setState({ dataSource: newData });
+    this.setState({ anthorList: newData });
+    this.authorEditRemark(row.id, row.remark);
   };
 
 

@@ -59,7 +59,7 @@ class EditForm extends Component {
         };
     }
 
-    initEditPage = ()=>{
+    initEditPage = () => {
         this.setState({
             articleTitle: '',  //文章title
             showAuthorMsg: false,
@@ -165,10 +165,16 @@ class EditForm extends Component {
         for (let i = 0; i < arr.length; i++) {
             let src = arr[i].match(srcReg)
             // 获取图片地址
-            srcArr.push(src[1])
+            if (src[1].indexOf('http') == -1) {
+                srcArr.push('https:' + src[1])
+            } else if (src[1].indexOf('https') == -1) {
+                srcArr.push(src[1].replace('http','https'))
+            }else{
+                srcArr.push(src[1])
+            }
         }
         // item.dataValues.imgList = srcArr
-        console.log(srcArr);
+        console.log(srcArr,'httppppppp');
         return srcArr;
         // this.baseImgList
     }
@@ -180,10 +186,14 @@ class EditForm extends Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 values.content = this.refs.content1.getVal();
+
+
+                console.log(_this.getImgurl(values))
+// debugger
                 this.setState({
                     content: values.content,
                     baseImgList: _this.getImgurl(values),
-                    // baseImgList: ['http://pub.suwenyj.xyz/coverimg/1573060732593.jpg'],
+                    // baseImgList: ['https://pic6.58cdn.com.cn/p1/big/n_v295572420aadf4f7191007842243a7cae_2be2453a997c206e.jpg'],
                 }, () => {
                     cb && cb();
                 })
@@ -233,7 +243,7 @@ class EditForm extends Component {
 
 
     showImgChooseModel = idx => {
-        this.handleSubmit(()=>{
+        this.handleSubmit(() => {
             this.setState({
                 editImgIdx: idx
             })
