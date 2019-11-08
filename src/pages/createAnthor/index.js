@@ -81,7 +81,7 @@ class CreateAnthor extends Component {
                 _this.setState({
                     rank: _data.rank,
                     anthorName: _data.name,
-                    shenfenText: _data.remark,
+                    shenfenText: _data.detail,
                     tagId: _data.tagId,
                     tagName: _data.tagName,
                     wxName: _data.wxId,

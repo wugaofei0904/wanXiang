@@ -117,7 +117,7 @@ class ArticleItem extends Component {
                         <div className="y_z_num">阅读：{itemData.readNum} 点赞：{itemData.likeNum}</div>
                     </div>
                     <div className="articleTable_header_text w_180">
-                        <img className="fm_logo" src={itemData.picUrl} />
+                        <img className="fm_logo" src={itemData.picUrl.split(',')[0]} />
                     </div>
                     <div className="articleTable_header_text w_160">{itemData.authorName}</div>
                     <div className="articleTable_header_text w_160">{itemData.status == 1 ? '发布成功' : '已删除'}</div>

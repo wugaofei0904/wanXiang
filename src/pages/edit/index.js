@@ -9,7 +9,7 @@ import ImgCropperTwo from './../../components/imgCropperTwo'
 import Ueditor from './components/ueditor';
 import AuthorToast from './../../components/authorToast'
 import ToastComponent from './../../components/toastComponent';
-import { createAuthor, imgUpload, postArticle, articleEdit } from './../../utils/fetchApi'
+import { createAuthor, imgUpload, postArticle, articleEdit, initBaseImg } from './../../utils/fetchApi'
 // import Editor from 'react-umeditor';
 import { withRouter } from 'react-router-dom';
 const FormItem = Form.Item;
@@ -158,7 +158,7 @@ class EditForm extends Component {
 
     getImgurl = (item) => {
         let imgReg = /<img.*?(?:>|\/>)/gi //匹配图片中的img标签
-        let srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
+        let srcReg = / src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
         let str = item.content
         let arr = str.match(imgReg) || [];  //筛选出所有的img
         let srcArr = []
@@ -168,31 +168,32 @@ class EditForm extends Component {
             if (src[1].indexOf('http') == -1) {
                 srcArr.push('https:' + src[1])
             } else if (src[1].indexOf('https') == -1) {
-                srcArr.push(src[1].replace('http','https'))
-            }else{
+                srcArr.push(src[1].replace('http', 'https'))
+            } else {
                 srcArr.push(src[1])
             }
         }
         // item.dataValues.imgList = srcArr
-        console.log(srcArr,'httppppppp');
-        return srcArr;
+        // console.log(srcArr, 'httppppppp');
+        // if(){}
+        return srcArr.length > 0 ? srcArr : null;
         // this.baseImgList
     }
 
 
 
     handleSubmit = (cb) => {
+        // debugger
         let _this = this;
+        let { baseImgList } = this.state;
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 values.content = this.refs.content1.getVal();
-
-
                 console.log(_this.getImgurl(values))
-// debugger
+                // debugger
                 this.setState({
                     content: values.content,
-                    baseImgList: _this.getImgurl(values),
+                    baseImgList: _this.getImgurl(values) || baseImgList,
                     // baseImgList: ['https://pic6.58cdn.com.cn/p1/big/n_v295572420aadf4f7191007842243a7cae_2be2453a997c206e.jpg'],
                 }, () => {
                     cb && cb();
@@ -400,9 +401,16 @@ class EditForm extends Component {
             _arr.push(item.name);
         })
 
+        let _new_list = [];
+        for (var i = 0; i < 3; i++) {
+            if(lastImgList[i] !== ''){
+                _new_list.push(lastImgList[i]);
+            }
+        }
+
         var formdata = new FormData();
         formdata.append("title", articleTitle);
-        formdata.append("picUrl", lastImgList[0]);
+        formdata.append("picUrl", _new_list.join(','));
 
         formdata.append("tags", _arr.join(','));
         formdata.append("body", content);
@@ -506,8 +514,8 @@ class EditForm extends Component {
                 textAreavalue: _data.corePoint,
                 tagList: new_list,
                 content: _data.body,
-                lastImgList: [_data.picUrl],
-                baseImgList: [_data.picUrl],
+                lastImgList: _data.picUrl.split(','),
+                baseImgList: _data.picUrl.split(','),
                 // baseImgList: ['https://pic7.58cdn.com.cn/p1/big/n_v23efc0ca43c7645c0b01e30ead7b93b78_06b3edb661442446.jpg'],
                 // baseImgChecked: 0,
                 author: {
@@ -570,6 +578,57 @@ class EditForm extends Component {
                 _this.imgTwoOk();
             })
         }
+    }
+
+    initBaseImgList = () => {
+        let _this = this;
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                values.content = this.refs.content1.getVal();           
+                let _arr = _this.getImgurl(values);
+
+                if(!_arr){
+                    alert('暂无图片');
+                }
+                let _content = values.content;
+                var formdata = new FormData();
+                formdata.append("url", _arr.join(','));
+                // let _this = this;
+                fetch(`${initBaseImg}`, {
+                    method: 'post',
+                    body: formdata,
+                })
+                    .then(function (response) {
+                        return response.json()
+                    }).then(function (json) {
+                        if (json.success) {
+                            let data = json.data;
+                            for (var i = 0; i < data.length; i++) {
+                                _content = _content.replace(_arr[i], data[i] + '?time=' + new Date().valueOf()); //re:/w/g
+                            }
+                            _this.refs.content1.setVal(`${_content}`)
+                        } else if (json.msg == '未登录') {
+                            window.initLogin();
+                        }
+
+
+                    }).catch(function (ex) {
+                        console.log('parsing failed', ex)
+                    })
+
+
+
+
+                // debugger
+                // this.setState({
+                //     content: values.content,
+                //     baseImgList: _this.getImgurl(values),
+                //     // baseImgList: ['https://pic6.58cdn.com.cn/p1/big/n_v295572420aadf4f7191007842243a7cae_2be2453a997c206e.jpg'],
+                // }, () => {
+                //     cb && cb();
+                // })
+            }
+        });
     }
 
     render() {
@@ -654,7 +713,8 @@ class EditForm extends Component {
                     </Row>
                 </div>
                 <Ueditor defaultData={content} config={editConfig} id="content1" height="1000" ref="content1" />
-                {/* <Button type={'primary'} onClick={this.handleSubmit.bind(this)}>保存</Button> */}
+                {/* <Button type={'primary'} onClick={this.handleSubmit.bind(this)}>格式化图片</Button> */}
+                <Button type={'primary'} onClick={this.initBaseImgList.bind(this)}>格式化图片</Button>
                 <div className="fmt_container">
                     <div className="fmt_container_title edit_title">封面图(必填项)</div>
                     <Row className="row color_hui flex_hc" type="flex">

@@ -1,5 +1,7 @@
 import React from 'react';
 // import UE from '../ueditor/ueditor.all';
+import { Switch, Modal, Button, Row, Col, Select, Input, DatePicker, Pagination, Radio, Form, Icon, Divider, message } from 'antd';
+
 const UE = window.UE;
 // let editor=null;
 class Ueditor extends React.Component {
@@ -91,6 +93,7 @@ class Ueditor extends React.Component {
         <textarea id={id}
           defaultValue={content}
           onChange={this.getVal} />
+          
       </div>
     )
   }

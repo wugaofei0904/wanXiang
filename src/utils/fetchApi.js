@@ -38,3 +38,6 @@ export const authorEdit = domain + '/author/edit';
 
 //文章编辑 删除.还原
 export const articleEdit = domain + '/article/edit';
+
+//置换img
+export const initBaseImg = domain + '/ueditor/uploadUrl';
