@@ -29,8 +29,8 @@ class ArticleItem extends Component {
                 break;
         }
 
-        let time1 = data.createTime.split('T')[0];
-        let time2 = data.createTime.split('T')[1].split('.')[0];
+        let time = data.createTime;
+        // let time2 = data.createTime.split('T')[1].split('.')[0];
 
 
         return (
@@ -43,8 +43,8 @@ class ArticleItem extends Component {
                     <div className="articleTable_header_text w_180">{text}</div>
                     {/* <div className="articleTable_header_text w_160">无</div> */}
                     <div className="articleTable_header_text w_160">
-                        <div>{time1}</div>
-                        <div>{time2}</div>
+                        <div>{time}</div>
+                        {/* <div>{time2}</div> */}
                     </div>
                     <div className="articleTable_header_text w_160">{data.userId}</div>
                 </div>

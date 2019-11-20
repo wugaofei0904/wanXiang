@@ -8,6 +8,7 @@ import ActionHistory from './pages/actionHistory/index.js';
 import EditPage from './pages/edit/index.js';
 import LoginPage from './pages/login/index.js';
 import CreateAnthor from './pages/createAnthor/index.js';
+// import OtherPage from './pages/otherPage/index.js';
 
 class App extends Component {
 
@@ -23,6 +24,7 @@ class App extends Component {
     return (
       <Router>
         <Switch>
+          {/* <Route exact path="/" component={OtherPage} /> */}
           <Route exact path="/" component={LoginPage} />
           <Route exact path="/articleManage" component={ArticleManage} />
           <Route exact path="/anthorManage" component={AnthorManage} />

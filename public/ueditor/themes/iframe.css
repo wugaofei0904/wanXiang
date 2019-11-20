@@ -1,1 +1,6 @@
 /*可以在这里添加你自己的css*/
+body .wangEditor-container .wangEditor-txt p, body .wangEditor-container .wangEditor-txt h2 {
+    margin: 0 0 20px;
+    line-height: 26px;
+    font-size: 14px;
+}

@@ -9,7 +9,7 @@ import ImgCropperTwo from './../../components/imgCropperTwo'
 import Ueditor from './components/ueditor';
 import AuthorToast from './../../components/authorToast'
 import ToastComponent from './../../components/toastComponent';
-import { createAuthor, imgUpload, postArticle, articleEdit, initBaseImg } from './../../utils/fetchApi'
+import { createAuthor, imgUpload, postArticle, articleEdit, initBaseImg, articleDetail } from './../../utils/fetchApi'
 // import Editor from 'react-umeditor';
 import { withRouter } from 'react-router-dom';
 const FormItem = Form.Item;
@@ -100,25 +100,6 @@ class EditForm extends Component {
             "horizontal date time  | image emotion spechars | inserttable"
         ]
         return icons;
-    }
-    getQiniuUploader() {
-        return {
-            url: 'http://upload.qiniu.com',
-            type: 'qiniu',
-            name: "file",
-            request: "image_src",
-            qiniu: {
-                app: {
-                    Bucket: "liuhong1happy",
-                    AK: "l9vEBNTqrz7H03S-SC0qxNWmf0K8amqP6MeYHNni",
-                    SK: "eizTTxuA0Kq1YSe2SRdOexJ-tjwGpRnzztsSrLKj"
-                },
-                domain: "http://o9sa2vijj.bkt.clouddn.com",
-                genKey: function (options) {
-                    return options.file.type + "-" + options.file.size + "-" + options.file.lastModifiedDate.valueOf() + "-" + new Date().valueOf() + "-" + options.file.name;
-                }
-            }
-        }
     }
 
     authorRadioChange = e => {
@@ -288,38 +269,16 @@ class EditForm extends Component {
     }
 
     getCropData = (imgdata) => {
-
+        let _this = this;
         let { lastImgList, editImgIdx } = this.state;
 
-        let _randomString = this.randomString();
-
-        var formdata = new FormData();
-        formdata.append("file", this.dataURLtoFile(imgdata, `img_${_randomString}.png`));
-        let _this = this;
-        fetch(`${imgUpload}`, {
-            method: 'post',
-            body: formdata,
+        lastImgList[editImgIdx] = imgdata;
+        _this.setState({
+            lastImgList: [...lastImgList]
         })
-            .then(function (response) {
-                return response.json()
-            }).then(function (json) {
-
-                if (json.success) {
-                    lastImgList[editImgIdx] = json.data;
-                    _this.setState({
-                        lastImgList: [...lastImgList]
-                    })
-                    //隐藏弹窗
-                    _this.imgModelCancel();
-                    _this.imgTwoCancel();
-                } else if (json.msg == '未登录') {
-                    window.initLogin();
-                }
-
-
-            }).catch(function (ex) {
-                console.log('parsing failed', ex)
-            })
+        //隐藏弹窗
+        _this.imgModelCancel();
+        _this.imgTwoCancel();
     }
 
 
@@ -393,80 +352,97 @@ class EditForm extends Component {
         let that = this;
         if (!this.checkForm()) return;
 
-        let { id, isEdit, authorMsg, authorRadioValue, author, authorName, content, articleTitle, lastImgList, tagList, textAreavalue, qingwuzhuanzai } = this.state;
+        let { baseImgList } = that.state;
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                let content1 = that.refs.content1.getVal();
+                console.log(values)
+                that.setState({
+                    content: content1
+                }, () => {
+                    let { id, isEdit, authorMsg, authorRadioValue, author, authorName, content, articleTitle, lastImgList, tagList, textAreavalue, qingwuzhuanzai } = this.state;
 
-        let _arr = [];
-        tagList.map(item => {
-            // _arr.push(item.id);
-            _arr.push(item.name);
-        })
+                    let _arr = [];
+                    tagList.map(item => {
+                        // _arr.push(item.id);
+                        _arr.push(item.name);
+                    })
 
-        let _new_list = [];
-        for (var i = 0; i < 3; i++) {
-            if(lastImgList[i] !== ''){
-                _new_list.push(lastImgList[i]);
+                    let _new_list = [];
+                    for (var i = 0; i < 3; i++) {
+                        if (lastImgList[i] !== '') {
+                            _new_list.push(lastImgList[i]);
+                        }
+                    }
+
+                    var formdata = new FormData();
+                    formdata.append("title", articleTitle);
+                    formdata.append("picUrl", _new_list.join(','));
+
+                    formdata.append("tags", _arr.join(','));
+                    formdata.append("body", content);
+                    formdata.append("authorId", author.id);
+
+                    formdata.append("isOwn", authorRadioValue);
+                    formdata.append("otherAuthorName", authorMsg);
+                    formdata.append("otherImg", '');
+
+                    formdata.append("corePoint", textAreavalue);
+                    formdata.append("isReprint", qingwuzhuanzai);
+
+                    let _this = this;
+                    if (isEdit) {
+                        formdata.append("id", id);
+                        fetch(`${articleEdit}`, {
+                            method: 'post',
+                            body: formdata,
+                        })
+                            .then(function (response) {
+                                return response.json()
+                            }).then(function (json) {
+                                if (json.success) {
+                                    message.success('编辑成功！')
+                                    setTimeout(() => {
+                                        _this.props.history.push('/articleManage')
+                                    }, 1500)
+                                } else if (json.msg == '未登录') {
+                                    alert(json.msg)
+                                    window.initLogin();
+                                } else {
+                                    alert(json.msg)
+                                }
+                            }).catch(function (ex) {
+                                console.log('parsing failed', ex)
+                            })
+
+                    } else {
+                        fetch(`${postArticle}`, {
+                            method: 'post',
+                            body: formdata,
+                        })
+                            .then(function (response) {
+                                return response.json()
+                            }).then(function (json) {
+                                if (json.success) {
+                                    message.success('发布成功！')
+                                    // setTimeout(() => {
+                                    //     _this.props.history.push('/articleManage')
+                                    // }, 1500)
+                                    //清空页面 保留作者
+                                    _this.initEditPage();
+                                } else if (json.msg == '未登录') {
+                                    alert(json.msg)
+                                    window.initLogin();
+                                } else {
+                                    alert(json.msg)
+                                }
+                            }).catch(function (ex) {
+                                console.log('parsing failed', ex)
+                            })
+                    }
+                })
             }
-        }
-
-        var formdata = new FormData();
-        formdata.append("title", articleTitle);
-        formdata.append("picUrl", _new_list.join(','));
-
-        formdata.append("tags", _arr.join(','));
-        formdata.append("body", content);
-        formdata.append("authorId", author.id);
-
-        formdata.append("isOwn", authorRadioValue);
-        formdata.append("otherAuthorName", authorMsg);
-        formdata.append("otherImg", '');
-
-        formdata.append("corePoint", textAreavalue);
-        formdata.append("isReprint", qingwuzhuanzai);
-
-        let _this = this;
-        if (isEdit) {
-            formdata.append("id", id);
-            fetch(`${articleEdit}`, {
-                method: 'post',
-                body: formdata,
-            })
-                .then(function (response) {
-                    return response.json()
-                }).then(function (json) {
-                    if (json.success) {
-                        message.success('编辑成功！')
-                        setTimeout(() => {
-                            _this.props.history.push('/articleManage')
-                        }, 1500)
-                    } else if (json.msg == '未登录') {
-                        window.initLogin();
-                    }
-                }).catch(function (ex) {
-                    console.log('parsing failed', ex)
-                })
-
-        } else {
-            fetch(`${postArticle}`, {
-                method: 'post',
-                body: formdata,
-            })
-                .then(function (response) {
-                    return response.json()
-                }).then(function (json) {
-                    if (json.success) {
-                        message.success('发布成功！')
-                        // setTimeout(() => {
-                        //     _this.props.history.push('/articleManage')
-                        // }, 1500)
-                        //清空页面 保留作者
-                        _this.initEditPage();
-                    } else if (json.msg == '未登录') {
-                        window.initLogin();
-                    }
-                }).catch(function (ex) {
-                    console.log('parsing failed', ex)
-                })
-        }
+        });
     }
 
     deleteTag = (idx) => {
@@ -486,47 +462,70 @@ class EditForm extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props.match.params.edit)
+        // debugger
+        // console.log(this.props.match.params.edit)
 
-        if (this.props.match.params.edit == 1) {
-            //回填数据
-            let _data = JSON.parse(localStorage.getItem('edit_article'));
-            console.log(_data)
+        let _that = this;
+        if ( this.props.match.params.edit && this.props.match.params.edit != '') {
+            let id = this.props.match.params.edit;
+            // let id = this.props.location.state.id;
+
+            fetch(`${articleDetail}?id=${id}`)
+                .then(function (response) {
+                    return response.json()
+                }).then(function (json) {
+                    // debugger
+                    if (json.success) {
+                        //回填数据
+                        let _data = json.data;
+                        // let _data = JSON.parse(localStorage.getItem('edit_article'));
 
 
-            let _list = _data.tags.split(',')
-            let new_list = []
-            for (var i = 0; i < _list.length; i++) {
-                new_list.push({
-                    name: _list[i]
+                        console.log(_data)
+                        let _list = _data.tags.split(',')
+                        let new_list = []
+                        for (var i = 0; i < _list.length; i++) {
+                            new_list.push({
+                                name: _list[i]
+                            })
+                        }
+
+                        // debugger
+                        // console.log([_data.picUrl])
+
+                        _that.setState({
+                            id: _data.id,
+                            isEdit: !!1,
+                            authorName: _data.authorName,
+                            articleTitle: _data.title,
+                            authorRadioValue: _data.isOwn == '1' ? 1 : 2,
+                            textAreavalue: _data.corePoint,
+                            tagList: new_list,
+                            content: _data.body,
+                            lastImgList: _data.picUrl.split(','),
+                            baseImgList: _data.picUrl.split(','),
+                            // baseImgList: ['https://pic7.58cdn.com.cn/p1/big/n_v23efc0ca43c7645c0b01e30ead7b93b78_06b3edb661442446.jpg'],
+                            // baseImgChecked: 0,
+                            author: {
+                                name: _data.authorName,
+                                id: _data.authorId,
+                            },
+                            authorMsg: _data.otherAuthorName,
+                            qingwuzhuanzai: _data.isReprint == '1' ? false : true,
+                        })
+
+                        _that.setdefaultContent(_data.body);
+                    } else if (json.msg == '未登录') {
+                        alert(json.msg)
+                        window.initLogin();
+                    } else {
+                        alert(json.msg)
+                    }
+                }).catch(function (ex) {
+                    console.log('parsing failed', ex)
                 })
-            }
 
-            // debugger
-            // console.log([_data.picUrl])
-
-            this.setState({
-                id: _data.id,
-                isEdit: !!1,
-                authorName: _data.authorName,
-                articleTitle: _data.title,
-                authorRadioValue: _data.isOwn == '1' ? 1 : 2,
-                textAreavalue: _data.corePoint,
-                tagList: new_list,
-                content: _data.body,
-                lastImgList: _data.picUrl.split(','),
-                baseImgList: _data.picUrl.split(','),
-                // baseImgList: ['https://pic7.58cdn.com.cn/p1/big/n_v23efc0ca43c7645c0b01e30ead7b93b78_06b3edb661442446.jpg'],
-                // baseImgChecked: 0,
-                author: {
-                    name: _data.authorName,
-                    id: _data.authorId,
-                },
-                authorMsg: _data.otherAuthorName,
-                qingwuzhuanzai: _data.isReprint == '1' ? false : true,
-            })
-
-            this.setdefaultContent(_data.body);
+            // articleDetail
 
         }
 
@@ -584,10 +583,10 @@ class EditForm extends Component {
         let _this = this;
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                values.content = this.refs.content1.getVal();           
+                values.content = this.refs.content1.getVal();
                 let _arr = _this.getImgurl(values);
 
-                if(!_arr){
+                if (!_arr) {
                     alert('暂无图片');
                 }
                 let _content = values.content;
@@ -608,25 +607,16 @@ class EditForm extends Component {
                             }
                             _this.refs.content1.setVal(`${_content}`)
                         } else if (json.msg == '未登录') {
+                            alert(json.msg)
                             window.initLogin();
+                        } else {
+                            alert(json.msg)
                         }
 
 
                     }).catch(function (ex) {
                         console.log('parsing failed', ex)
                     })
-
-
-
-
-                // debugger
-                // this.setState({
-                //     content: values.content,
-                //     baseImgList: _this.getImgurl(values),
-                //     // baseImgList: ['https://pic6.58cdn.com.cn/p1/big/n_v295572420aadf4f7191007842243a7cae_2be2453a997c206e.jpg'],
-                // }, () => {
-                //     cb && cb();
-                // })
             }
         });
     }
@@ -715,22 +705,7 @@ class EditForm extends Component {
                 <Ueditor defaultData={content} config={editConfig} id="content1" height="1000" ref="content1" />
                 {/* <Button type={'primary'} onClick={this.handleSubmit.bind(this)}>格式化图片</Button> */}
                 <Button type={'primary'} onClick={this.initBaseImgList.bind(this)}>格式化图片</Button>
-                <div className="fmt_container">
-                    <div className="fmt_container_title edit_title">封面图(必填项)</div>
-                    <Row className="row color_hui flex_hc" type="flex">
-                        {
-                            lastImgList.map((item, idx) =>
-                                <Col onClick={this.showImgChooseModel.bind(null, idx)} className="mr-12">
-                                    {
-                                        item === '' ? <div className="img_add_box">+</div> :
-                                            <img className="last_img_item" src={item} />
-                                    }
-                                </Col>
-                            )
-                        }
-                    </Row>
-                    <div className="fmt_container_tips">图片最低尺寸要求 450像素*270像素</div>
-                </div>
+
 
                 <div className="hxgd_container">
                     <div className="fmt_container_title edit_title">核心观点 <span className="font_color_grid">(推荐填写，有助于提升阅读量和点赞，不少于50字)</span></div>
@@ -747,6 +722,24 @@ class EditForm extends Component {
                     </div>
                 </div>
 
+                <div className="fmt_container">
+                    <div className="fmt_container_title edit_title">封面图(必填项<span className="fmt_container_tips">图片最低尺寸要求 450像素*270像素</span>)</div>
+                    <Row className="row color_hui flex_hc" type="flex">
+                        {
+                            lastImgList.map((item, idx) =>
+                                <Col onClick={this.showImgChooseModel.bind(null, idx)} className="mr-12">
+                                    {
+                                        item === '' ? <div className="img_add_box">+</div> :
+                                            <img className="last_img_item" src={item} />
+                                    }
+                                </Col>
+                            )
+                        }
+                    </Row>
+
+                </div>
+
+
                 <div className="addBq_container">
                     <div className="fmt_container_title edit_title">添加标签 <span className="font_color_grid">文章审核通过后不可再修改关联话题。</span></div>
                     <div className="bq_list">
@@ -760,13 +753,13 @@ class EditForm extends Component {
                     </div>
                 </div>
 
+                <div className="submit_btn">
+                    <Button onClick={this.submitAllData} size="large" type="primary">发布</Button>
+                </div>
                 <div className="qingwuzhuanzai">
                     <Switch checked={qingwuzhuanzai} onChange={this.switchChange} /> 请勿转载
                 </div>
 
-                <div className="submit_btn">
-                    <Button onClick={this.submitAllData} size="large" type="primary">发布</Button>
-                </div>
 
 
             </div>

@@ -1,7 +1,9 @@
 import React from 'react'
 import Cropper from 'react-cropper'
 import 'cropperjs/dist/cropper.css'
-import { Button } from 'antd'
+import { Button, message } from 'antd'
+import { createAuthor, imgUpload, postArticle, articleEdit, initBaseImg } from './../../utils/fetchApi'
+
 
 export default class ImgCropperTwo extends React.Component {
     constructor() {
@@ -31,14 +33,72 @@ export default class ImgCropperTwo extends React.Component {
         return new File([u8arr], filename, { type: mime });
     }
 
-    cropImage() {
+    //生成随机字符串
+    randomString = (len) => {
+        len = len || 32;
+        var _chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+        var maxPos = _chars.length;
+        var pwd = '';
+        for (var i = 0; i < len; i++) {
+            pwd += _chars.charAt(Math.floor(Math.random() * maxPos));
+        }
+        return pwd;
+    }
+
+    cropImage = () => {
+        let _this = this;
+
         if (this.cropper.getCroppedCanvas() === 'null') {
             return false
         }
 
+        let _randomString = this.randomString();
+
+        // 这里可以尝试修改上传图片的尺寸
+        this.cropper.getCroppedCanvas().toBlob(async blob => {
+            // 创造提交表单数据对象
+            var formdata = new FormData();
+            formdata.append('file', blob, `img_${_randomString}.jpg`);
+            // 提示开始上传
+            // try {
+            //     // 接口
+            //     let res = await upload(srcCropper, formData);
+            //     if (res.errCode === 0) {
+            //         // 上传成功
+            //         //子传父
+            //         this.props.getImg();
+            //         message.success('上传成功')
+            //     } else {
+            //         // 上传失败
+            //         message.error('上传失败')
+            //     }
+            // } catch (err) {
+            //     console.log(err);
+            // }
+            fetch(`${imgUpload}`, {
+                method: 'post',
+                body: formdata,
+            })
+                .then(function (response) {
+                    return response.json()
+                }).then(function (json) {
+                    // debugger
+                    if (json.success) {
+                        _this.props.getCropData(json.data);
+                        message.success('上传成功');
+                    } else if (json.msg == '未登录') {
+                        window.initLogin();
+                    }
+                }).catch(function (ex) {
+                    console.log('parsing failed', ex)
+                })
+
+
+        }, "image/jpeg")
+
         // this.uploadImg()
         // console.log(this.cropper.getCroppedCanvas().toDataURL())
-        this.props.getCropData(this.cropper.getCroppedCanvas().toDataURL())
+        // this.props.getCropData(this.cropper.getCroppedCanvas().toDataURL())
     }
 
     // uploadImg = () => {

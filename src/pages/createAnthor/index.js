@@ -241,7 +241,7 @@ class CreateAnthor extends Component {
                     console.log('parsing failed', ex)
                 })
         } else {
-            fetch(`${createAuthor}?name=${anthorName}&rank=${rank}&tagId=${tagId}&remark=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
+            fetch(`${createAuthor}?name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
                 .then(function (response) {
                     return response.json()
                 }).then(function (json) {

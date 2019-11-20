@@ -1,0 +1,105 @@
+.chexing_list {
+  width: 286px;
+  height: 30px;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 20px;
+  border: 1px solid rgba(234, 234, 234, 1);
+  margin-right: 50px;
+  padding-left: 16px;
+  line-height: 20px;
+  position: relative;
+  cursor: pointer;
+
+  .header_text {
+    font-weight: 600;
+    // cursor: pointer;
+  }
+  .position_box {
+    position: absolute;
+    top: 36px;
+    left: 0;
+    z-index: 99;
+    width: 286px;
+    // min-height: 251px;
+    -height: 551px;
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(234, 234, 234, 1);
+    // position: relative;
+    display: none;
+  }
+  .position_box.show{
+      display: block;
+  }
+
+  .chexing_list_box {
+    width: 286px;
+    // min-height: 251px;
+    height: 551px;
+    position: relative;
+    .year_item {
+      width: 283px;
+      height: 25px;
+      background: rgba(248, 248, 248, 1);
+      padding-left: 20px;
+      font-size: 12px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: rgba(31, 35, 38, 1);
+      line-height: 25px;
+    }
+    .chexing_item {
+      height: 50px;
+      padding-left: 20px;
+      padding-right: 20px;
+      cursor: pointer;
+
+      .check_box {
+        width: 21px;
+        height: 20px;
+        border: 1px dashed rgba(0, 0, 0, 0.4);
+        margin-right: 9px;
+        background: url("./../../img/border-icon.png");
+        background-size: 100% auto;
+      }
+      .check_box.checked {
+        background: url("./../../img/checked-icon.png");
+        background-size: 100% auto;
+      }
+      .item_text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+  .btn_bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 283px;
+    height: 48px;
+    .btn_cancel {
+      width: 60px;
+      height: 100%;
+      float: left;
+      text-align: center;
+      line-height: 48px;
+
+      font-size: 14px;
+      font-family: PingFangSC-Semibold, PingFang SC;
+      font-weight: 600;
+      color: rgba(95, 113, 125, 1);
+    }
+    .btn_submit {
+      width: 60px;
+      height: 100%;
+      float: right;
+      text-align: center;
+      line-height: 48px;
+      font-size: 14px;
+      font-family: PingFangSC-Semibold, PingFang SC;
+      font-weight: 600;
+      color: rgba(38, 94, 254, 1);
+    }
+  }
+}

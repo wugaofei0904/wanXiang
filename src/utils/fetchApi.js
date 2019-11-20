@@ -41,3 +41,7 @@ export const articleEdit = domain + '/article/edit';
 
 //置换img
 export const initBaseImg = domain + '/ueditor/uploadUrl';
+
+//获取文章详情
+// https://pub.suwenyj.xyz/open/article/article?id
+export const articleDetail = domain + '/article/article';

@@ -51,7 +51,10 @@ class ArticleItem extends Component {
                         tagList: tagList
                     })
                 } else if (json.msg == '未登录') {
+                    alert(json.msg)
                     window.initLogin();
+                } else {
+                    alert(json.msg)
                 }
             }).catch(function (ex) {
                 console.log('parsing failed', ex)
@@ -77,7 +80,10 @@ class ArticleItem extends Component {
                         }
                     })
                 } else if (json.msg == '未登录') {
+                    alert(json.msg)
                     window.initLogin();
+                } else {
+                    alert(json.msg)
                 }
 
             }).catch(function (ex) {
@@ -87,14 +93,13 @@ class ArticleItem extends Component {
 
     editArticle = (data) => {
 
-        localStorage.setItem('edit_article', JSON.stringify(data))
-
-
-        this.props.history.push({pathname:"/editPage/" + 1});
-
+        // console.log(data)
+        // debugger
+        // localStorage.setItem('edit_article', JSON.stringify(data))
+        this.props.history.push({ pathname: "/editPage/" + data.id });
         // this.props.history.push({
-        //     pathname: '/editPage', state: {
-        //         edit: 1
+        //     pathname: '/editPage/1', state: {
+        //         id: data.id
         //     }
         // })
     }
@@ -122,8 +127,8 @@ class ArticleItem extends Component {
                     <div className="articleTable_header_text w_160">{itemData.authorName}</div>
                     <div className="articleTable_header_text w_160">{itemData.status == 1 ? '发布成功' : '已删除'}</div>
                     <div className="articleTable_header_text w_160">
-                        <div>{itemData.updateTime.split('T')[0]}</div>
-                        <div>{itemData.updateTime.split('T')[1].split('.')[0]}</div>
+                        <div>{itemData.updateTime}</div>
+                        {/* <div>{itemData.updateTime.split('T')[1].split('.')[0]}</div> */}
                     </div>
                     <div className="articleTable_header_text w_160">
                         <div className="m_b_4">

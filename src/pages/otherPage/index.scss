@@ -1,0 +1,116 @@
+.che_gongxu {
+  width: 100%;
+  .ant-tabs {
+    overflow: initial;
+  }
+
+  .ant-tabs-bar {
+    border: 0;
+  }
+  .ant-tabs-ink-bar {
+    display: none !important;
+  }
+  .ant-tabs-nav {
+    font-size: 14px;
+    font-family: PingFang-SC-Medium, PingFang-SC;
+    font-weight: 500;
+    color: rgba(95, 113, 125, 1);
+    line-height: 20px;
+    .ant-tabs-tab {
+      margin-right: 0;
+    }
+  }
+  .ant-tabs-nav .ant-tabs-tab-active {
+    // width: 98px;
+    // height: 20px;
+    font-weight: 600;
+    color: rgba(30, 34, 37, 1);
+    line-height: 20px;
+  }
+
+  .tab-header {
+    width: 100%;
+    max-width: 1740px;
+    height: 114px;
+    background: rgba(248, 250, 251, 1);
+    border-radius: 1px;
+    margin-left: 30px;
+    padding-left: 20px;
+    padding-top: 20px;
+    .ant-select-selection {
+      border-radius: 100px;
+      height: 30px;
+    }
+
+    .list2-item {
+      font-size: 14px;
+      font-family: PingFang-SC-Medium, PingFang-SC;
+      //   font-weight: 600;
+      color: rgba(30, 34, 37, 1);
+      line-height: 20px;
+      margin-right: 40px;
+      margin-top: 24px;
+      span {
+        color: #265efe;
+      }
+    }
+  }
+
+  .table_list {
+    width: 100%;
+    // max-width: 1740px;
+    max-width: 1760px;
+    margin-left: 30px;
+    margin-top: 20px;
+    // padding-left: 20px;
+    .ant-table-thead > tr > th {
+      background: #5d86ff;
+      height: 50px;
+    }
+    .ant-table-thead > tr:first-child > th:first-child {
+      border-top-left-radius: 0px;
+    }
+    .ant-table-thead > tr:first-child > th:last-child {
+      border-top-left-radius: 0px;
+    }
+    .ant-table-thead > tr > th:hover {
+      background: #5d86ff;
+      height: 50px;
+    }
+    .ant-table-column-title {
+      color: #ffffff;
+      font-size: 14px;
+      font-family: PingFangSC-Semibold, PingFang SC;
+      font-weight: 600;
+    }
+    .ant-table-tbody > tr:hover {
+      background: #f8fafb !important;
+    }
+  }
+  .ant-pagination-item{
+      border: 0;
+      width: auto;
+      min-width: initial;
+  }
+}
+.flex {
+  display: flex;
+}
+.flex-hc {
+  display: flex;
+  align-items: center;
+}
+.flex-vc {
+  display: flex;
+  // align-items: center;
+  justify-content: center;
+}
+.flex-1{
+    flex: 1;
+}
+.m-r-6 {
+  margin-right: 6px;
+}
+.m-r-12 {
+  margin-right: 12px;
+}

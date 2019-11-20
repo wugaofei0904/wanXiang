@@ -176,27 +176,38 @@ class ArticleManage extends Component {
         dataIndex: 'updateTime',
         render: (text, record) => {
 
-          if (text) {
-            let _text1 = record.updateTime.split('T')[0]
-            let _text2 = record.updateTime.split('T')[1].split('.')[0]
-            return <div>
-              <p>
-                {_text1}
-              </p>
-              {/* &nbsp; */}
-              {_text2}
-            </div>
-          } else {
-            let _text1 = record.createTime.split('T')[0]
-            let _text2 = record.createTime.split('T')[1].split('.')[0]
-            return <div>
-              <p>
-                {_text1}
-              </p>
-              {/* &nbsp; */}
-              {_text2}
-            </div>
-          }
+
+          let _text1 = record.updateTime
+          // let _text2 = record.updateTime.split('T')[1].split('.')[0]
+          return <div>
+            <p>
+              {_text1}
+            </p>
+            {/* &nbsp; */}
+            {/* {_text2} */}
+          </div>
+
+          // if (text) {
+          //   let _text1 = record.updateTime
+          //   // let _text2 = record.updateTime.split('T')[1].split('.')[0]
+          //   return <div>
+          //     <p>
+          //       {_text1}
+          //     </p>
+          //     {/* &nbsp; */}
+          //     {/* {_text2} */}
+          //   </div>
+          // } else {
+          //   let _text1 = record.createTime
+          //   // let _text2 = record.createTime.split('T')[1].split('.')[0]
+          //   return <div>
+          //     <p>
+          //       {_text1}
+          //     </p>
+          //     {/* &nbsp; */}
+          //     {/* {_text2} */}
+          //   </div>
+          // }
 
         }
       },
@@ -204,14 +215,14 @@ class ArticleManage extends Component {
         title: '创建时间',
         dataIndex: 'createTime',
         render: (text, record) => {
-          let _text1 = record.createTime.split('T')[0]
-          let _text2 = record.createTime.split('T')[1].split('.')[0]
+          let _text1 = record.createTime;
+          // let _text2 = record.createTime.split('T')[1].split('.')[0]
           return <div>
             <p>
               {_text1}
             </p>
             {/* &nbsp; */}
-            {_text2}
+            {/* {_text2} */}
           </div>
         }
       },
@@ -313,7 +324,10 @@ class ArticleManage extends Component {
             anthorList: [...anthorList]
           })
         } else if (json.msg == '未登录') {
+          alert(json.msg)
           window.initLogin();
+        } else {
+          alert(json.msg)
         }
 
       }).catch(function (ex) {
@@ -337,7 +351,10 @@ class ArticleManage extends Component {
           //   anthorList: [...anthorList]
           // })
         } else if (json.msg == '未登录') {
+          alert(json.msg)
           window.initLogin();
+        } else {
+          alert(json.msg)
         }
 
       }).catch(function (ex) {
@@ -375,7 +392,10 @@ class ArticleManage extends Component {
             total: json.total
           })
         } else if (json.msg == '未登录') {
+          alert(json.msg)
           window.initLogin();
+        } else {
+          alert(json.msg)
         }
       }).catch(function (ex) {
         console.log('parsing failed', ex)
