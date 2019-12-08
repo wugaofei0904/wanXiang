@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Modal, Button, Row, Col, Select, Input, DatePicker, Pagination, Radio, Form, Icon, Divider, message } from 'antd';
+import { Checkbox, Switch, Modal, Button, Row, Col, Select, Input, DatePicker, Pagination, Radio, Form, Icon, Divider, message } from 'antd';
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
@@ -54,7 +54,8 @@ class EditForm extends Component {
             qingwuzhuanzai: true,
             // qingwuzhuanzai: true,
             localImgValue: '',
-            isEdit: false
+            isEdit: false,
+            shiXiao: false
 
         };
     }
@@ -185,6 +186,13 @@ class EditForm extends Component {
 
     changeAnthor = () => {
         this.refs['authorToast'].showModal();
+    }
+
+    checkboxChange = (e) => {
+        this.setState({
+            shiXiao: e.target.checked
+        })
+        console.log(`checked = ${e.target.checked}`);
     }
 
     updateAuthor = item => {
@@ -360,7 +368,7 @@ class EditForm extends Component {
                 that.setState({
                     content: content1
                 }, () => {
-                    let { id, isEdit, authorMsg, authorRadioValue, author, authorName, content, articleTitle, lastImgList, tagList, textAreavalue, qingwuzhuanzai } = this.state;
+                    let { shiXiao, id, isEdit, authorMsg, authorRadioValue, author, authorName, content, articleTitle, lastImgList, tagList, textAreavalue, qingwuzhuanzai } = this.state;
 
                     let _arr = [];
                     tagList.map(item => {
@@ -389,6 +397,9 @@ class EditForm extends Component {
 
                     formdata.append("corePoint", textAreavalue);
                     formdata.append("isReprint", qingwuzhuanzai);
+
+                    formdata.append("isTop", shiXiao ? '1' : '0');
+
 
                     let _this = this;
                     if (isEdit) {
@@ -466,7 +477,7 @@ class EditForm extends Component {
         // console.log(this.props.match.params.edit)
 
         let _that = this;
-        if ( this.props.match.params.edit && this.props.match.params.edit != '') {
+        if (this.props.match.params.edit && this.props.match.params.edit != '') {
             let id = this.props.match.params.edit;
             // let id = this.props.location.state.id;
 
@@ -512,6 +523,7 @@ class EditForm extends Component {
                             },
                             authorMsg: _data.otherAuthorName,
                             qingwuzhuanzai: _data.isReprint == '1' ? false : true,
+                            shiXiao: _data.isTop == '1' ? true : false
                         })
 
                         _that.setdefaultContent(_data.body);
@@ -754,6 +766,7 @@ class EditForm extends Component {
                 </div>
 
                 <div className="submit_btn">
+                    <Checkbox checked={this.state.shiXiao} onChange={this.checkboxChange}>时效内容</Checkbox>
                     <Button onClick={this.submitAllData} size="large" type="primary">发布</Button>
                 </div>
                 <div className="qingwuzhuanzai">

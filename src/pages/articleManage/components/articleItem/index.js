@@ -109,10 +109,8 @@ class ArticleItem extends Component {
         // console.log(this.props.data, '23')
         let { data } = this.props;
         let { itemData, tagList } = this.state;
-        // let { data } = this.props;
-        // debugger
+
         let _tagList = itemData.tags.split(',');
-        // console.log(data)
         return (
             <div className="article_item">
                 <ToastComponent getTagid={this.getTagid} ref="toast" />
@@ -125,7 +123,7 @@ class ArticleItem extends Component {
                         <img className="fm_logo" src={itemData.picUrl.split(',')[0]} />
                     </div>
                     <div className="articleTable_header_text w_160">{itemData.authorName}</div>
-                    <div className="articleTable_header_text w_160">{itemData.status == 1 ? '发布成功' : '已删除'}</div>
+                    <div className="articleTable_header_text w_160">{itemData.status == 1 ? '发布成功' : '已删除'}{itemData.isTop == undefined ? '' : (itemData.isTop == '1' ? ' | 时效' : ' | 非时效')} </div>
                     <div className="articleTable_header_text w_160">
                         <div>{itemData.updateTime}</div>
                         {/* <div>{itemData.updateTime.split('T')[1].split('.')[0]}</div> */}
