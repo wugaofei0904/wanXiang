@@ -53,11 +53,16 @@ class AuthorToast extends React.Component {
     };
 
     isGetAuthorList = async () => {
+        // debugger
         let tagList = await getAuthorList();
+
+        if(tagList.msg == "未登录"){
+            window.initLogin();
+        }
         // debugger
         this.setState({
-            authorList: tagList.data
-        })
+            authorList: tagList.data || []
+        }) 
     }
 
 
@@ -96,17 +101,20 @@ class AuthorToast extends React.Component {
 
     //搜索all标签
     searchAllTag = (value) => {
+        debugger
         let _this = this;
         fetch(`${authorListNoPage}?name=测试`)
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
+                debugger
 
                 if (json.success) {
                     _this.setState({
                         searchTagList: json.data
                     })
                 } else if (json.msg == '未登录') {
+                    debugger
                    window.initLogin();
                 }
 

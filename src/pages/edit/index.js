@@ -356,6 +356,34 @@ class EditForm extends Component {
 
     }
 
+
+    debounce(func, wait, immediate) {
+        let timer;
+
+        return function () {
+            let context = this;
+            let args = arguments;
+
+            if (timer) clearTimeout(timer);
+            if (immediate) {
+                var callNow = !timer;
+                timer = setTimeout(() => {
+                    timer = null;
+                }, wait)
+                if (callNow) func.apply(context, args)
+            } else {
+                timer = setTimeout(function () {
+                    func.apply(context, args)
+                }, wait);
+            }
+        }
+    }
+
+    submitDebounce = () => {
+        this.debounce(this.submitAllData,1000,false)
+        // this.debounce(this.submitAllData, 5000)
+    }
+
     submitAllData = () => {
         let that = this;
         if (!this.checkForm()) return;
@@ -767,7 +795,7 @@ class EditForm extends Component {
 
                 <div className="submit_btn">
                     <Checkbox checked={this.state.shiXiao} onChange={this.checkboxChange}>时效内容</Checkbox>
-                    <Button onClick={this.submitAllData} size="large" type="primary">发布</Button>
+                    <Button onClick={this.debounce(this.submitAllData,3000,true)} size="large" type="primary">发布</Button>
                 </div>
                 <div className="qingwuzhuanzai">
                     <Switch checked={qingwuzhuanzai} onChange={this.switchChange} /> 请勿转载

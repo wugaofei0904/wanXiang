@@ -39,8 +39,13 @@ class ArticleManage extends Component {
 
 
 
-  onChange = (pageNumber)=> {
-    this.searchList(pageNumber);
+  onChange = (pageNumber) => {
+    this.setState({
+      pageNumber
+    }, () => {
+     
+      this.searchList(pageNumber);
+    })
     // console.log('Page: ', pageNumber);
   }
 
@@ -91,6 +96,7 @@ class ArticleManage extends Component {
             total: json.total,
             listData: json.data
           })
+          window.scrollTo(0, 0);
         } else if (json.msg == '未登录') {
           window.initLogin();
         }
@@ -103,7 +109,15 @@ class ArticleManage extends Component {
 
 
   componentDidMount() {
-    this.searchList(1);
+
+
+    let _hasList = this.try_restore_component();
+
+    if (!_hasList) {
+      // debugger
+      this.searchList(1);
+    }
+
     Array.prototype.indexOf = function (val) {
       for (var i = 0; i < this.length; i++) {
         if (this[i] == val) return i;
@@ -118,9 +132,43 @@ class ArticleManage extends Component {
     };
   }
 
+  try_restore_component(cb) {
+    let data = window.sessionStorage.getItem("tmpdata");
+    if (data) {
+      data = JSON.parse(data);
+      this.setState(
+        {
+          listData: data.listData,
+          pageNumber: parseInt(data.pageNumber),
+          scrollpx: data.scrollpx,
+          total: data.total,
+        }
+      )
+      window.sessionStorage.setItem('tmpdata', '');
+
+      setTimeout(() => {
+        // debugger
+        window.scrollTo(0, data.scrollpx);
+      }, 10)
+      return 1
+    }
+    return 0
+  }
+
+  componentWillUnmount() {
+    console.log('待保存的数据：', this.state.listData);
+    console.log('保存滚动条位置：', window.scrollY);
+    let data = {
+      listData: this.state.listData,
+      scrollpx: window.scrollY,
+      pageNumber: this.state.pageNumber,
+      total: this.state.total
+    }
+    window.sessionStorage.setItem('tmpdata', JSON.stringify(data));
+  }
 
   render() {
-    let { total, listData } = this.state;
+    let { total, listData, pageNumber } = this.state;
     return (
       <div className="appPage">
         <HeaderTabbar current='article' />
@@ -167,7 +215,7 @@ class ArticleManage extends Component {
               })
             }
           </div>
-          <Pagination showQuickJumper defaultPageSize={20} defaultCurrent={1} total={total} onChange={this.onChange} />
+          <Pagination showQuickJumper defaultPageSize={20} current={pageNumber} total={total} onChange={this.onChange} />
         </div>
       </div>
     );

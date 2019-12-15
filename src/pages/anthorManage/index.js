@@ -405,7 +405,7 @@ class ArticleManage extends Component {
   isgetTagList = async () => {
     let tagList = await GetTagList(0);
     this.setState({
-      tagIdList: tagList.data
+      tagIdList: tagList.data || []
     })
   }
 

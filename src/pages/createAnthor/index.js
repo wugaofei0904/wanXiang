@@ -62,8 +62,12 @@ class CreateAnthor extends Component {
 
     isgetTagList = async () => {
         let tagList = await GetTagList(0);
+        if(tagList.msg == "未登录"){
+            window.initLogin();
+        }
+        // debugger
         this.setState({
-            tagIdList: tagList.data
+            tagIdList: tagList.data || []
         })
     }
 
