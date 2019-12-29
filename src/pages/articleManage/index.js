@@ -10,7 +10,7 @@ import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
 import { domain } from './../../utils/fetchApi';
 
-import { articleList } from './../../utils/fetchApi'
+import { articleList, articleExport } from './../../utils/fetchApi'
 
 
 const { Option } = Select;
@@ -33,6 +33,7 @@ class ArticleManage extends Component {
       endTime: '',
       total: 0,
       pageSize: 20,
+      sxStatus: '0',
       listData: []
     };
   }
@@ -43,7 +44,7 @@ class ArticleManage extends Component {
     this.setState({
       pageNumber
     }, () => {
-     
+
       this.searchList(pageNumber);
     })
     // console.log('Page: ', pageNumber);
@@ -62,6 +63,13 @@ class ArticleManage extends Component {
       articleStatus: value == 0 ? '' : value
     })
   }
+
+  sxStatusChange = (value) => {
+    this.setState({
+      sxStatus: value
+    })
+  }
+
   rangePickeronChange = (date, dateString) => {
     console.log(date, dateString);
     this.setState({
@@ -82,11 +90,12 @@ class ArticleManage extends Component {
     })
   }
 
-  searchList = pageNumber => {
+  searchList = (pageNumber) => {
 
-    let { articleStatus, articleName, anthorName, startTime, endTime, pageSize } = this.state;
+    let { articleStatus, articleName, anthorName, startTime, endTime, pageSize, sxStatus } = this.state;
     let _this = this;
-    fetch(`${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`)
+    fetch(`${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}&isTop=${sxStatus}`)
+    // fetch(`${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`)
       .then(function (response) {
         return response.json()
       }).then(function (json) {
@@ -104,6 +113,32 @@ class ArticleManage extends Component {
       }).catch(function (ex) {
         console.log('parsing failed', ex)
       })
+
+  }
+
+  exportExl = (pageNumber) => {
+    let { articleStatus, articleName, anthorName, startTime, endTime, pageSize, sxStatus } = this.state;
+    let _this = this;
+    // fetch(`${articleExport}?status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}&isTop=${sxStatus}`)
+    //   // fetch(`${articleExport}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`)
+    //   .then(function (response) {
+    //     return response.json()
+    //   }).then(function (json) {
+    //     if (json.success) {
+    //       //更新当前列表
+    //       _this.setState({
+    //         total: json.total,
+    //         listData: json.data
+    //       })
+    //       window.scrollTo(0, 0);
+    //     } else if (json.msg == '未登录') {
+    //       window.initLogin();
+    //     }
+
+    //   }).catch(function (ex) {
+    //     console.log('parsing failed', ex)
+    //   })
+    window.location.href = `${articleExport}?status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}&isTop=${sxStatus}`
 
   }
 
@@ -175,7 +210,7 @@ class ArticleManage extends Component {
         <div className="fiter-list">
           <Row className="row" type="flex">
             <Col className="mr-12">
-              <Select defaultValue="0" style={{ width: 120 }} onChange={this.statusChange}>
+              <Select defaultValue="0" style={{ width: 100 }} onChange={this.statusChange}>
                 <Option value="0">全部状态</Option>
                 <Option value="1">发布成功</Option>
                 <Option value="2">已删除</Option>
@@ -183,11 +218,18 @@ class ArticleManage extends Component {
             </Col>
             <Col >文章名：</Col>
             <Col className="mr-12">
-              <Input onChange={this.articleNameChange} style={{ width: 100 }} placeholder="" />
+              <Input onChange={this.articleNameChange} style={{ width: 80 }} placeholder="" />
             </Col>
             <Col >作者：</Col>
             <Col className="mr-12">
-              <Input onChange={this.anthorChange} placeholder="" style={{ width: 100 }} />
+              <Input onChange={this.anthorChange} placeholder="" style={{ width: 80 }} />
+            </Col>
+            <Col className="mr-12">
+              <Select defaultValue="0" style={{ width: 100 }} onChange={this.sxStatusChange}>
+                <Option value="0">非时效性</Option>
+                <Option value="1">时效性</Option>
+                {/* <Option value="2">已删除</Option> */}
+              </Select>
             </Col>
             <Col >发布时间： </Col>
             <Col className="mr-12">
@@ -196,7 +238,8 @@ class ArticleManage extends Component {
               </LocaleProvider>
             </Col>
             <Col className="mr-12"><Button onClick={this.searchList.bind(null, 1)}>查找</Button></Col>
-            <Col ><Button onClick={this.fabuwenzhang} type="primary">发布文章</Button></Col>
+            <Col className="mr-12" ><Button onClick={this.fabuwenzhang} type="primary">发布文章</Button></Col>
+            <Col ><Button onClick={this.exportExl} type="primary">导出</Button></Col>
           </Row>
         </div>
         <div className="articleTable">

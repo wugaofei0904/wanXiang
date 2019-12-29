@@ -8,6 +8,9 @@ export const login = domain + '/login';
 //文章列表
 export const articleList = domain + '/article/list-page';
 
+//导出
+export const articleExport = domain + '/article/article-export';
+
 //文章发布
 export const postArticle = domain + '/article/create';
 
