@@ -1,0 +1,51 @@
+.flex-container-item {
+  display: flex;
+}
+.m_l_20 {
+  margin-left: 20px;
+}
+.m-l-r-30 {
+  margin: 0 16px;
+}
+.w_100 {
+  width: 100px;
+}
+.form_title {
+  font-size: 16px;
+}
+.f_b {
+  font-weight: 600;
+}
+.wenzhangText {
+  width: 460px;
+}
+/* .bq_list{
+    min-height: 40px;
+} */
+.bq_item_list {
+  min-height: 40px;
+}
+.item_title_1 {
+  width: 140px;
+  text-align: right;
+  font-size: 16px;
+  color: #454545;
+}
+.ad_anthor_touxaing {
+  width: 60px;
+  height: 60px;
+  /* border-radius: 50%; */
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  margin-right: 24px;
+  overflow: hidden;
+}
+.ad_anthor_touxaing img {
+  width: 100%;
+}
+.text_120_hide {
+  max-width: 240px;
+  /* overflow: hidden; */
+  /* overflow: hidden; */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

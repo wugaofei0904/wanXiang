@@ -1,0 +1,11 @@
+.flex_1 {
+  flex: 1;
+}
+.width_120 {
+  width: 220px;
+}
+.fabu_btn_2 {
+  position: absolute;
+  right: 16px;
+  top: -56px;
+}

@@ -23,6 +23,9 @@ class HeaderTabbar extends Component {
             case 'action':
                 _router = 'actionHistory';
                 break;
+            case 'commodity':
+                _router = 'commoditySet';
+                break;
         }
         this.props.history.push(_router)
     };
@@ -33,6 +36,7 @@ class HeaderTabbar extends Component {
                 <Menu.Item key="article">文章管理</Menu.Item>
                 <Menu.Item key="anthor">作者管理</Menu.Item>
                 <Menu.Item key="action">操作管理</Menu.Item>
+                <Menu.Item key="commodity">商品配置</Menu.Item>
             </Menu>
         );
     }

@@ -8,6 +8,7 @@ import ActionHistory from './pages/actionHistory/index.js';
 import EditPage from './pages/edit/index.js';
 import LoginPage from './pages/login/index.js';
 import CreateAnthor from './pages/createAnthor/index.js';
+import CommoditySet from './pages/commoditySet/index.js';
 // import OtherPage from './pages/otherPage/index.js';
 
 class App extends Component {
@@ -15,8 +16,8 @@ class App extends Component {
 
   componentDidMount = () => {
     window.initLogin = () => {
-      alert('用户登陆失效，请重新登陆！');
-      window.location.href = '#';
+      // alert('用户登陆失效，请重新登陆！');
+      // window.location.href = '#';
     }
   }
 
@@ -27,6 +28,7 @@ class App extends Component {
           {/* <Route exact path="/" component={OtherPage} /> */}
           <Route exact path="/" component={LoginPage} />
           <Route exact path="/articleManage" component={ArticleManage} />
+          <Route exact path="/commoditySet" component={CommoditySet} />
           <Route exact path="/anthorManage" component={AnthorManage} />
           <Route exact path="/actionHistory" component={ActionHistory} />
           <Route exact path="/editPage" component={EditPage} />

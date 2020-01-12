@@ -801,8 +801,6 @@ class EditForm extends Component {
                     <Switch checked={qingwuzhuanzai} onChange={this.switchChange} /> 请勿转载
                 </div>
 
-
-
             </div>
         );
     }

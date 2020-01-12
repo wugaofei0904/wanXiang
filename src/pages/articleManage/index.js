@@ -33,7 +33,7 @@ class ArticleManage extends Component {
       endTime: '',
       total: 0,
       pageSize: 20,
-      sxStatus: '0',
+      sxStatus: '-1',
       listData: []
     };
   }
@@ -94,8 +94,12 @@ class ArticleManage extends Component {
 
     let { articleStatus, articleName, anthorName, startTime, endTime, pageSize, sxStatus } = this.state;
     let _this = this;
-    fetch(`${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}&isTop=${sxStatus}`)
-    // fetch(`${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`)
+    let _url = `${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`
+    if (sxStatus != '-1') {
+      _url += `&isTop=${sxStatus}`
+    }
+    fetch(_url)
+      // fetch(`${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`)
       .then(function (response) {
         return response.json()
       }).then(function (json) {
@@ -138,8 +142,12 @@ class ArticleManage extends Component {
     //   }).catch(function (ex) {
     //     console.log('parsing failed', ex)
     //   })
-    window.location.href = `${articleExport}?status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}&isTop=${sxStatus}`
-
+    let _url = `${articleExport}?status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`
+    if (sxStatus != '-1') {
+      _url += `&isTop=${sxStatus}`
+    }
+    // window.location.href = `${articleExport}?status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}&isTop=${sxStatus}`
+    window.location.href = _url
   }
 
 
@@ -206,14 +214,25 @@ class ArticleManage extends Component {
     let { total, listData, pageNumber } = this.state;
     return (
       <div className="appPage">
+
         <HeaderTabbar current='article' />
         <div className="fiter-list">
+          <div className="fabu_btn">
+            <Button onClick={this.fabuwenzhang} type="primary">发布文章</Button>
+          </div>
           <Row className="row" type="flex">
             <Col className="mr-12">
               <Select defaultValue="0" style={{ width: 100 }} onChange={this.statusChange}>
                 <Option value="0">全部状态</Option>
                 <Option value="1">发布成功</Option>
                 <Option value="2">已删除</Option>
+              </Select>
+            </Col>
+            <Col className="mr-12">
+              <Select defaultValue="-1" style={{ width: 100 }} onChange={this.sxStatusChange}>
+                <Option value="-1">全部时效</Option>
+                <Option value="0">非时效性</Option>
+                <Option value="1">时效性</Option>
               </Select>
             </Col>
             <Col >文章名：</Col>
@@ -224,13 +243,6 @@ class ArticleManage extends Component {
             <Col className="mr-12">
               <Input onChange={this.anthorChange} placeholder="" style={{ width: 80 }} />
             </Col>
-            <Col className="mr-12">
-              <Select defaultValue="0" style={{ width: 100 }} onChange={this.sxStatusChange}>
-                <Option value="0">非时效性</Option>
-                <Option value="1">时效性</Option>
-                {/* <Option value="2">已删除</Option> */}
-              </Select>
-            </Col>
             <Col >发布时间： </Col>
             <Col className="mr-12">
               <LocaleProvider locale={zh_CN}>
@@ -238,7 +250,6 @@ class ArticleManage extends Component {
               </LocaleProvider>
             </Col>
             <Col className="mr-12"><Button onClick={this.searchList.bind(null, 1)}>查找</Button></Col>
-            <Col className="mr-12" ><Button onClick={this.fabuwenzhang} type="primary">发布文章</Button></Col>
             <Col ><Button onClick={this.exportExl} type="primary">导出</Button></Col>
           </Row>
         </div>

@@ -125,7 +125,7 @@ class ArticleItem extends Component {
                     <div className="articleTable_header_text w_160">{itemData.authorName}</div>
                     <div className="articleTable_header_text w_160">{itemData.status == 1 ? '发布成功' : '已删除'}{itemData.isTop == undefined ? '' : (itemData.isTop == '1' ? ' | 时效' : ' | 非时效')} </div>
                     <div className="articleTable_header_text w_160">
-                        <div>{itemData.updateTime}</div>
+                        <div>{itemData.publishTime}</div>
                         {/* <div>{itemData.updateTime.split('T')[1].split('.')[0]}</div> */}
                     </div>
                     <div className="articleTable_header_text w_160">

@@ -1,6 +1,7 @@
 // http://open.suwenyj.xyz:8080/author/list-page?pageSize=10&pageNum=1&rank=1&tagId=1
 // export const domain = 'http://open.suwenyj.xyz:8080';
 export const domain = '/open';
+// http://pubs.suwenyj.xyz:9876/
 // export const domain = '';
 //登陆
 export const login = domain + '/login';
@@ -48,3 +49,11 @@ export const initBaseImg = domain + '/ueditor/uploadUrl';
 //获取文章详情
 // https://pub.suwenyj.xyz/open/article/article?id
 export const articleDetail = domain + '/article/article';
+
+//获取商品列表
+export const adpageList = domain + '/ad/ad-page-list';
+
+//发布商品
+export const addAdItem = domain + '/ad/add-ad';
+
+
