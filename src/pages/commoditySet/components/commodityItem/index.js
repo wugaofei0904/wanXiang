@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import './style.css';
 
 import { withRouter } from 'react-router-dom';
-
+import CommpToast from './../editToast'
 import ToastComponent from '../../../../components/toastComponent';
 import { articleEdit } from '../../../../utils/fetchApi';
 
@@ -16,6 +16,11 @@ class CommodityItem extends Component {
             status: 1,  //1 已发布 2 已删除
             tagList: this.props.data.tags.split(',') || []  //领域list
         };
+        this.showEditSet = this.showEditSet.bind(this);
+    }
+
+    showEditSet(data) {
+        this.commpToast.showModal(data);
     }
 
     addTag = () => {
@@ -105,20 +110,15 @@ class CommodityItem extends Component {
     }
 
     render() {
-
-        // console.log(this.props.data, '23')
         let { data } = this.props;
-        console.log(data, 'http://localhost:3000/open/ad/ad-page-list?pageSize=20&pageNum=1')
-        let { itemData, tagList } = this.state;
-
-        let _tagList = itemData.tags.split(',');
+        // console.log(data, 'http://localhost:3000/open/ad/ad-page-list?pageSize=20&pageNum=1')
+        let { itemData } = this.state;
         return (
             <div className="article_item">
-                <ToastComponent getTagid={this.getTagid} ref="toast" />
+                <CommpToast ref={(commpToast) => { this.commpToast = commpToast }} />
                 <div className="article_item_head">
                     <div className="articleTable_header_text w_160">
                         <p className="article_item_title">{data.goodsTag}</p>
-
                     </div>
                     <div className="articleTable_header_text w_180">
                         <img className="fm_logo_ad" src={data.goodsPic} />
@@ -133,7 +133,7 @@ class CommodityItem extends Component {
                     </div>
                     <div className="articleTable_header_text w_80">
                         <div className="m_b_4">
-                            <Button onClick={this.editArticle.bind(null, data)} className="edit_article_btn">编辑</Button>
+                            <Button onClick={this.showEditSet.bind(null, data)} className="edit_article_btn">编辑</Button>
                         </div>
                         {
                             itemData.status == 1 ? <div><Button onClick={this.articleEditFunc.bind(null, itemData)} type="danger">下线</Button></div> : <Button onClick={this.articleEditFunc.bind(null, itemData)} type="primary">上线</Button>

@@ -125,12 +125,10 @@ class CommpToast extends React.Component {
         }
 
         if (tagList.length) {
-
-
             let tagListstr = []
             tagList.map(item => {
-                // tagListstr.push(item.name)
-                tagListstr.push(item.id)
+                tagListstr.push(item.name)
+                // tagListstr.push(item.id)
             })
             formdata.append("tags", tagListstr.join(','));
         }
@@ -148,14 +146,21 @@ class CommpToast extends React.Component {
             formdata.append("authorId", authoridList.join(','));
         }
 
-        //文章
-        // formdata.append("articleName", textAreavalue);
-        // formdata.append("articleId", author.id);
+        if (wenzhangList.length) {
+            let authorNameList = []
+            let authoridList = []
+            wenzhangList.map(item => {
+                // debugger
+                authorNameList.push(item.articleName)
+                authoridList.push(item.articleId)
+            })
+            formdata.append("articleName", authorNameList.join('-'));
+            formdata.append("articleId", authoridList.join(','));
+        }
 
         let _this = this;
         let isEdit = false;
         if (isEdit) {
-
             // fetch(`${articleEdit}`, {
             //     method: 'post',
             //     body: formdata,
@@ -186,14 +191,10 @@ class CommpToast extends React.Component {
                 .then(function (response) {
                     return response.json()
                 }).then(function (json) {
-                    debugger
                     if (json.success) {
                         message.success('发布成功！')
-                        // setTimeout(() => {
-                        //     _this.props.history.push('/articleManage')
-                        // }, 1500)
                         this.setState({
-                            false: false
+                            visible: false
                         })
                         //清空页面 保留作者
                         _this.initEditPage();
@@ -247,10 +248,76 @@ class CommpToast extends React.Component {
 
     }
 
-    showModal = () => {
+    showModal = (data) => {
         this.setState({
             visible: true,
         });
+
+        if (data) {
+
+
+            let tagList = [];
+            let authorList = [];
+            let wenzhangList = [];
+
+            //存在作者
+            if (data.authors) {
+
+                let authors_list = data.authors.split(',');
+                let authors_list_id = data.authorId.split(',');
+                authors_list.map((item, idx) => {
+                    authorList.push({
+                        author: authors_list_id[idx],
+                        authorName: item,
+                    })
+                })
+            }
+
+
+            //存在标签
+            if (data.tags) {
+                let tags_list = data.tags.split(',');
+                tags_list.map(item => {
+                    tagList.push(item)
+                })
+            }
+
+            //存在文章
+            if (data.articleName) {
+                let articleName_list = data.articleName.split(',');
+                let articleName_list_id = data.articleId.split(',');
+                articleName_list.map((item, idx) => {
+                    wenzhangList.push({
+                        articleId: articleName_list_id[idx],
+                        articleName: item,
+                    })
+                })
+            }
+
+
+            this.setState({
+                adTitle: data.goodsTitle, //广告标题
+                // adimgUrl: data, //广告头图
+                resultImg: data.goodsPic,//广告头图
+                // localImg: '',
+                tzly: data.reason, //推荐理由
+                adBiaoq: data.goodsTag,//广告标签
+                xaixianTime: data.offlineTime, //下线时间
+                maidianList: [],
+                tagList: tagList,
+                authorList: authorList,
+                wenzhangList: wenzhangList, //文章ad
+                priceMin: data.salesPrice,//现价
+                basePrice: data.price,//原价
+                adLink: data.adUrl, //广告链接
+                // checkboxOptions: [
+                //     { label: '优惠券', value: '1' },
+                //     { label: '满减', value: '2' },
+                //     { label: '有赠品', value: '3' },
+                // ],
+                autoTime: data.submitAllDataofflineTime, //自动下线时间
+            })
+        }
     };
 
     adTitleChange = (e) => {
@@ -495,11 +562,12 @@ class CommpToast extends React.Component {
     }
 
     getTagid = (tag) => {
+        
         if (!tag.name) {
             tag.name = tag.tagName
         }
         let newtagList = this.state.tagList;
-        newtagList.push(tag)
+        newtagList.push(tag.name)
         this.setState({
             tagList: newtagList
         })
@@ -627,7 +695,7 @@ class CommpToast extends React.Component {
                             <div className="bq_list">
                                 {
                                     tagList.map((item, idx) => {
-                                        return <div className="bq_list_item"><span onClick={this.deleteTag.bind(null, idx)} className="cancle_btn"></span> {item.name}</div>
+                                        return <div className="bq_list_item"><span onClick={this.deleteTag.bind(null, idx)} className="cancle_btn"></span> {item}</div>
                                     })
                                 }
 

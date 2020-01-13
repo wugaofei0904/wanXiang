@@ -9,14 +9,10 @@ import { withRouter } from 'react-router-dom';
 
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
-import { domain } from './../../utils/fetchApi';
-
 import { adpageList } from './../../utils/fetchApi'
 import CommpToast from './components/editToast'
 
 const { TabPane } = Tabs;
-
-
 const { Option } = Select;
 const { MonthPicker, RangePicker } = DatePicker;
 const dateFormat = 'YYYY/MM/DD';
@@ -227,7 +223,6 @@ class CommoditySet extends Component {
 
     showEditSet() {
         this.commpToast.showModal();
-
     }
 
     render() {
