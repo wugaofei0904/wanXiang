@@ -3,3 +3,26 @@
     width: 100px;
     height: 100px;
 }
+.w_74{
+    width: 74px;
+}
+
+.w_70{
+    width: 70px;
+}
+
+.w_68{
+    width: 68px;
+}
+.text_center{
+    text-align: center;
+}
+.m_l_20{
+    margin-left: 20px;
+}
+.point_item_n{
+    border: 1px solid rgba(0, 0, 0, .2);
+    text-align: center;
+    /* line-height: 30px; */
+    margin-bottom: 4px;
+}

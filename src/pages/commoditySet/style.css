@@ -4,6 +4,27 @@
 .width_120 {
   width: 220px;
 }
+
+
+.width_120_n {
+  width: 120px;
+}
+
+.w_150_n{
+  width: 150px;
+}
+
+.width_80 {
+  width: 80px;
+  text-align: center;
+}
+.text_center{
+  text-align: center;
+}
+.text_right{
+  text-align: right;
+}
+
 .fabu_btn_2 {
   position: absolute;
   right: 16px;

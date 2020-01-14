@@ -71,7 +71,7 @@ class CommoditySet extends Component {
 
     statusChange = (value) => {
         this.setState({
-            shangpinStatus: value == 0 ? '' : value
+            shangpinStatus: value == 2 ? '' : value
         })
     }
 
@@ -126,12 +126,6 @@ class CommoditySet extends Component {
 
     searchList = (pageNumber) => {
 
-        // shangpinBq: "",
-        // adTitle: '',
-        // shangpinStatus: '',
-        // articleName: '',  //文章名
-        // detailBq: "",
-
         let { shangpinStatus, articleName, shangpinBq, adTitle, detailBq, startTime, endTime, pageSize } = this.state;
         let _this = this;
         let _url = `${adpageList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${shangpinStatus}&articleName=${articleName}&startTime=${startTime}&endTime=${endTime}&goodsTag=${shangpinBq}&goodsTitle=${adTitle}&tag=${detailBq}`
@@ -165,12 +159,14 @@ class CommoditySet extends Component {
     componentDidMount() {
 
 
-        let _hasList = this.try_restore_component();
+        // let _hasList = this.try_restore_component();
 
-        if (!_hasList) {
-            // debugger
-            this.searchList(1);
-        }
+        // if (!_hasList) {
+        //     // debugger
+        //     this.searchList(1);
+        // }
+
+        this.searchList(1);
 
         Array.prototype.indexOf = function (val) {
             for (var i = 0; i < this.length; i++) {
@@ -186,40 +182,40 @@ class CommoditySet extends Component {
         };
     }
 
-    try_restore_component(cb) {
-        let data = window.sessionStorage.getItem("tmpdata");
-        if (data) {
-            data = JSON.parse(data);
-            this.setState(
-                {
-                    listData: data.listData,
-                    pageNumber: parseInt(data.pageNumber),
-                    scrollpx: data.scrollpx,
-                    total: data.total,
-                }
-            )
-            window.sessionStorage.setItem('tmpdata', '');
+    // try_restore_component(cb) {
+    //     let data = window.sessionStorage.getItem("tmpdata");
+    //     if (data) {
+    //         data = JSON.parse(data);
+    //         this.setState(
+    //             {
+    //                 listData: data.listData,
+    //                 pageNumber: parseInt(data.pageNumber),
+    //                 scrollpx: data.scrollpx,
+    //                 total: data.total,
+    //             }
+    //         )
+    //         window.sessionStorage.setItem('tmpdata', '');
 
-            setTimeout(() => {
-                // debugger
-                window.scrollTo(0, data.scrollpx);
-            }, 10)
-            return 1
-        }
-        return 0
-    }
+    //         setTimeout(() => {
+    //             // debugger
+    //             window.scrollTo(0, data.scrollpx);
+    //         }, 10)
+    //         return 1
+    //     }
+    //     return 0
+    // }
 
-    componentWillUnmount() {
-        console.log('待保存的数据：', this.state.listData);
-        console.log('保存滚动条位置：', window.scrollY);
-        let data = {
-            listData: this.state.listData,
-            scrollpx: window.scrollY,
-            pageNumber: this.state.pageNumber,
-            total: this.state.total
-        }
-        window.sessionStorage.setItem('tmpdata', JSON.stringify(data));
-    }
+    // componentWillUnmount() {
+    //     console.log('待保存的数据：', this.state.listData);
+    //     console.log('保存滚动条位置：', window.scrollY);
+    //     let data = {
+    //         listData: this.state.listData,
+    //         scrollpx: window.scrollY,
+    //         pageNumber: this.state.pageNumber,
+    //         total: this.state.total
+    //     }
+    //     window.sessionStorage.setItem('tmpdata', JSON.stringify(data));
+    // }
 
     showEditSet() {
         this.commpToast.showModal();
@@ -252,10 +248,10 @@ class CommoditySet extends Component {
                                 </Col>
                                 <Col >状态：</Col>
                                 <Col className="mr-12">
-                                    <Select defaultValue="0" style={{ width: 100 }} onChange={this.statusChange}>
-                                        <Option value="0">全部状态</Option>
-                                        <Option value="1">已下线</Option>
-                                        <Option value="2">生效</Option>
+                                    <Select defaultValue="2" style={{ width: 100 }} onChange={this.statusChange}>
+                                        <Option value="2">全部状态</Option>
+                                        <Option value="0">已下线</Option>
+                                        <Option value="1">生效</Option>
                                     </Select>
                                 </Col>
 
@@ -280,13 +276,19 @@ class CommoditySet extends Component {
                         </div>
                         <div className="articleTable">
                             <div className="articleTable_header">
-                                <div className="articleTable_header_text w_160">商品标签</div>
-                                <div className="articleTable_header_text w_180">商品头图</div>
-                                <div className="articleTable_header_text w_160">商品标题</div>
-                                <div className="articleTable_header_text flex_1">推荐理由</div>
-                                <div className="articleTable_header_text w_80">原价/合作价</div>
-                                <div className="articleTable_header_text w_80">点击量</div>
-                                <div className="articleTable_header_text w_80">操作</div>
+                                <div className="articleTable_header_text w_150_n">商品标签</div>
+                                <div className="articleTable_header_text text_center width_120_n">商品头图</div>
+                                <div className="articleTable_header_text w_150_n text_right">商品标题</div>
+                                <div className="articleTable_header_text flex_1 text_center">推荐理由</div>
+
+
+                                <div className="articleTable_header_text width_80">卖点</div>
+                                <div className="articleTable_header_text width_80 text_center">合作价/原价</div>
+
+                                <div className="articleTable_header_text width_80">下线时间</div>
+                                
+                                <div className="articleTable_header_text width_80 text_center">点击量</div>
+                                <div className="articleTable_header_text width_80 text_center">操作</div>
                             </div>
                             <div className="articleTable_table_list">
                                 {

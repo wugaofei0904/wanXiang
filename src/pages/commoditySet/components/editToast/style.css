@@ -19,6 +19,17 @@
 .wenzhangText {
   width: 460px;
 }
+
+.text_hidden {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.huanhang{
+  flex-wrap: wrap;
+}
+
 /* .bq_list{
     min-height: 40px;
 } */

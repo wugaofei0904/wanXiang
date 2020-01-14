@@ -5,7 +5,7 @@ import './style.css';
 import { withRouter } from 'react-router-dom';
 import CommpToast from './../editToast'
 import ToastComponent from '../../../../components/toastComponent';
-import { articleEdit } from '../../../../utils/fetchApi';
+import { articleEdit, adChangeStatus } from '../../../../utils/fetchApi';
 
 class CommodityItem extends Component {
 
@@ -28,51 +28,15 @@ class CommodityItem extends Component {
     }
 
 
-    getTagid = (tag) => {
-        // debugger
-        // let newtagList = this.state.tagList;
-        // newtagList.push(tag.name)
-        this.addOrDelTag(tag.name || tag.tagName, 1);
-        this.refs['toast'].initModal();
-    }
-
-    //文章标签添加删除
-    addOrDelTag = (item, type) => {
-        let { itemData, tagList } = this.state;
-        if (type == 0) {
-            tagList.remove(item);
-        } else {
-            tagList.push(item);
-        }
-        let _this = this;
-        let _tags = tagList.join(',');
-        fetch(`${articleEdit}?id=${itemData.id}&tags=${_tags}`)
-            .then(function (response) {
-                return response.json()
-            }).then(function (json) {
-                if (json.success) {
-                    console.log('操作成功')
-                    _this.setState({
-                        tagList: tagList
-                    })
-                } else if (json.msg == '未登录') {
-                    alert(json.msg)
-                    window.initLogin();
-                } else {
-                    alert(json.msg)
-                }
-            }).catch(function (ex) {
-                console.log('parsing failed', ex)
-            })
-    }
-
     //文章编辑 删除、还原   type 1还原 2删除
     articleEditFunc = item => {
-        // debugger
+
         let _this = this;
         let { itemData } = this.state;
-        let _status = item.status == 1 ? 2 : 1;
-        fetch(`${articleEdit}?id=${item.id}&status=${_status}`)
+        let _status = item.status == 1 ? 0 : 1;
+
+        console.log(_status)
+        fetch(`${adChangeStatus}?id=${item.id}&status=${_status}`)
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
@@ -81,7 +45,7 @@ class CommodityItem extends Component {
                     _this.setState({
                         itemData: {
                             ...itemData,
-                            status: itemData.status == '1' ? '2' : '1'
+                            status: itemData.status == '1' ? '0' : '1'
                         }
                     })
                 } else if (json.msg == '未登录') {
@@ -113,6 +77,13 @@ class CommodityItem extends Component {
         let { data } = this.props;
         // console.log(data, 'http://localhost:3000/open/ad/ad-page-list?pageSize=20&pageNum=1')
         let { itemData } = this.state;
+        let _pointList = []
+        if ( data.salePoint && data.salePoint != '') {
+            // debugger
+            _pointList = data.salePoint.split(',');
+        }
+
+
         return (
             <div className="article_item">
                 <CommpToast ref={(commpToast) => { this.commpToast = commpToast }} />
@@ -120,18 +91,27 @@ class CommodityItem extends Component {
                     <div className="articleTable_header_text w_160">
                         <p className="article_item_title">{data.goodsTag}</p>
                     </div>
-                    <div className="articleTable_header_text w_180">
+                    <div className="articleTable_header_text w_160">
                         <img className="fm_logo_ad" src={data.goodsPic} />
                     </div>
                     <div className="articleTable_header_text pad_r_20 w_160">{data.goodsTitle}</div>
                     <div className="articleTable_header_text pad_r_20 w_280">{data.reason}</div>
-                    <div className="articleTable_header_text w_80">
-                        {data.price}/{data.salesPrice}
+
+                    <div className="articleTable_header_text w_74 pad_r_20">
+                        {
+                            _pointList.map(item => <div className="point_item_n">{item}</div>)
+                        }
                     </div>
-                    <div className="articleTable_header_text w_80">
-                        {data.salePoint}
+                    <div className="articleTable_header_text w_74">
+                        {data.salesPrice}/{data.price}
                     </div>
-                    <div className="articleTable_header_text w_80">
+                    <div className="articleTable_header_text w_74">
+                        {data.offlineTime}
+                    </div>
+                    <div className="articleTable_header_text w_68 text_center">
+                        {data.readNum}
+                    </div>
+                    <div className="articleTable_header_text w_68 m_l_20">
                         <div className="m_b_4">
                             <Button onClick={this.showEditSet.bind(null, data)} className="edit_article_btn">编辑</Button>
                         </div>
@@ -141,9 +121,19 @@ class CommodityItem extends Component {
                     </div>
                 </div>
                 <div className="article_item_bq_list m_t_16">
-                    <div className="article_item_bq_list_item">{data.tags}</div>
-                    <div className="article_item_bq_list_item">{data.authors}</div>
-                    <div className="article_item_bq_list_item">{data.articleNum}篇文章</div>
+                    {
+                        data.tags != '' &&
+                        <div className="article_item_bq_list_item">{data.tags}</div>
+                    }
+                    {
+                        data.authors != '' &&
+                        <div className="article_item_bq_list_item">{data.authors}</div>
+                    }
+
+                    {
+                        data.articleNum != 0 && <div className="article_item_bq_list_item">{data.articleNum}篇文章</div>
+                    }
+
                 </div>
             </div>
         );

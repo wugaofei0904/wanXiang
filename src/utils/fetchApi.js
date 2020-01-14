@@ -56,4 +56,16 @@ export const adpageList = domain + '/ad/ad-page-list';
 //发布商品
 export const addAdItem = domain + '/ad/add-ad';
 
+//卖点列表
+export const adPoint = domain + '/ad/point';
+
+//编辑商品
+export const adEdit = domain + '/ad/edit-ad';
+
+//编辑商品
+export const adChangeStatus = domain + '/ad/ad-status';
+
+
+
+
 

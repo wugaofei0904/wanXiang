@@ -14,7 +14,8 @@ import './style.css';
 import cs from 'classnames';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
-import { imgUpload, addAdItem } from './../../../../utils/fetchApi'
+import { imgUpload, addAdItem, adEdit } from './../../../../utils/fetchApi'
+import getPointList from './../../../hooks/useGetPoint'
 
 
 // import { authorListNoPage } from '../../utils/fetchApi';
@@ -24,6 +25,8 @@ const { Search, TextArea } = Input;
 
 class CommpToast extends React.Component {
     state = {
+        isEdit: false,
+        id: '',
         visible: false,
         imgVisible: false,
         adTitle: '', //广告标题
@@ -55,13 +58,13 @@ class CommpToast extends React.Component {
         let { adTitle, resultImg, tzly, adBiaoq, priceMin, basePrice, adLink, biaoqianList, zuozheList, wenzhang, autoTime } = this.state;
         let _msg = '';
         if (adTitle == '') {
-            _msg = '请输入广告标题';
+            _msg = '请输入商品标题';
             message.error(_msg);
             return false
         }
 
         if (resultImg == '') {
-            _msg = '请选择广告头图';
+            _msg = '请选择商品头图';
             message.error(_msg);
             return false
         }
@@ -72,7 +75,7 @@ class CommpToast extends React.Component {
             return false
         }
         if (adBiaoq == '') {
-            _msg = '请输入广告标签';
+            _msg = '请输入商品标签';
             message.error(_msg);
             return false
         }
@@ -84,7 +87,7 @@ class CommpToast extends React.Component {
         }
 
         if (adLink == '') {
-            _msg = '请输入广告链接';
+            _msg = '请输入商品链接';
             message.error(_msg);
             return false
         }
@@ -122,15 +125,19 @@ class CommpToast extends React.Component {
 
         if (maidianList.length) {
             formdata.append("salePoint", maidianList.join(','));
+        } else {
+            formdata.append("salePoint", '');
         }
 
         if (tagList.length) {
             let tagListstr = []
             tagList.map(item => {
-                tagListstr.push(item.name)
+                tagListstr.push(item)
                 // tagListstr.push(item.id)
             })
             formdata.append("tags", tagListstr.join(','));
+        } else {
+            formdata.append("tags", '');
         }
 
 
@@ -144,6 +151,9 @@ class CommpToast extends React.Component {
             })
             formdata.append("authors", authorNameList.join(','));
             formdata.append("authorId", authoridList.join(','));
+        } else {
+            formdata.append("authors", '');
+            formdata.append("authorId", '');
         }
 
         if (wenzhangList.length) {
@@ -156,32 +166,41 @@ class CommpToast extends React.Component {
             })
             formdata.append("articleName", authorNameList.join('-'));
             formdata.append("articleId", authoridList.join(','));
+        } else {
+            formdata.append("articleName", '');
+            formdata.append("articleId", '');
         }
 
         let _this = this;
-        let isEdit = false;
+        let isEdit = this.state.isEdit;
         if (isEdit) {
-            // fetch(`${articleEdit}`, {
-            //     method: 'post',
-            //     body: formdata,
-            // })
-            //     .then(function (response) {
-            //         return response.json()
-            //     }).then(function (json) {
-            //         if (json.success) {
-            //             message.success('编辑成功！')
-            //             setTimeout(() => {
-            //                 _this.props.history.push('/articleManage')
-            //             }, 1500)
-            //         } else if (json.msg == '未登录') {
-            //             alert(json.msg)
-            //             window.initLogin();
-            //         } else {
-            //             alert(json.msg)
-            //         }
-            //     }).catch(function (ex) {
-            //         console.log('parsing failed', ex)
-            //     })
+
+            formdata.append("id", this.state.id);
+
+            fetch(`${adEdit}`, {
+                method: 'post',
+                body: formdata,
+            })
+                .then(function (response) {
+                    return response.json()
+                }).then(function (json) {
+                    if (json.success) {
+                        message.success('编辑成功！')
+                        _this.setState({
+                            visible: false
+                        })
+                        //清空页面 保留作者
+                        _this.initEditPage();
+
+                    } else if (json.msg == '未登录') {
+                        alert(json.msg)
+                        window.initLogin();
+                    } else {
+                        alert(json.msg)
+                    }
+                }).catch(function (ex) {
+                    console.log('parsing failed', ex)
+                })
 
         } else {
             fetch(`${addAdItem}`, {
@@ -193,7 +212,7 @@ class CommpToast extends React.Component {
                 }).then(function (json) {
                     if (json.success) {
                         message.success('发布成功！')
-                        this.setState({
+                        _this.setState({
                             visible: false
                         })
                         //清空页面 保留作者
@@ -248,17 +267,27 @@ class CommpToast extends React.Component {
 
     }
 
-    showModal = (data) => {
+    showModal = async (data) => {
+        let poiuntList = await getPointList();
+        let checkboxOptions = [];
+        poiuntList.data.map(item => {
+            checkboxOptions.push({
+                label: item.name,
+                value: item.name
+                //  value: JSON.stringify(item.id)
+            })
+        })
         this.setState({
             visible: true,
+            checkboxOptions
         });
 
         if (data) {
 
-
             let tagList = [];
             let authorList = [];
             let wenzhangList = [];
+            let maidianList = [];
 
             //存在作者
             if (data.authors) {
@@ -284,7 +313,7 @@ class CommpToast extends React.Component {
 
             //存在文章
             if (data.articleName) {
-                let articleName_list = data.articleName.split(',');
+                let articleName_list = data.articleName.split('-');
                 let articleName_list_id = data.articleId.split(',');
                 articleName_list.map((item, idx) => {
                     wenzhangList.push({
@@ -293,9 +322,9 @@ class CommpToast extends React.Component {
                     })
                 })
             }
-
-
             this.setState({
+                isEdit: true,
+                id: data.id, //广告标题
                 adTitle: data.goodsTitle, //广告标题
                 // adimgUrl: data, //广告头图
                 resultImg: data.goodsPic,//广告头图
@@ -303,19 +332,14 @@ class CommpToast extends React.Component {
                 tzly: data.reason, //推荐理由
                 adBiaoq: data.goodsTag,//广告标签
                 xaixianTime: data.offlineTime, //下线时间
-                maidianList: [],
+                maidianList: data.salePoint && data.salePoint.split(',') || [],
                 tagList: tagList,
                 authorList: authorList,
                 wenzhangList: wenzhangList, //文章ad
                 priceMin: data.salesPrice,//现价
                 basePrice: data.price,//原价
-                adLink: data.adUrl, //广告链接
-                // checkboxOptions: [
-                //     { label: '优惠券', value: '1' },
-                //     { label: '满减', value: '2' },
-                //     { label: '有赠品', value: '3' },
-                // ],
-                autoTime: data.submitAllDataofflineTime, //自动下线时间
+                adLink: data.adUrl, //广告链接        
+                autoTime: data.offlineTime, //自动下线时间
             })
         }
     };
@@ -391,15 +415,16 @@ class CommpToast extends React.Component {
     }
 
 
-    componentDidMount() {
+    // componentDidMount = async () => {
 
-    }
+    //     console.log(await getPointList(), '222222')
+
+    // }
 
 
     autoTimeChange = (value, dateString) => {
         console.log('Selected Time: ', value);
         console.log('Formatted Selected Time: ', dateString);
-
 
         this.setState({
             autoTime: dateString
@@ -473,6 +498,7 @@ class CommpToast extends React.Component {
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
+                message.destroy()
                 message.success('上传成功！');
 
                 if (json.success) {
@@ -562,7 +588,7 @@ class CommpToast extends React.Component {
     }
 
     getTagid = (tag) => {
-        
+
         if (!tag.name) {
             tag.name = tag.tagName
         }
@@ -587,7 +613,13 @@ class CommpToast extends React.Component {
     render() {
 
         let _this = this;
-        let { wenzhangList, authorList, tagList, wenzhang, maidianList, adLink, priceMin, basePrice, checkboxOptions, adTitle, resultImg, adimgUrl, localImg, tzly, adBiaoq } = this.state;
+        let { autoTime, wenzhangList, authorList, tagList, wenzhang, maidianList, adLink, priceMin, basePrice, checkboxOptions, adTitle, resultImg, adimgUrl, localImg, tzly, adBiaoq } = this.state;
+
+
+        // let autoTime_init = moment({ autoTime }, 'YYYY-MM-DD HH:mm:ss')
+        let autoTime_init = moment(autoTime, 'YYYY-MM-DD HH:mm:ss')
+
+
         return (
             <div id="shangpinToast">
                 <Modal
@@ -620,13 +652,13 @@ class CommpToast extends React.Component {
                         <ToastComponent getTagid={this.getTagid} ref='tagToast' />
 
                         <div className="form_item">
-                            <div className="item_title_1 f_b">广告标题</div>
+                            <div className="item_title_1 f_b">商品标题</div>
                             <div className="item_content">
                                 <Input className="w_300" value={adTitle} onChange={this.adTitleChange} placeholder="最多36字，必填" />
                             </div>
                         </div>
                         <div className="form_item">
-                            <div className="item_title_1 f_b">广告头图</div>
+                            <div className="item_title_1 f_b">商品头图</div>
                             <div className="item_content">
                                 <div className="ad_anthor_touxaing">
                                     {resultImg &&
@@ -647,7 +679,7 @@ class CommpToast extends React.Component {
                             </div>
                         </div>
                         <div className="form_item">
-                            <div className="item_title_1 f_b">广告标签</div>
+                            <div className="item_title_1 f_b">商品标签</div>
                             <div className="item_content">
                                 <Input className="w_300" value={adBiaoq} onChange={this.adBiaoqChange} placeholder="最多8字，必填" />
                             </div>
@@ -661,17 +693,18 @@ class CommpToast extends React.Component {
                             </div>
                         </div>
                         <div className="form_item">
-                            <div className="item_title_1 f_b">广告链接</div>
+                            <div className="item_title_1 f_b">商品链接</div>
                             <div className="item_content">
                                 <Input className="w_300" value={adLink} onChange={this.adLinkChange} placeholder="必填" />
                             </div>
                         </div>
 
                         <div className="form_item">
-                            <div className="item_title_1 f_b">广告自动下线时间</div>
+                            <div className="item_title_1 f_b">商品自动下线时间</div>
                             <div className="item_content">
                                 <LocaleProvider locale={zh_CN}>
                                     <DatePicker
+                                        value={autoTime_init}
                                         onChange={this.autoTimeChange}
                                         format="YYYY-MM-DD HH:mm:ss"
                                         showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
@@ -729,11 +762,14 @@ class CommpToast extends React.Component {
                                     autoSize={{ minRows: 3, maxRows: 5 }}
                                 />
                             </div> */}
-                            <div className="bq_list">
+                            <div className="bq_list huanhang">
                                 {
                                     wenzhangList.map((item, idx) => {
                                         // console.log(item,'title...........articleId: 9254, articleName........')
-                                        return <div className="bq_list_item text_120_hide"><span onClick={this.deleteArticle.bind(null, idx)} className="cancle_btn"></span> {item.articleName}</div>
+                                        return <div className="bq_list_item text_120_hide">
+                                            <span onClick={this.deleteArticle.bind(null, idx)} className="cancle_btn"></span>
+                                            <div className="text_hidden">{item.articleName}</div>
+                                        </div>
                                     })
                                 }
                                 <Button onClick={this.changeArticle} > + 添加文章</Button>
