@@ -39,6 +39,10 @@ p{
     position: relative;
     /* pointer-events: stroke; */
 }
+.article_item_bq_list_item.bg_blue{
+    background: #1890ff;
+    color: #ffffff;
+}
 
 .tags_close_btn{
     display: block;

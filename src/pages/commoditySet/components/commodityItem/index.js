@@ -86,7 +86,7 @@ class CommodityItem extends Component {
 
         return (
             <div className="article_item">
-                <CommpToast ref={(commpToast) => { this.commpToast = commpToast }} />
+                <CommpToast searchList={this.props.searchList} ref={(commpToast) => { this.commpToast = commpToast }} />
                 <div className="article_item_head">
                     <div className="articleTable_header_text w_160">
                         <p className="article_item_title">{data.goodsTag}</p>

@@ -5,7 +5,7 @@ import './style.css';
 import { withRouter } from 'react-router-dom';
 
 import ToastComponent from './../../../../components/toastComponent';
-import { articleEdit } from './../../../../utils/fetchApi';
+import { articleEdit, deleteAdBq } from './../../../../utils/fetchApi';
 
 class ArticleItem extends Component {
 
@@ -13,6 +13,7 @@ class ArticleItem extends Component {
         super(props);
         this.state = {
             itemData: this.props.data,
+            adlist: this.props.data.ads,
             status: 1,  //1 已发布 2 已删除
             tagList: this.props.data.tags.split(',') || []  //领域list
         };
@@ -49,6 +50,32 @@ class ArticleItem extends Component {
                     console.log('操作成功')
                     _this.setState({
                         tagList: tagList
+                    })
+                } else if (json.msg == '未登录') {
+                    alert(json.msg)
+                    window.initLogin();
+                } else {
+                    alert(json.msg)
+                }
+            }).catch(function (ex) {
+                console.log('parsing failed', ex)
+            })
+    }
+
+    delAd = (id,inedx) => {
+        // debugger
+        let { itemData, adlist } = this.state;
+        adlist.remove(adlist[inedx]);
+        let _this = this;
+        // let _tags = tagList.join(',');
+        fetch(`${deleteAdBq}?adId=${id}&articleId=${itemData.id}`)
+            .then(function (response) {
+                return response.json()
+            }).then(function (json) {
+                if (json.success) {
+                    console.log('操作成功')
+                    _this.setState({
+                        adlist: adlist
                     })
                 } else if (json.msg == '未登录') {
                     alert(json.msg)
@@ -111,6 +138,7 @@ class ArticleItem extends Component {
         let { itemData, tagList } = this.state;
 
         let _tagList = itemData.tags.split(',');
+        let _adList = itemData.ads;
         return (
             <div className="article_item">
                 <ToastComponent getTagid={this.getTagid} ref="toast" />
@@ -147,6 +175,16 @@ class ArticleItem extends Component {
                         })
                     }
                     <div onClick={this.addTag} className="article_item_bq_list_item">+添加标签</div>
+                    |
+                    {
+                        _adList.map((item,idx) => {
+                            return <div className="article_item_bq_list_item bg_blue">
+                                {item.goodsTag}
+                                <div onClick={this.delAd.bind(null, item.id,idx)} className="tags_close_btn"></div>
+                            </div>
+                        })
+                    }
+
                 </div>
             </div>
         );

@@ -69,11 +69,11 @@ class CommpToast extends React.Component {
             return false
         }
 
-        if (tzly == '') {
-            _msg = '请输入推荐理由';
-            message.error(_msg);
-            return false
-        }
+        // if (tzly == '') {
+        //     _msg = '请输入推荐理由';
+        //     message.error(_msg);
+        //     return false
+        // }
         if (adBiaoq == '') {
             _msg = '请输入商品标签';
             message.error(_msg);
@@ -189,6 +189,8 @@ class CommpToast extends React.Component {
                         _this.setState({
                             visible: false
                         })
+
+                        _this.props.searchList();
                         //清空页面 保留作者
                         _this.initEditPage();
 
@@ -215,6 +217,8 @@ class CommpToast extends React.Component {
                         _this.setState({
                             visible: false
                         })
+                        _this.props.searchList();
+
                         //清空页面 保留作者
                         _this.initEditPage();
 

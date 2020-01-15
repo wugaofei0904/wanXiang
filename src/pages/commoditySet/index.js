@@ -125,6 +125,9 @@ class CommoditySet extends Component {
     }
 
     searchList = (pageNumber) => {
+        if(!pageNumber){
+            pageNumber = this.state.pageNumber
+        }
 
         let { shangpinStatus, articleName, shangpinBq, adTitle, detailBq, startTime, endTime, pageSize } = this.state;
         let _this = this;
@@ -222,6 +225,7 @@ class CommoditySet extends Component {
     }
 
     render() {
+        let _this = this;
         let { total, listData, pageNumber } = this.state;
         return (
             <div className="appPage">
@@ -229,7 +233,7 @@ class CommoditySet extends Component {
 
                 <Tabs defaultActiveKey="1" onChange={this.callback}>
                     <TabPane tab="见地X京东" key="1">
-                        <CommpToast ref={(commpToast) => { this.commpToast = commpToast }} />
+                        <CommpToast searchList={this.searchList} ref={(commpToast) => { this.commpToast = commpToast }} />
                         <div className="fiter-list">
                             <div className="fabu_btn_2">
                                 <Button onClick={this.showEditSet} type="primary">发布商品</Button>
@@ -237,12 +241,11 @@ class CommoditySet extends Component {
 
                             <Row className="row" type="flex">
 
-
                                 <Col >商品标签：</Col>
                                 <Col className="mr-12">
                                     <Input onChange={this.shangpinBqChange} style={{ width: 80 }} placeholder="" />
                                 </Col>
-                                <Col >广告标题：</Col>
+                                <Col >商品标题：</Col>
                                 <Col className="mr-12">
                                     <Input onChange={this.adTitleChange} placeholder="" style={{ width: 80 }} />
                                 </Col>
@@ -293,7 +296,7 @@ class CommoditySet extends Component {
                             <div className="articleTable_table_list">
                                 {
                                     listData.map(item => {
-                                        return <CommodityItem key={item.id} data={item} />
+                                        return <CommodityItem searchList={_this.searchList} key={item.id} data={item} />
                                     })
                                 }
                             </div>

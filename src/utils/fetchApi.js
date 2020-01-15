@@ -65,6 +65,10 @@ export const adEdit = domain + '/ad/edit-ad';
 //编辑商品
 export const adChangeStatus = domain + '/ad/ad-status';
 
+//删除文章商品标签
+export const deleteAdBq = domain + '/ad/remove-ad';
+
+
 
 
 
