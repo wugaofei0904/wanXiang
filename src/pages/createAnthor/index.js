@@ -25,7 +25,7 @@ class CreateAnthor extends Component {
             modalVisible: false,
             localImg: '',
             imgValue: '',
-
+            wxIndexName: '',
             resultImg: '',
             tagIdList: []  //领域list
         };
@@ -62,7 +62,7 @@ class CreateAnthor extends Component {
 
     isgetTagList = async () => {
         let tagList = await GetTagList(0);
-        if(tagList.msg == "未登录"){
+        if (tagList.msg == "未登录") {
             window.initLogin();
         }
         // debugger
@@ -91,7 +91,8 @@ class CreateAnthor extends Component {
                     wxName: _data.wxId,
                     resultImg: _data.headImg,
                     edit: true,
-                    id: _data.id
+                    id: _data.id,
+                    wxIndexName: _data.publicUrl
                 })
             }
         } catch (err) {
@@ -219,15 +220,23 @@ class CreateAnthor extends Component {
         })
     }
 
+
+
+    wxIndexNameChange = (e) => {
+        this.setState({
+            wxIndexName: e.target.value
+        })
+    }
+
     submitData = () => {
 
-        let { id,edit, rank, anthorName, shenfenText, wxName, tagId, resultImg } = this.state;
+        let { id, edit, rank, anthorName, shenfenText, wxName, tagId, resultImg, wxIndexName } = this.state;
         let _this = this;
         // console.log(rank, anthorName, shenfenText, wxName, tagId, resultImg);
         console.log(anthorName, '123');
 
         if (edit) {
-            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
+            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&headImg=${resultImg}&wxId=${wxName}&publicUrl=${wxIndexName}`)
                 .then(function (response) {
                     return response.json()
                 }).then(function (json) {
@@ -273,7 +282,7 @@ class CreateAnthor extends Component {
 
     render() {
         // debugger
-        let { tagName, rank, tagId, wxName, shenfenText, tagIdList, localImg, imgValue, resultImg, anthorName } = this.state;
+        let { tagName, rank, tagId, wxName, shenfenText, tagIdList, localImg, imgValue, resultImg, anthorName, wxIndexName } = this.state;
         console.log(rank, tagId, wxName, shenfenText, tagIdList, localImg, imgValue, resultImg, anthorName)
 
         return (
@@ -345,6 +354,13 @@ class CreateAnthor extends Component {
                     <div className="item_title">微信公众号</div>
                     <div className="item_content">
                         <Input value={wxName} className="w_300" onChange={this.wxNameChange} placeholder="请输入微信公众号" />
+                    </div>
+                </div>
+
+                <div className="form_item">
+                    <div className="item_title">公众号主页</div>
+                    <div className="item_content">
+                        <Input value={wxIndexName} className="w_300" onChange={this.wxIndexNameChange} placeholder="请输入公众号主页" />
                     </div>
                 </div>
 
