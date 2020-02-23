@@ -1,0 +1,32 @@
+.bannerListItem{
+  display: flex;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.bannerListItem>div{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.bannerListItem .item-action{
+  flex-wrap: wrap;
+}
+/* .bannerListItem .item-number{
+  width: 100px;
+}
+
+.bannerListItem .img{
+  width: 100px;
+}
+
+.bannerListItem .item-title{
+  flex: 1;
+}
+
+.bannerListItem .item-effect-time{
+  width: 100px;
+}
+
+.bannerListItem .item-action{
+  width: 100px;
+} */
