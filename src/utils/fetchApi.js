@@ -73,3 +73,4 @@ export const deleteAdBq = domain + '/ad/remove-ad';
 
 
 
+
