@@ -57,7 +57,7 @@ export default class ImgCropper extends React.Component {
                         rotatable={false} //是否旋转
                         // style={{ height: '100%', width: '100%' }}
                         cropBoxResizable={true}//是否可以拖拽
-                        cropBoxMovable={false}//是否可以移动裁剪框
+                        cropBoxMovable={false}//1是否可以移动裁剪框
                         dragMode="move"
                         center={true}
                         src={this.props.src}
