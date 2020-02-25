@@ -1,38 +1,43 @@
 import React, { Component } from "react";
 import { Modal, Tabs, Button, LocaleProvider, DatePicker, Input,
   message } from "antd";
-import ArticleToast from "./../../../../components/articleToast";
 import "./style.css";
 import zh_CN from "antd/lib/locale-provider/zh_CN";
 import moment from "moment";
-import ImgCropper from './../../../../components/imgCropper';
-import { imgUpload } from './../../../../utils/fetchApi';
+import ArticleToast from "../../../../components/articleToast";
+import ImgCropper from '../../../../components/imgCropper';
+import { imgUpload, addBanner } from '../../../../utils/fetchApi';
 import { randomString, dataURLtoFile } from '../../../../utils/utils';
  
 const { TabPane } = Tabs;
+const { RangePicker } = DatePicker;
+const DATEFORMAT = "YYYY-MM-DD HH:mm:ss";
 
 class BannerModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      visible: false,
       tabActiveKey: '1',
-      articleTitleShow: false,
-      article: "",
-      effectTime: "",
+      articleTitleShow: false, // 文章标题显隐
+      articleId: '',    // 搜索文章id
+      title: '',        // 文章标题
+      startTime: '', 
+      endTime: '',
       effectTimeShow: "",
       adTitle: "",
-      linkTitle: "",
-      linkUrl: "",
+      url: "",
       linkImg: "",
       imgVisible: false,
-      linkImgUrl: "",
-      localImg: '',
-      linkEffectTimeShow: ""
+      imageUrl: "",
+      imgUrl: '',
     };
+    this.toggleBannerModal = this.toggleBannerModal.bind(this);
     this.changeTab = this.changeTab.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleAddArticle = this.handleAddArticle.bind(this);
     this.updateArticle = this.updateArticle.bind(this);
+    this.deleteArticle = this.deleteArticle.bind(this);
     this.effectTimeChange = this.effectTimeChange.bind(this);
     this.effectTimeOk = this.effectTimeOk.bind(this);
     this.addBannerOk = this.addBannerOk.bind(this);
@@ -41,11 +46,93 @@ class BannerModal extends Component {
     this.linkImgChange = this.linkImgChange.bind(this);
     this.imghandleOk = this.imghandleOk.bind(this);
     this.imghandleCancel = this.imghandleCancel.bind(this);
-    this.otherLinkEffectTimeChange = this.otherLinkEffectTimeChange.bind(this);
+  }
+
+  componentWillReceiveProps(props, oldProps) {
+    console.log('ss', props, oldProps);
+    // if (props.data) {
+    //   const {
+    //     id,
+    //     articleId,    // 搜索文章id
+    //     title,        // 文章标题
+    //     startTime, 
+    //     endTime,
+    //     url,
+    //     imageUrl
+    //   } = props.data;
+    //   console.log( url === '' || url === 'null' )
+    //   this.setState({
+    //     isEdit: true,
+    //     bannerId: id,
+    //     tabActiveKey: url === '' || url === 'null' ? '1' : '2' ,
+    //     articleId,
+    //     title,
+    //     startTime,
+    //     endTime,
+    //     imageUrl,
+    //     url
+    //   })
+    // } else {
+    //   console.log('ddddd')
+    //   this.setState({ 
+    //     isEdit: false,
+    //     bannerId: '',
+    //     tabActiveKey: '1' ,
+    //     articleId: '',
+    //     title: '',
+    //     startTime: '',
+    //     endTime: '',
+    //     imageUrl: '',
+    //     url: ''
+    //   })
+    // }
+  }
+
+  toggleBannerModal (data) {
+    if (data && data.id) {
+      const {
+        id,
+        articleId,    // 搜索文章id
+        title,        // 文章标题
+        startTime, 
+        endTime,
+        url,
+        imageUrl
+      } = data;
+      console.log("url === '' || url === 'null' ? '1' : '2'", url === '' || url === 'null' ? '1' : '2')
+      this.setState({
+        visible: !!data,
+        tabActiveKey: url === '' || url === 'null' ? '1' : '2',
+        bannerId: id,
+        articleId,    // 搜索文章id
+        title,        // 文章标题
+        startTime, 
+        endTime,
+        url,
+        imageUrl
+      })
+    } else {
+      this.setState({ 
+        visible: !this.state.visible,
+        tabActiveKey: '1',
+        bannerId: '',
+        articleId: '',    // 搜索文章id
+        title: '',        // 文章标题
+        startTime: '', 
+        endTime: '',
+        url: '',
+      })
+    }
   }
 
   changeTab(tabKey) {
-    this.setState({ tabActiveKey: tabKey });
+    this.setState({ 
+      tabActiveKey: tabKey,
+      articleId: '',
+      title: '',
+      startTime: '',
+      endTime: ''
+     });
   }
 
   handleCancel() {
@@ -57,23 +144,27 @@ class BannerModal extends Component {
   }
 
   updateArticle = item => {
-    console.log(item);
+    console.log('选择文章', item);
+    let { id, title, picUrl } = item;
     this.setState({
-      article: item,
-      articleTitleShow: true
+      articleId: id,
+      title: title,
+      imageUrl: picUrl
     });
   };
 
   deleteArticle() {
     this.setState({
-      article: "",
+      articleId: "",
+      title: '',
       articleTitleShow: false
     });
   }
 
   effectTimeChange(date, datestring) {
     console.log(date, datestring);
-    this.setState({ effectTime: datestring });
+    let [ startTime, endTime ] = datestring;
+    this.setState({ startTime, endTime });
   }
 
   // eslint-disable-next-line no-dupe-class-members
@@ -83,14 +174,14 @@ class BannerModal extends Component {
 
   linkTitleChange(e) {
     this.setState({
-      linkTitle: e.target.value
+      title: e.target.value
     });
     //   this.setState({ })
   }
 
   linkUrlChange(e) {
     this.setState({
-      linkUrl: e.target.value
+      url: e.target.value
     });
   }
 
@@ -110,7 +201,7 @@ class BannerModal extends Component {
           var a = window.navigator.userAgent.indexOf("Chrome") >= 1 || window.navigator.userAgent.indexOf("Safari") >= 1 ? window.webkitURL.createObjectURL(file_head.files[0]) : window.URL.createObjectURL(file_head.files[0]);
           console.log(a)
           this.setState({
-              localImg: a,
+              imgUrl: a,
               imgVisible: true,
           }, () => {
               this.setState({
@@ -121,6 +212,7 @@ class BannerModal extends Component {
   }
 
   imghandleOk = e => {
+
       this.setState({
           imgVisible: false,
       });
@@ -153,7 +245,7 @@ class BannerModal extends Component {
 
             if (json.success) {
                 _this.setState({
-                  linkImgUrl: json.data
+                  imageUrl: json.data
                 })
             } else if (json.msg === '未登录') {
                 window.initLogin();
@@ -166,35 +258,45 @@ class BannerModal extends Component {
         })
   }
 
-  otherLinkEffectTimeChange(date, datestring) {
-    console.log(datestring);
-    this.setState({ linkEffectTimeShow: datestring });
-  }
-
-
   addBannerOk() {
-    // const { tabActiveKey, article, effectTime } = this.state;
+    const { articleId, title, startTime, endTime, url, imageUrl, bannerId } = this.state;
+    this.props.addBanner({ articleId, title, startTime, endTime, url, imageUrl, bannerId })
+
+    // const _url = `${addBanner}?articleId=${articleId}&title=${title}&startTime=${startTime}&endTime=${endTime}&url=${url}&imgUrl=${imgUrl}`
+    // fetch(_url)
+    // .then(function (response) {
+    //     return response.json()
+    // }).then(function (json) {
+    //   console.log('addbanner', json);
+    // })
+
+
   }
 
   render() {
     let {
-      articleTitleShow,
-      article,
-      effectTimeShow,
+      title,
+      startTime,
+      endTime,
       tabActiveKey,
-      linkTitle,
-      linkUrl,
-      linkImgUrl,
-      linkEffectTimeShow,
+      url,
+      imageUrl,
       imgVisible,
-      localImg
+      imgUrl,
+      visible,
+      isEdit
     } = this.state;
-    const { visible } = this.props;
 
     const { imghandleOk, imghandleCancel } = this;
 
-    let effectTime_init = moment(effectTimeShow, "YYYY-MM-DD HH:mm:ss");
-    let linkEffectTime_init = moment(linkEffectTimeShow, "YYYY-MM-DD HH:mm:ss");
+    let effectTime_init = null 
+    if (startTime && endTime) {
+      let startTimeObj = moment(startTime, DATEFORMAT);
+      let endTimeObj = moment(endTime, DATEFORMAT);
+      effectTime_init = [startTimeObj, endTimeObj];
+    }
+
+    console.log('tabActiveKey', tabActiveKey)
 
     return (
       <div className="bannerModal">
@@ -206,13 +308,14 @@ class BannerModal extends Component {
             onCancel={imghandleCancel}
             footer={null}
         >
-            <ImgCropper getCropData={this.getCropData} src={localImg} />
+            <ImgCropper getCropData={this.getCropData} src={imgUrl} aspectRatio={ 1056/480 } />
         </Modal>
         <Modal
           title="banner位配置"
           visible={visible}
-          onCancel={this.handleCancel}
-          // onOk={ this.addBannerOk }
+          onCancel={this.toggleBannerModal}
+          onOk={ this.addBannerOk }
+          // okButtonProps={  }
           footer={[
             <Button type="primary" key="back" onClick={this.addBannerOk}>
               确认
@@ -221,7 +324,7 @@ class BannerModal extends Component {
         >
           <div class="tabWrapper">
             <Tabs
-              defaultActiveKey={tabActiveKey}
+              activeKey={ tabActiveKey }
               onChange={this.changeTab}
               tabBarStyle={{
                 width: "200px",
@@ -229,17 +332,17 @@ class BannerModal extends Component {
                 marginBottom: "10px"
               }}
             >
-              <TabPane tab="文章" key="1">
+              <TabPane tab="文章" key="1" disabled={ isEdit && tabActiveKey === '2' }>
                 <div className="form_item">
                   <div className="item_title_1 f_b">文章</div>
                   <div className="item_content">
-                    {articleTitleShow ? (
+                    {title ? (
                       <div className="bq_list_item text_120_hide">
                         <span
                           onClick={this.deleteArticle}
                           className="cancle_btn"
                         ></span>
-                        <div className="text_hidden">{article.title}</div>
+                        <div className="text_hidden">{ title }</div>
                       </div>
                     ) : (
                       <Button type="default" onClick={this.handleAddArticle}>
@@ -255,27 +358,28 @@ class BannerModal extends Component {
                   </div>
                   <div className="item_content">
                     <LocaleProvider locale={zh_CN}>
-                      <DatePicker
+                      <RangePicker
                         value={effectTime_init}
                         onChange={this.effectTimeChange}
                         onOk={this.effectTimeOk}
-                        format="YYYY-MM-DD HH:mm:ss"
-                        showTime={{
-                          defaultValue: moment("00:00:00", "HH:mm:ss")
-                        }}
+                        format={ DATEFORMAT }
+                        defaultValue={ effectTime_init }
+                        // showTime={{
+                        //   defaultValue: moment("00:00:00", "HH:mm:ss")
+                        // }}
                         // getCalendarContainer={trigger => trigger.parentNode}
                       />
                     </LocaleProvider>
                   </div>
                 </div>
               </TabPane>
-              <TabPane tab="其他链接" key="2">
+              <TabPane tab="其他链接" key="2"  disabled={ isEdit && tabActiveKey === '1' }>
                 <div className="form_item">
                   <div className="item_title_1 f_b">标题</div>
                   <div className="item_content">
                     <Input
                       className="w_300"
-                      value={linkTitle}
+                      value={ title }
                       onChange={this.linkTitleChange}
                       placeholder="最多36字，必填"
                     />
@@ -286,7 +390,7 @@ class BannerModal extends Component {
                   <div className="item_content">
                     <Input
                       className="w_300"
-                      value={linkUrl}
+                      value={ url }
                       onChange={this.linkUrlChange}
                       placeholder="必填"
                     />
@@ -296,7 +400,7 @@ class BannerModal extends Component {
                   <div className="item_title_1 f_b">图片</div>
                   <div className="item_content">
                     <div className="ad_anthor_touxaing">
-                      {linkImgUrl && <img src={ linkImgUrl } />}
+                      {imageUrl && <img src={ imageUrl } />}
                     </div>
                     <div className="sc_btn">
                       <Input
@@ -314,13 +418,12 @@ class BannerModal extends Component {
                   <div className="item_title_1 f_b">生效时间</div>
                   <div className="item_content">
                     <LocaleProvider locale={zh_CN}>
-                      <DatePicker
-                        value={linkEffectTime_init}
-                        onChange={this.otherLinkEffectTimeChange}
-                        format="YYYY-MM-DD HH:mm:ss"
-                        showTime={{
-                          defaultValue: moment("00:00:00", "HH:mm:ss")
-                        }}
+                      <RangePicker
+                        value={effectTime_init}
+                        onChange={this.effectTimeChange}
+                        onOk={this.effectTimeOk}
+                        format={ DATEFORMAT }
+                        defaultValue={ effectTime_init }
                       />
                     </LocaleProvider>
                   </div>

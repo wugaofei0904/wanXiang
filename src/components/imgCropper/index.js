@@ -46,6 +46,7 @@ export default class ImgCropper extends React.Component {
     // }
 
     render() {
+        console.log('aspectRatio', this.props.aspectRatio)
         let _props = this.props;
         return (
             <div>
@@ -65,7 +66,8 @@ export default class ImgCropper extends React.Component {
                             this.cropper = cropper;
                         }}
                         style={{ height: 400, width: '100%' }}
-                        aspectRatio={240 / 240}
+                        // 横纵比
+                        aspectRatio={ this.props.aspectRatio || 240/240 }
                         guides={false}
                     />
                 </div>
