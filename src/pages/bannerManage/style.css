@@ -1,0 +1,9 @@
+
+.bannerManage{
+  position: relative;
+}
+.addBanner_btn{
+  position: absolute;
+  right: 16px;
+  top: -40px;
+}

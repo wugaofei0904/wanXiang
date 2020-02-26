@@ -120,7 +120,7 @@ class ArticleItem extends Component {
 
     editArticle = (data) => {
 
-        // console.log(data)
+        console.log(data)
         // debugger
         // localStorage.setItem('edit_article', JSON.stringify(data))
         this.props.history.push({ pathname: "/editPage/" + data.id });

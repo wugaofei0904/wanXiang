@@ -1,0 +1,29 @@
+.bannerModal{
+
+}
+.tabWrapper{
+  padding-top: 10px;
+}
+.item_title_2{
+  width: 80px;
+}
+.item_title_1{
+  width: 80px;
+}
+.ant-calendar-picker{
+  width: 100%;
+}
+.ad_anthor_touxaing{
+  width: 105px;
+  height: 84px;
+}
+.required-icon{
+  position: relative;
+}
+.required-icon::after{
+  content: '*';
+  position: absolute;
+  top: 0;
+  right: -10px;
+  color: red;
+}
