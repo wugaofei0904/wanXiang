@@ -34,7 +34,6 @@ class BannerManage extends Component {
     fetch(getBannerList)
     .then(res => res.json())
     .then(res => {
-      console.log('list', res);
       const { success, data } = res;
       if (success) {
         let bannersId = data.map(item => item.id)
@@ -82,7 +81,7 @@ class BannerManage extends Component {
         if (item.id === id) itemData = item
       })
       this.setState({ editItemData: itemData }, () => {
-        this.bannerModal.toggleBannerModal(itemData);
+        this.bannerModal.toggleBannerModal(itemData, true);
       })
     } else if (type === 'del') {
       console.log('del', id)
@@ -120,14 +119,14 @@ class BannerManage extends Component {
   }
 
   render() {
-    const { bannerList, editItemData } = this.state
+    const { bannerList } = this.state
     const { changeBannerItem } = this
     return (
       <div className="appPage">
         <HeaderTabbar current="banner" />
         <div class="bannerManage">
           <div className="addBanner_btn">
-            <Button onClick={this.showBannerModal} type="primary">
+            <Button onClick={this.showBannerModal} type="primary" disabled={ bannerList.length >= 8 }>
               新配置
             </Button>
           </div>

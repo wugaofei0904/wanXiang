@@ -31,6 +31,7 @@ class BannerModal extends Component {
       imgVisible: false,
       imageUrl: "",
       imgUrl: '',
+      confirmBtnStatus: true // 提交按钮的状态
     };
     this.toggleBannerModal = this.toggleBannerModal.bind(this);
     this.changeTab = this.changeTab.bind(this);
@@ -46,6 +47,7 @@ class BannerModal extends Component {
     this.linkImgChange = this.linkImgChange.bind(this);
     this.imghandleOk = this.imghandleOk.bind(this);
     this.imghandleCancel = this.imghandleCancel.bind(this);
+    this.changeConfirmBtn = this.changeConfirmBtn.bind(this);
   }
 
   componentWillReceiveProps(props, oldProps) {
@@ -88,21 +90,21 @@ class BannerModal extends Component {
     // }
   }
 
-  toggleBannerModal (data) {
-    if (data && data.id) {
+  toggleBannerModal (data, isEdit) {
+    if (isEdit) {
       const {
         id,
         articleId,    // 搜索文章id
         title,        // 文章标题
         startTime, 
         endTime,
-        url,
+        url = '',
         imageUrl
       } = data;
-      console.log("url === '' || url === 'null' ? '1' : '2'", url === '' || url === 'null' ? '1' : '2')
       this.setState({
-        visible: !!data,
-        tabActiveKey: url === '' || url === 'null' ? '1' : '2',
+        isEdit,
+        visible: !!isEdit,
+        tabActiveKey: url === 'null' ? '1' : '2',
         bannerId: id,
         articleId,    // 搜索文章id
         title,        // 文章标题
@@ -113,6 +115,7 @@ class BannerModal extends Component {
       })
     } else {
       this.setState({ 
+        isEdit: !!isEdit,
         visible: !this.state.visible,
         tabActiveKey: '1',
         bannerId: '',
@@ -121,6 +124,7 @@ class BannerModal extends Component {
         startTime: '', 
         endTime: '',
         url: '',
+        imageUrl: ''
       })
     }
   }
@@ -144,12 +148,13 @@ class BannerModal extends Component {
   }
 
   updateArticle = item => {
-    console.log('选择文章', item);
     let { id, title, picUrl } = item;
     this.setState({
       articleId: id,
       title: title,
       imageUrl: picUrl
+    }, () => {
+      this.changeConfirmBtn()
     });
   };
 
@@ -158,11 +163,12 @@ class BannerModal extends Component {
       articleId: "",
       title: '',
       articleTitleShow: false
+    }, () => {
+      this.changeConfirmBtn()
     });
   }
 
   effectTimeChange(date, datestring) {
-    console.log(date, datestring);
     let [ startTime, endTime ] = datestring;
     this.setState({ startTime, endTime });
   }
@@ -173,10 +179,10 @@ class BannerModal extends Component {
   }
 
   linkTitleChange(e) {
+    if (e.target.value.length >= 20) return;
     this.setState({
       title: e.target.value
     });
-    //   this.setState({ })
   }
 
   linkUrlChange(e) {
@@ -186,8 +192,6 @@ class BannerModal extends Component {
   }
 
   linkImgChange(e) {
-      console.log(e.target.value)
-
       let file_head = e.target;
       let picture = e.target.value;
       if (!picture.match(/.jpg|.gif|.png|.bmp/i)) {
@@ -203,10 +207,6 @@ class BannerModal extends Component {
           this.setState({
               imgUrl: a,
               imgVisible: true,
-          }, () => {
-              this.setState({
-                  adimgUrl: ''
-              })
           })
       }
   }
@@ -246,6 +246,8 @@ class BannerModal extends Component {
             if (json.success) {
                 _this.setState({
                   imageUrl: json.data
+                }, () => {
+                  _this.changeConfirmBtn()
                 })
             } else if (json.msg === '未登录') {
                 window.initLogin();
@@ -259,18 +261,17 @@ class BannerModal extends Component {
   }
 
   addBannerOk() {
-    const { articleId, title, startTime, endTime, url, imageUrl, bannerId } = this.state;
+    const { articleId, title, startTime, endTime, url = '', imageUrl, bannerId } = this.state;
     this.props.addBanner({ articleId, title, startTime, endTime, url, imageUrl, bannerId })
+  }
 
-    // const _url = `${addBanner}?articleId=${articleId}&title=${title}&startTime=${startTime}&endTime=${endTime}&url=${url}&imgUrl=${imgUrl}`
-    // fetch(_url)
-    // .then(function (response) {
-    //     return response.json()
-    // }).then(function (json) {
-    //   console.log('addbanner', json);
-    // })
-
-
+  changeConfirmBtn () {
+    let { articleId, url = '', imageUrl } = this.state;
+    if ( (articleId ) || ( url && imageUrl ) ) {
+      this.setState({ confirmBtnStatus: false })
+    } else {
+      this.setState({ confirmBtnStatus: true })
+    }
   }
 
   render() {
@@ -284,9 +285,11 @@ class BannerModal extends Component {
       imgVisible,
       imgUrl,
       visible,
-      isEdit
+      isEdit,
+      confirmBtnStatus
     } = this.state;
 
+    console.log(url);
     const { imghandleOk, imghandleCancel } = this;
 
     let effectTime_init = null 
@@ -295,9 +298,6 @@ class BannerModal extends Component {
       let endTimeObj = moment(endTime, DATEFORMAT);
       effectTime_init = [startTimeObj, endTimeObj];
     }
-
-    console.log('tabActiveKey', tabActiveKey)
-
     return (
       <div className="bannerModal">
         <ArticleToast ref="ArticleToast" changeArticle={this.updateArticle} />
@@ -314,11 +314,9 @@ class BannerModal extends Component {
           title="banner位配置"
           visible={visible}
           onCancel={this.toggleBannerModal}
-          onOk={ this.addBannerOk }
-          // okButtonProps={  }
           footer={[
-            <Button type="primary" key="back" onClick={this.addBannerOk}>
-              确认
+            <Button type="primary" key="back" disabled ={ confirmBtnStatus } onClick={this.addBannerOk}>
+              提交
             </Button>
           ]}
         >
@@ -381,23 +379,24 @@ class BannerModal extends Component {
                       className="w_300"
                       value={ title }
                       onChange={this.linkTitleChange}
-                      placeholder="最多36字，必填"
+                      placeholder="最多20字，必填"
                     />
                   </div>
                 </div>
                 <div className="form_item">
-                  <div className="item_title_1 f_b">链接</div>
+                  <div className="item_title_1 f_b required-icon">链接</div>
                   <div className="item_content">
                     <Input
                       className="w_300"
                       value={ url }
                       onChange={this.linkUrlChange}
+                      onBlur={this.changeConfirmBtn}
                       placeholder="必填"
                     />
                   </div>
                 </div>
                 <div className="form_item">
-                  <div className="item_title_1 f_b">图片</div>
+                  <div className="item_title_1 f_b required-icon">图片</div>
                   <div className="item_content">
                     <div className="ad_anthor_touxaing">
                       {imageUrl && <img src={ imageUrl } />}
@@ -411,7 +410,7 @@ class BannerModal extends Component {
                       />
                       <Button type="primary">选择图片</Button>
                     </div>
-                    <span className="m_l_20">图片比例1：1，必填</span>
+                    <span className="m_l_20">图片比例1056:480，必填</span>
                   </div>
                 </div>
                 <div className="form_item">

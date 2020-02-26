@@ -17,3 +17,13 @@
   width: 105px;
   height: 84px;
 }
+.required-icon{
+  position: relative;
+}
+.required-icon::after{
+  content: '*';
+  position: absolute;
+  top: 0;
+  right: -10px;
+  color: red;
+}
