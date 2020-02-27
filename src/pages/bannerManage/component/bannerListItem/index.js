@@ -17,7 +17,7 @@ export default class BannerListItem extends Component {
   }
 
   render () {
-    let { id, order, startTime, title, imageUrl, createTime} = this.props.data
+    let { id, order, startTime, endTime, title, imageUrl, createTime} = this.props.data
     const { index, listLength, changeItem } = this.props
     createTime = moment(createTime).format(DATEFORMAT);
     if(title.length > 20) {
@@ -33,7 +33,7 @@ export default class BannerListItem extends Component {
             { title }
         </div>
         <div className="text_center  w_150_n">
-            { startTime || createTime }
+            { startTime || createTime } <br/> { endTime  }
         </div>
         <div className="w_200_n item-action">
           <div>

@@ -51,7 +51,7 @@ class BannerModal extends Component {
   }
 
   componentWillReceiveProps(props, oldProps) {
-    console.log('ss', props, oldProps);
+    // console.log('ss', props, oldProps);
     // if (props.data) {
     //   const {
     //     id,
@@ -104,7 +104,7 @@ class BannerModal extends Component {
       this.setState({
         isEdit,
         visible: !!isEdit,
-        tabActiveKey: url === 'null' ? '1' : '2',
+        tabActiveKey: url === 'null' || url == null ? '1' : '2',
         bannerId: id,
         articleId,    // 搜索文章id
         title,        // 文章标题
@@ -289,7 +289,6 @@ class BannerModal extends Component {
       confirmBtnStatus
     } = this.state;
 
-    console.log(url);
     const { imghandleOk, imghandleCancel } = this;
 
     let effectTime_init = null 
