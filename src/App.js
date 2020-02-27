@@ -18,7 +18,7 @@ class App extends Component {
   componentDidMount = () => {
     window.initLogin = () => {
       // alert('用户登陆失效，请重新登陆！');
-      // window.location.href = '#';
+       window.location.href = '#';
     }
   }
 

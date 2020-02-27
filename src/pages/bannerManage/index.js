@@ -62,10 +62,14 @@ class BannerManage extends Component {
     fetch(_url)
     .then(res => res.json())
     .then(res => {
-      if (res.success) this.fetchBannerList(text)
-      this.setState({ editItemData: ''}, () => {
-        this.bannerModal.toggleBannerModal();
-      })
+      if (res.success) {
+        this.fetchBannerList(text)
+        this.setState({ editItemData: ''}, () => {
+          this.bannerModal.toggleBannerModal();
+        })
+      } else if(res.msg === '未登录') {
+        window.initLogin();
+      }
     })
     
   }
@@ -91,6 +95,8 @@ class BannerManage extends Component {
         console.log('del-res', res)
         if (res.success) {
           this.fetchBannerList('删除成功');
+        } else if(res.msg === '未登录') {
+          window.initLogin();
         }
       })
     } else if (type === 'up') {
@@ -102,6 +108,8 @@ class BannerManage extends Component {
       .then(res => {
         if (res.success) {
           _this.fetchBannerList('移动成功');
+        } else if(res.msg === '未登录') {
+          window.initLogin();
         }
       })
     } else if (type === 'down') {
@@ -113,6 +121,8 @@ class BannerManage extends Component {
       .then(res => {
         if (res.success) {
           _this.fetchBannerList('移动成功');
+        } else if(res.msg === '未登录') {
+          window.initLogin();
         }
       })
     }
