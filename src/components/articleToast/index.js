@@ -140,7 +140,7 @@ class ArticleToast extends React.Component {
     }
 
     chooseAuthor = (item) => {
-        console.log(item)
+        // console.log(item)
         this.handleCancel();
         this.props.changeArticle(item);
     }

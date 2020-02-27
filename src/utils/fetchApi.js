@@ -69,6 +69,21 @@ export const adChangeStatus = domain + '/ad/ad-status';
 export const deleteAdBq = domain + '/ad/remove-ad';
 
 
+// 添加banner
+export const addBanner = domain + '/banner/create';
+
+// 删除banner
+export const deleteBanner = `${domain}/banner/delete`
+
+// banner列表
+export const getBannerList = `${domain}/banner/list`
+
+// banner移动
+export const moveBannerOrder = `${domain}/banner/move`
+
+// 修改banner
+export const editBanner =`${domain}/banner/edit`
+
 
 
 
