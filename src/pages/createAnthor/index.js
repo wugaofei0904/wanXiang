@@ -82,6 +82,8 @@ class CreateAnthor extends Component {
             if (edit) {
                 let _data = JSON.parse(data);
                 console.log(_data);
+
+                let _publicUrl = decodeURIComponent(_data.publicUrl)
                 _this.setState({
                     rank: _data.rank,
                     anthorName: _data.name,
@@ -92,7 +94,7 @@ class CreateAnthor extends Component {
                     resultImg: _data.headImg,
                     edit: true,
                     id: _data.id,
-                    wxIndexName: _data.publicUrl
+                    wxIndexName: _publicUrl
                 })
             }
         } catch (err) {
@@ -231,12 +233,15 @@ class CreateAnthor extends Component {
     submitData = () => {
 
         let { id, edit, rank, anthorName, shenfenText, wxName, tagId, resultImg, wxIndexName } = this.state;
+
+        let _publicUrl = encodeURIComponent(wxIndexName)
+
         let _this = this;
         // console.log(rank, anthorName, shenfenText, wxName, tagId, resultImg);
         console.log(anthorName, '123');
 
         if (edit) {
-            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&headImg=${resultImg}&wxId=${wxName}&publicUrl=${wxIndexName}`)
+            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&headImg=${resultImg}&wxId=${wxName}&publicUrl=${_publicUrl}`)
                 .then(function (response) {
                     return response.json()
                 }).then(function (json) {
