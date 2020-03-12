@@ -52,6 +52,8 @@ class BannerManage extends Component {
   addBanner ({ articleId, title, startTime, endTime, url, imageUrl, bannerId }) {
     let _url = '';
     let text = '';
+    url = encodeURIComponent(url);
+    imageUrl = encodeURIComponent(imageUrl);
     if (bannerId) { //编辑
       _url =  `${editBanner}?id=${bannerId}&articleId=${articleId}&title=${title}&startTime=${startTime}&endTime=${endTime}&url=${url}&imageUrl=${imageUrl}`;
       text = '修改banner成功～';
