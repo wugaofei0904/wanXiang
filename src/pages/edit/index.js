@@ -20,6 +20,9 @@ const dateFormat = 'YYYY/MM/DD';
 const monthFormat = 'YYYY/MM';
 const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
 
+
+let imgArrHasWH = [];
+
 class EditForm extends Component {
 
 
@@ -55,7 +58,8 @@ class EditForm extends Component {
             // qingwuzhuanzai: true,
             localImgValue: '',
             isEdit: false,
-            shiXiao: false
+            shiXiao: false,
+            imgWhArr: []
 
         };
     }
@@ -164,18 +168,101 @@ class EditForm extends Component {
 
 
 
+    //获取图片宽高
+    getImgWh = url => {
+        let _this = this
+        // let { imgWhArr } = this.state;
+        let width = 0;
+        let height = 0;
+        // 通过定时循环检测获取
+        var start_time = new Date().getTime();
+        //图片地址后加时间戳，是为了避免缓存
+        var img_url = url
+        // 创建对象
+        var img = new Image()
+        // 改变图片的src
+        img.src = img_url;
+        // 定时执行获取宽高
+        var check = function () {
+            //  只要任何一方大于0 表示服务器已经返回宽高
+            if (img.width > 0 || img.height > 0) {
+                // var diff = new Date().getTime() - start_time;
+                // document.body.innerHTML += 'from: check : width:' + img.width + ',height:' + img.height + ',time:' + diff + 'ms';
+                clearInterval(set);
+                imgArrHasWH.push({
+                    width: img.width,
+                    height: img.height,
+                    url: url
+                })
+                // console.log(imgArrHasWH, 'imgArrHasWH')
+                // _this.setState({
+                //     imgWhArr: imgWhArr.concat([])
+                //     // baseImgList: ['https://pic6.58cdn.com.cn/p1/big/n_v295572420aadf4f7191007842243a7cae_2be2453a997c206e.jpg'],
+                // }, () => {
+                //     console.log(_this.state.imgWhArr, 'imgWhArr')
+                // })
+            }
+        }
+        var set = setInterval(check, 40)
+        //加载完成获取宽高
+        // img.onload = function () {
+        //     return {
+        //         width: img.width,
+        //         height: img.height
+        //     }
+        //     // var diff = new Date().getTime() - start_time;
+        //     // document.body.innerHTML += 'from:onload : width:' + img.width + ',height:' + img.height + ',time:' + diff + 'ms';
+        // }
+    }
+
+
+    filtImgArr = (arrImg = []) => {
+
+        imgArrHasWH.length = 0
+        arrImg.map((item) => {
+            this.getImgWh(item)
+        })
+
+        setTimeout(() => {
+            console.log(imgArrHasWH)
+            var _arr = imgArrHasWH.filter(item => {
+                // if (item.width >= 372 && item.height >= 248) {
+                if (item.width <= 372 && item.height <= 248) {
+                    return false
+                } else {
+                    return true
+                }
+            })
+
+            let _arr2 = []
+            _arr.map((item) => {
+                _arr2.push(item.url)
+            })
+
+            this.setState({
+                baseImgList: _arr2
+            })
+            // console.log(_arr)
+        }, 2000)
+    }
+
+    // 372  248
+
+
     handleSubmit = (cb) => {
         // debugger
         let _this = this;
         let { baseImgList } = this.state;
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                // debugger
                 values.content = this.refs.content1.getVal();
-                console.log(_this.getImgurl(values))
+                // console.log(_this.getImgurl(values))
+                this.filtImgArr(_this.getImgurl(values))
                 // debugger
                 this.setState({
                     content: values.content,
-                    baseImgList: _this.getImgurl(values) || baseImgList,
+                    // baseImgList: _this.getImgurl(values) || baseImgList,
                     // baseImgList: ['https://pic6.58cdn.com.cn/p1/big/n_v295572420aadf4f7191007842243a7cae_2be2453a997c206e.jpg'],
                 }, () => {
                     cb && cb();
@@ -230,6 +317,7 @@ class EditForm extends Component {
         })
         this.refs['tagToast'].initModal();
     }
+
 
 
     showImgChooseModel = idx => {
@@ -380,7 +468,7 @@ class EditForm extends Component {
     }
 
     submitDebounce = () => {
-        this.debounce(this.submitAllData,1000,false)
+        this.debounce(this.submitAllData, 1000, false)
         // this.debounce(this.submitAllData, 5000)
     }
 
@@ -795,7 +883,7 @@ class EditForm extends Component {
 
                 <div className="submit_btn">
                     <Checkbox checked={this.state.shiXiao} onChange={this.checkboxChange}>时效内容</Checkbox>
-                    <Button onClick={this.debounce(this.submitAllData,3000,true)} size="large" type="primary">发布</Button>
+                    <Button onClick={this.debounce(this.submitAllData, 3000, true)} size="large" type="primary">发布</Button>
                 </div>
                 <div className="qingwuzhuanzai">
                     <Switch checked={qingwuzhuanzai} onChange={this.switchChange} /> 请勿转载
