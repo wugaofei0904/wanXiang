@@ -48,6 +48,18 @@
     height: 100%;
 }
 
+.anthor_qrCode{
+    width: 60px;
+    height: 60px;
+    border: 1px solid rgba(0,0,0,.2);
+    margin-right: 24px;
+    overflow: hidden;
+}
+.anthor_qrCode img{
+    width: 100%;
+    height: 100%;
+}
+
 .hidden_input{
     width: 100px;
     height: 40px;
