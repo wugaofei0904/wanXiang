@@ -19,14 +19,17 @@ class CreateAnthor extends Component {
             rank: '',
             anthorName: '',
             shenfenText: '',
+            business: '',
             tagId: '',
             tagName: '综合',
             wxName: '',
             modalVisible: false,
             localImg: '',
             imgValue: '',
+            qrCode: '',
             wxIndexName: '',
             resultImg: '',
+            qrResultImg: '',
             tagIdList: []  //领域list
         };
     }
@@ -34,13 +37,21 @@ class CreateAnthor extends Component {
     showModal = () => {
         this.setState({
             visible: true,
+            visible1: true
         });
     };
 
     handleOk = e => {
         console.log(e);
         this.setState({
-            visible: false,
+            visible: false
+        });
+    };
+
+    handleOk1 = e => {
+        console.log(e);
+        this.setState({
+            visible1: false
         });
     };
 
@@ -48,6 +59,7 @@ class CreateAnthor extends Component {
         console.log(e);
         this.setState({
             visible: false,
+            visible1: false
         });
     };
 
@@ -88,10 +100,12 @@ class CreateAnthor extends Component {
                     rank: _data.rank,
                     anthorName: _data.name,
                     shenfenText: _data.detail,
+                    business: _data.business,
                     tagId: _data.tagId,
                     tagName: _data.tagName,
                     wxName: _data.wxId,
                     resultImg: _data.headImg,
+                    qrResultImg: _data.qrCode,
                     edit: true,
                     id: _data.id,
                     wxIndexName: _publicUrl
@@ -160,6 +174,38 @@ class CreateAnthor extends Component {
             })
     }
 
+    getQrCropData = (imgdata) => {
+        // console.log('截取图片...');
+        let _randomString = this.randomString();
+
+        var formdata = new FormData();
+        formdata.append("file", this.dataURLtoFile(imgdata, `img_${_randomString}.png`));
+        let _this = this;
+        message.loading('图片上传中...');
+        fetch(`${imgUpload}`, {
+            method: 'post',
+            body: formdata,
+        })
+            .then(function (response) {
+                return response.json()
+            }).then(function (json) {
+                message.success('上传成功！');
+
+                if (json.success) {
+                    _this.setState({
+                        qrResultImg: json.data
+                    })
+                } else if (json.msg == '未登录') {
+                    window.initLogin();
+                }
+                //隐藏弹窗
+                _this.handleCancel();
+
+            }).catch(function (ex) {
+                console.log('parsing failed', ex)
+            })
+    }
+
     imgChange(e) {
         console.log(e.target.value)
 
@@ -181,6 +227,32 @@ class CreateAnthor extends Component {
             }, () => {
                 this.setState({
                     imgValue: ''
+                })
+            })
+        }
+    }
+
+    qrChange(e) {
+        console.log(e.target.value)
+
+        let file_head = e.target;
+        let picture = e.target.value;
+        if (!picture.match(/.jpg|.gif|.png|.bmp/i)) {
+            alert("您上传的图片格式不正确，请重新选择！")
+            this.setState({
+                qrCode: ''
+            })
+            return false
+        }
+        if (file_head.files && file_head.files[0]) {
+            var a = window.navigator.userAgent.indexOf("Chrome") >= 1 || window.navigator.userAgent.indexOf("Safari") >= 1 ? window.webkitURL.createObjectURL(file_head.files[0]) : window.URL.createObjectURL(file_head.files[0]);
+            console.log(a)
+            this.setState({
+                localImg: a,
+                visible1: true,
+            }, () => {
+                this.setState({
+                    qrCode: ''
                 })
             })
         }
@@ -215,6 +287,13 @@ class CreateAnthor extends Component {
         // console.log(e.target.value)
     }
 
+    businessChange = (e) => {
+        this.setState({
+            business: e.target.value
+        })
+        // console.log(e.target.value)
+    }
+
 
     wxNameChange = (e) => {
         this.setState({
@@ -232,7 +311,7 @@ class CreateAnthor extends Component {
 
     submitData = () => {
 
-        let { id, edit, rank, anthorName, shenfenText, wxName, tagId, resultImg, wxIndexName } = this.state;
+        let { id, edit, rank, anthorName, shenfenText, business, wxName, tagId, resultImg, qrResultImg, wxIndexName } = this.state;
 
         let _publicUrl = encodeURIComponent(wxIndexName)
 
@@ -241,7 +320,7 @@ class CreateAnthor extends Component {
         console.log(anthorName, '123');
 
         if (edit) {
-            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&headImg=${resultImg}&wxId=${wxName}&publicUrl=${_publicUrl}`)
+            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&business=${business}&qrCode=${qrResultImg}&headImg=${resultImg}&wxId=${wxName}&publicUrl=${_publicUrl}`)
                 .then(function (response) {
                     return response.json()
                 }).then(function (json) {
@@ -259,7 +338,7 @@ class CreateAnthor extends Component {
                     console.log('parsing failed', ex)
                 })
         } else {
-            fetch(`${createAuthor}?name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&headImg=${resultImg}&wxId=${wxName}`)
+            fetch(`${createAuthor}?name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&business=${business}&qrCode=${qrResultImg}&headImg=${resultImg}&wxId=${wxName}`)
                 .then(function (response) {
                     return response.json()
                 }).then(function (json) {
@@ -287,8 +366,8 @@ class CreateAnthor extends Component {
 
     render() {
         // debugger
-        let { tagName, rank, tagId, wxName, shenfenText, tagIdList, localImg, imgValue, resultImg, anthorName, wxIndexName } = this.state;
-        console.log(rank, tagId, wxName, shenfenText, tagIdList, localImg, imgValue, resultImg, anthorName)
+        let { tagName, rank, tagId, wxName, shenfenText, business, tagIdList, localImg, imgValue, qrCode, resultImg, qrResultImg, anthorName, wxIndexName } = this.state;
+        console.log(rank, tagId, wxName, shenfenText, business, tagIdList, localImg, imgValue, qrCode, resultImg, qrResultImg, anthorName)
 
         return (
             <div className="create_anthor_Page">
@@ -301,9 +380,18 @@ class CreateAnthor extends Component {
                 >
                     <ImgCropper getCropData={this.getCropData} src={localImg} />
                 </Modal>
+                <Modal
+                    title="裁剪图片"
+                    visible={this.state.visible1}
+                    onOk={this.handleOk1}
+                    onCancel={this.handleCancel}
+                    footer={null}
+                >
+                    <ImgCropper getCropData={this.getQrCropData} src={localImg} />
+                </Modal>
                 <h1 className="page_title">创建作者</h1>
                 <div className="form_item">
-                    <div className="item_title">领域</div>
+                    <div className="item_title"><span className="red_color">*</span>领域</div>
                     <div className="item_content">
                         <Select value={tagId} style={{ width: 120 }} onChange={this.tagHandleChange}>
                             {/* <Option value='3'>综合</Option> */}
@@ -356,9 +444,31 @@ class CreateAnthor extends Component {
                 </div>
 
                 <div className="form_item">
-                    <div className="item_title">微信公众号</div>
+                    <div className="item_title">公众号ID</div>
                     <div className="item_content">
-                        <Input value={wxName} className="w_300" onChange={this.wxNameChange} placeholder="请输入微信公众号" />
+                        <Input value={wxName} className="w_300" onChange={this.wxNameChange} placeholder="请输入公众号ID" />
+                    </div>
+                </div>
+
+                <div className="form_item">
+                    <div className="item_title">公众号二维码</div>
+                    <div className="item_content">
+                        <div className="anthor_qrCode">
+                            {qrResultImg &&
+                                <img src={qrResultImg} />
+                            }
+                        </div>
+                        <div className="sc_btn">
+                            <Input value={qrCode} onChange={this.qrChange.bind(this)} className="hidden_input" type="file" placeholder="Basic usage" />
+                            <Button type="primary">选择二维码</Button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="form_item">
+                    <div className="item_title">商务信息</div>
+                    <div className="item_content">
+                        <TextArea defaultValue={business} onChange={this.businessChange} placeholder="每行少字，最多3行，不超过50字符。" className="w_300" rows={3} maxLength="50" />
                     </div>
                 </div>
 
