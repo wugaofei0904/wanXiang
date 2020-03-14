@@ -93,14 +93,12 @@ class CreateAnthor extends Component {
             // debugger
             if (edit) {
                 let _data = JSON.parse(data);
-                console.log(_data);
-
                 let _publicUrl = decodeURIComponent(_data.publicUrl)
                 _this.setState({
                     rank: _data.rank,
                     anthorName: _data.name,
                     shenfenText: _data.detail,
-                    business: _data.business,
+                    business: _data.business ? _data.business.replace(/<br\/>/g,'\r\n') : '',
                     tagId: _data.tagId,
                     tagName: _data.tagName,
                     wxName: _data.wxId,
@@ -319,6 +317,8 @@ class CreateAnthor extends Component {
         // console.log(rank, anthorName, shenfenText, wxName, tagId, resultImg);
         console.log(anthorName, '123');
 
+        business = business.replace(/\r\n/g,'<br/>').replace(/\n/g,'<br/>').replace(/\s/g,' ')
+
         if (edit) {
             fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&business=${business}&qrCode=${qrResultImg}&headImg=${resultImg}&wxId=${wxName}&publicUrl=${_publicUrl}`)
                 .then(function (response) {
@@ -412,7 +412,7 @@ class CreateAnthor extends Component {
                 <div className="form_item">
                     <div className="item_title"><span className="red_color">*</span>身份介绍</div>
                     <div className="item_content">
-                        <TextArea defaultValue={shenfenText} onChange={this.textAreaChange} placeholder="请准确描述作者擅长领域" className="w_300" rows={4} />
+                        <TextArea value={shenfenText} onChange={this.textAreaChange} placeholder="请准确描述作者擅长领域" className="w_300" rows={4} />
                     </div>
                 </div>
 
@@ -468,7 +468,7 @@ class CreateAnthor extends Component {
                 <div className="form_item">
                     <div className="item_title">商务信息</div>
                     <div className="item_content">
-                        <TextArea defaultValue={business} onChange={this.businessChange} placeholder="每行少字，最多3行，不超过50字符。" className="w_300" rows={3} maxLength="50" />
+                        <TextArea value={business} onChange={this.businessChange} placeholder="每行少字，最多3行，不超过50字符。" className="w_300" rows={3} maxLength="50" wrap='hard' />
                     </div>
                 </div>
 
