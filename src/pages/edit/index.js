@@ -226,8 +226,7 @@ class EditForm extends Component {
         setTimeout(() => {
             console.log(imgArrHasWH)
             var _arr = imgArrHasWH.filter(item => {
-                // if (item.width >= 372 && item.height >= 248) {
-                if (item.width <= 372 && item.height <= 248) {
+                if (item.width <= 218 && item.height <= 146) {
                     return false
                 } else {
                     return true
@@ -243,7 +242,7 @@ class EditForm extends Component {
                 baseImgList: _arr2
             })
             // console.log(_arr)
-        }, 2000)
+        }, 1000)
     }
 
     // 372  248
