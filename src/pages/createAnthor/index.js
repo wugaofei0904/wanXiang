@@ -317,6 +317,11 @@ class CreateAnthor extends Component {
         // console.log(rank, anthorName, shenfenText, wxName, tagId, resultImg);
         console.log(anthorName, '123');
 
+        if (business.split("\n").length > 3){
+            alert('商务信息字段不能超过3行')
+            return false
+        }
+
         business = business.replace(/\r\n/g,'<br/>').replace(/\n/g,'<br/>').replace(/\s/g,' ')
 
         if (edit) {
