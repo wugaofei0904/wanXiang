@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { LocaleProvider, Button, Row, Col, Select, Input, DatePicker, Pagination, Table, Popconfirm, Form } from 'antd';
+import { LocaleProvider, Button, Row, Col, Select, Input, DatePicker, Badge,Pagination, Table, Popconfirm, Form } from 'antd';
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
@@ -528,6 +528,13 @@ class ArticleManage extends Component {
             </Col>
             <Col className="mr-12"><Button onClick={this.search}>搜索</Button></Col>
             <Col ><Button onClick={this.addAuthor} type="primary">添加作者</Button></Col>
+              <Col className='auth-col'>
+                  <Badge count={1}
+                         offset={[-10,0]}
+                         showZero={true}>
+                      <Button className='auth-button'>授</Button>
+                  </Badge>
+              </Col>
           </Row>
         </div>
         <div className="articleTable m_t_16">
