@@ -4,7 +4,7 @@ import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
 import fetchJsonp from 'fetch-jsonp';
-import { authorList, tagList, authorEdit } from './../../utils/fetchApi';
+import { authorList, tagList, authorEdit,getRedCount } from './../../utils/fetchApi';
 
 import GetTagList from './../hooks/useGetTagList';
 import { async } from 'q';
@@ -264,6 +264,7 @@ class ArticleManage extends Component {
       tagIdList: [],  //领域list
       anthorList: [],  //作者list
       total: 0,
+        redCount:0,
     };
   }
 
@@ -414,6 +415,34 @@ class ArticleManage extends Component {
     this.isgetTagList();
 
     this.requestListData(1);
+    this.getAuthNum();
+  }
+
+  /**
+   * 获取红心
+   **/
+  getAuthNum=()=>{
+    let _this=this;
+      fetch(`${getRedCount}`)
+          .then(function (response) {
+              return response.json()
+          }).then(function (json) {
+
+          if (json.success) {
+              //更新当前列表
+              _this.setState({
+                  redCount: json.data
+              })
+          } else if (json.msg == '未登录') {
+              alert(json.msg)
+              window.initLogin();
+          } else {
+              alert(json.msg)
+          }
+
+      }).catch(function (ex) {
+          console.log('parsing failed', ex)
+      })
   }
 
   onChange = (pageNumber) => {
@@ -460,8 +489,13 @@ class ArticleManage extends Component {
     })
   }
 
+  jumpToAuth=()=>{
+      this.props.history.push('authManage')
+
+    }
+
   render() {
-    const { dataSource, tagIdList, anthorList, total } = this.state;
+    const { dataSource, tagIdList, anthorList, total, redCount } = this.state;
     const components = {
       body: {
         row: EditableFormRow,
@@ -483,7 +517,6 @@ class ArticleManage extends Component {
         }),
       };
     });
-
 
 
 
@@ -529,10 +562,10 @@ class ArticleManage extends Component {
             <Col className="mr-12"><Button onClick={this.search}>搜索</Button></Col>
             <Col ><Button onClick={this.addAuthor} type="primary">添加作者</Button></Col>
               <Col className='auth-col'>
-                  <Badge count={1}
+                  <Badge count={redCount}
                          offset={[-10,0]}
                          showZero={true}>
-                      <Button className='auth-button'>授</Button>
+                      <Button className='auth-button' onClick={this.jumpToAuth}>授</Button>
                   </Badge>
               </Col>
           </Row>

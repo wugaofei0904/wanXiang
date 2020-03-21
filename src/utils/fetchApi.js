@@ -84,6 +84,16 @@ export const moveBannerOrder = `${domain}/banner/move`
 // 修改banner
 export const editBanner =`${domain}/banner/edit`
 
+//获取红点
+export const getRedCount =`${domain}/wx/apply/total`
+
+//授权列表
+export const getAuthList =`${domain}/wx/apply/list`
+
+//删除意向登记
+export const deleteAuth =`${domain}/wx/apply/del`
+
+
 
 
 

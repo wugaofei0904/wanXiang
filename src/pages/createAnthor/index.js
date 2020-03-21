@@ -91,6 +91,11 @@ class CreateAnthor extends Component {
         try {
             let { data, edit } = _this.props.location.state;
             // debugger
+            if(data.wxId){
+                _this.setState({
+                    wxName: data.wxId,
+                })
+            }
             if (edit) {
                 let _data = JSON.parse(data);
                 let _publicUrl = decodeURIComponent(_data.publicUrl)

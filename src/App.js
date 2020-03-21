@@ -10,6 +10,7 @@ import LoginPage from './pages/login/index.js';
 import CreateAnthor from './pages/createAnthor/index.js';
 import CommoditySet from './pages/commoditySet/index.js';
 import BannerManage from './pages/bannerManage';
+import AuthManage from './pages/authManage'
 // import OtherPage from './pages/otherPage/index.js';
 
 class App extends Component {
@@ -37,6 +38,7 @@ class App extends Component {
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/createAnthor" component={CreateAnthor} />
           <Route exact path="/bannerManage" component={BannerManage} />
+            <Route exact path="/authManage" component={AuthManage} />
           {/* <Route exact path="/createAnthor/:edit/:data" component={CreateAnthor} /> */}
           <Route component={ArticleManage} />
         </Switch>
