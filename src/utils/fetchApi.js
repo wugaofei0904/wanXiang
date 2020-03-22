@@ -93,6 +93,22 @@ export const getAuthList =`${domain}/wx/apply/list`
 //删除意向登记
 export const deleteAuth =`${domain}/wx/apply/del`
 
+//待定
+export const goStay =`${domain}/wx/apply/undetermine`
+
+//取消待定
+export const cancelStay =`${domain}/wx/apply/determine`
+
+//抓取数据
+export const grabData =`${domain}/author/start-grab`
+
+//停止抓取
+export const stopGrab =`${domain}/author/stop-grab`
+
+
+
+
+
 
 
 

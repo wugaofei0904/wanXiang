@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { LocaleProvider, Button, message,Row, Col, Select, Input, DatePicker, Badge,Pagination, Table, Popconfirm, Form } from 'antd';
 // import {CheckCircleOutlined} from 'antd/icons'
 import HeaderTabbar from '../../components/headTabBar/index'
-import { getAuthList,deleteAuth } from './../../utils/fetchApi';
-
+import { getAuthList,deleteAuth,cancelStay,goStay} from './../../utils/fetchApi';
+import Request from '../../utils/request'
 import 'moment/locale/zh-cn';
 import { withRouter } from 'react-router-dom';
 
@@ -50,12 +50,17 @@ class AuthManage extends Component {
         width: 300,
         render: (text, record) => {
             return <div>
-              <Button disabled={this.state['ifStay'+text]} onClick={()=>this.jumpToCreate(record)}>创建</Button>
-                <Button  style={{marginLeft:10}}
-                         onClick={()=>this.stayOn(text,this.state['ifStay'+text])}>{this.state['ifStay'+text]?'取消待定':'待定'}</Button>
-              <Popconfirm disabled={this.state['ifStay'+text]} title="确认删除?" onConfirm={()=>this.deleteAuth(text)}>
+              <Button disabled={record.status==1}
+                      onClick={()=>this.jumpToCreate(record)}
+                      style={{background:'#1988CB'}}
+                      type={'primary'}>创建</Button>
+                <Button  style={{marginLeft:10,background:'#1988CB'}}
+                         onClick={()=>this.stayOn(text,record.status)}
+                         type={'primary'}
+                >{record.status==1?'取消待定':'待定'}</Button>
+              <Popconfirm disabled={record.status==1} title="确认删除?" onConfirm={()=>this.deleteAuth(text)}>
                 <Button style={{marginLeft:10}}
-                        disabled={this.state['ifStay'+text]} type="danger">删除</Button>
+                        disabled={record.status==1} type="danger">删除</Button>
               </Popconfirm>
             </div>
 
@@ -89,10 +94,20 @@ class AuthManage extends Component {
      * 待定
      * @param val
      */
-    stayOn=(id,val)=>{
-      this.setState({
-          ['ifStay'+id]:!val
-      })
+    stayOn=(id,status)=>{
+      if(status!=1){  //如果没待定
+          Request.Get_Request(`${goStay}?id=${id}`,()=>{
+              message.success('待定成功')
+          })
+      }else{
+          Request.Get_Request(`${cancelStay}?id=${id}`,()=>{
+              message.success('取消待定成功')
+          })
+      }
+      setTimeout(()=>{
+          this.requestListData(1)
+
+      },100)
     }
 
     /**
@@ -102,50 +117,28 @@ class AuthManage extends Component {
     deleteAuth=id=>{
         // deleteAuth
         let that=this;
-        fetch(`${deleteAuth}?id=${id}`)
-            .then(function (response) {
-                return response.json()
-            }).then(function (json) {
-            console.log('json',json)
-            if (json.success) {
-               message.success('删除成功')
-                that.requestListData(1)
-            } else if (json.msg == '未登录') {
-                message.error(json.msg)
-                window.initLogin();
-            } else {
-                message.error(json.msg)
-            }
-        }).catch(function (ex) {
-            console.log('parsing failed', ex)
+        Request.Get_Request(`${deleteAuth}?id=${id}`,()=>{
+            message.success('删除成功')
+            that.requestListData(1)
         })
     }
 
-
+    /**
+     * 获取列表数据
+     * @param pageNumber
+     */
   requestListData = pageNumber => {
     let { pageSize } = this.state;
     // console.log(anthorName, rank, tagId, startTime, endTime)
     let _this = this;
     // debugger
-    fetch(`${getAuthList}?pageNum=${pageNumber}&pageSize=${pageSize}`)
-      .then(function (response) {
-        return response.json()
-      }).then(function (json) {
-        console.log('json',json)
-        if (json.success) {
-          let data=json.data;
+      Request.Get_Request(`${getAuthList}?pageNum=${pageNumber}&pageSize=${pageSize}`,(res)=>{
+          console.log('ceshi',res)
+          let data=res.data;
           _this.setState({
-              authList: data.list,
-            total: data.total
+              authList: data,
+              total: res.total
           })
-        } else if (json.msg == '未登录') {
-          alert(json.msg)
-          window.initLogin();
-        } else {
-          alert(json.msg)
-        }
-      }).catch(function (ex) {
-        console.log('parsing failed', ex)
       })
   }
 
