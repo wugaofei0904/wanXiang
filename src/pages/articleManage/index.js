@@ -91,7 +91,6 @@ class ArticleManage extends Component {
   }
 
   searchList = (pageNumber) => {
-
     let { articleStatus, articleName, anthorName, startTime, endTime, pageSize, sxStatus } = this.state;
     let _this = this;
     let _url = `${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`
@@ -265,7 +264,7 @@ class ArticleManage extends Component {
           <div className="articleTable_table_list">
             {
               listData.map(item => {
-                return <ArticleItem key={item.id} data={item} />
+                return <ArticleItem key={item.id} searchListdata={this.searchList} pageNum={pageNumber} data={item} />
               })
             }
           </div>

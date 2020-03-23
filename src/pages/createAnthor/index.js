@@ -369,7 +369,8 @@ class CreateAnthor extends Component {
     }
 
     onClose = () => {
-        this.props.history.push('anthorManage')
+        // this.props.history.push('anthorManage')
+        this.props.history.push('/anthorManage')
     }
 
 
