@@ -225,6 +225,7 @@ class ArticleManage extends Component {
                 <Option value="0">全部状态</Option>
                 <Option value="1">发布成功</Option>
                 <Option value="2">已删除</Option>
+                  <Option value="3">待发布</Option>
               </Select>
             </Col>
             <Col className="mr-12">

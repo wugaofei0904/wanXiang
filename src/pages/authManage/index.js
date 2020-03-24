@@ -33,6 +33,10 @@ class AuthManage extends Component {
         title: '联系人',
         dataIndex: 'phone',
       },
+        {
+            title: '推荐人',
+            dataIndex: 'referee',
+        },
       {
         title: '授权',
         dataIndex: 'authorize',
@@ -83,7 +87,7 @@ class AuthManage extends Component {
             pathname: '/createAnthor/',
             state: {
                 data: {
-                    wxId:wxName
+                    name:wxName
                 },
                 edit:true
             } } )

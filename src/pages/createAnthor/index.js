@@ -91,9 +91,9 @@ class CreateAnthor extends Component {
         try {
             let { data, edit } = _this.props.location.state;
             // debugger
-            if(data.wxId){
+            if(data.name){
                 _this.setState({
-                    wxName: data.wxId,
+                    anthorName: data.name,
                 })
             }
             if (edit) {
