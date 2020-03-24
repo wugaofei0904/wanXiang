@@ -144,11 +144,18 @@ class EditForm extends Component {
 
     getImgurl = (item) => {
         let imgReg = /<img.*?(?:>|\/>)/gi //匹配图片中的img标签
-        let srcReg = / src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
         let str = item.content
         let arr = str.match(imgReg) || [];  //筛选出所有的img
         let srcArr = []
+        let gotSrc=/^src=/g
         for (let i = 0; i < arr.length; i++) {
+            let srcReg=''
+            if(gotSrc.test(arr[i])){ //有src标签
+                 srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
+
+            }else{
+                 srcReg = /data-src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的data-src
+            }
             let src = arr[i].match(srcReg)
             // 获取图片地址
             if (src[1].indexOf('http') == -1) {
@@ -717,6 +724,9 @@ class EditForm extends Component {
                     alert('暂无图片');
                 }
                 let _content = values.content;
+                let imgReg = /<img.*?(?:>|\/>)/gi //匹配图片中的img标签
+                let arr = _content.match(imgReg) || [];  //筛选出所有的img
+
                 var formdata = new FormData();
                 formdata.append("url", _arr.join(','));
                 // let _this = this;
@@ -729,8 +739,14 @@ class EditForm extends Component {
                     }).then(function (json) {
                         if (json.success) {
                             let data = json.data;
+                            let gotSrc=/^src=/g
                             for (var i = 0; i < data.length; i++) {
-                                _content = _content.replace(_arr[i], data[i] + '?time=' + new Date().valueOf()); //re:/w/g
+                                if(gotSrc.test(arr[i])){ //有src标签
+                                    _content = _content.replace(_arr[i], data[i] + '?time=' + new Date().valueOf()); //re:/w/g
+
+                                }else{  //data-src
+                                    _content = _content.replace(_arr[i], _arr[i]+'" src="'+data[i] + '?time=' + new Date().valueOf()+'"'); //re:/w/g
+                                }
                             }
                             _this.refs.content1.setVal(`${_content}`)
                         } else if (json.msg == '未登录') {
