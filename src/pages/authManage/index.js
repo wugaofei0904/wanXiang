@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { LocaleProvider, Button, message,Row, Col, Select, Input, DatePicker, Badge,Pagination, Table, Popconfirm, Form } from 'antd';
 // import {CheckCircleOutlined} from 'antd/icons'
 import HeaderTabbar from '../../components/headTabBar/index'
-import { getAuthList,deleteAuth,cancelStay,goStay} from './../../utils/fetchApi';
+import { getAuthList,deleteAuth,cancelStay,goStay,wxAuthUrl} from './../../utils/fetchApi';
 import Request from '../../utils/request'
 import 'moment/locale/zh-cn';
 import { withRouter } from 'react-router-dom';
@@ -150,6 +150,13 @@ class AuthManage extends Component {
         this.requestListData(pageNumber);
         // console.log('Page: ', pageNumber);
   }
+    jumpToWX(){
+        Request.Get_Request(`${wxAuthUrl}`,(res)=>{
+            console.log('ceshi',res)
+            let data=res.data;
+            window.open(data);
+        })
+    }
 
   componentDidMount() {
       this.requestListData(1)
@@ -161,7 +168,12 @@ class AuthManage extends Component {
     return (
       <div className="appPage">
         <HeaderTabbar current='anthor' />
-        <h2 style={{marginTop:20}}>授权管理</h2>
+          <div style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',width:'100%'}}>
+              <h2 style={{marginTop:20,display:'inline-block'}}>授权管理</h2>
+                 <Button onClick={()=>this.jumpToWX()}
+                         style={{marginLeft:'77%'}}
+                         type={'primary'}>授权二维码</Button>
+          </div>
           <div className="articleTable m_t_16">
               <div className="articleTable_table_list">
                   <Table

@@ -105,6 +105,9 @@ export const grabData =`${domain}/author/start-grab`
 //停止抓取
 export const stopGrab =`${domain}/author/stop-grab`
 
+//获取二维码
+export const wxAuthUrl =`${domain}/wx/op/authUrl`
+
 
 
 
