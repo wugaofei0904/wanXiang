@@ -151,11 +151,13 @@ class AuthManage extends Component {
         // console.log('Page: ', pageNumber);
   }
     jumpToWX(){
-        Request.Get_Request(`${wxAuthUrl}`,(res)=>{
-            console.log('ceshi',res)
-            let data=res.data;
-            window.open(data);
-        })
+            // if(process.env.NODE_ENV === 'production'){
+            //     window.open('https://www.jiandi.life/open/wx/op/authPage');
+            //
+            // }else{
+                window.open('/open/wx/op/authPage');
+
+            // }
     }
 
   componentDidMount() {
