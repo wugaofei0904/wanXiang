@@ -84,7 +84,7 @@ class AuthManage extends Component {
         let wxName=val.wxId
 
         this.props.history.push( {
-            pathname: '/createAnthor/',
+            pathname: '/createAnthor',
             state: {
                 data: {
                     name:wxName

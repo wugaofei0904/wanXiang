@@ -147,11 +147,11 @@ class EditForm extends Component {
         let str = item.content
         let arr = str.match(imgReg) || [];  //筛选出所有的img
         let srcArr = []
-        let gotSrc=/^src=/g
+        let gotSrc = new RegExp(" src=");
         for (let i = 0; i < arr.length; i++) {
             let srcReg=''
             if(gotSrc.test(arr[i])){ //有src标签
-                 srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
+                 srcReg = / src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
 
             }else{
                  srcReg = /data-src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的data-src
@@ -224,7 +224,6 @@ class EditForm extends Component {
 
 
     filtImgArr = (arrImg = []) => {
-
         imgArrHasWH.length = 0
         arrImg.map((item) => {
             this.getImgWh(item)
@@ -781,7 +780,7 @@ class EditForm extends Component {
                     }).then(function (json) {
                         if (json.success) {
                             let data = json.data;
-                            let gotSrc=/^src=/g
+                            let gotSrc = new RegExp(" src=");
                             for (let i = 0; i < data.length; i++) {
                                 if(gotSrc.test(arr[i])){ //有src标签
                                     _content = _content.replace(_arr[i], data[i] + '?time=' + new Date().valueOf()); //re:/w/g
