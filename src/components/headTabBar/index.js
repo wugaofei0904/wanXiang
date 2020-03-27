@@ -17,6 +17,9 @@ class HeaderTabbar extends Component {
             case 'article':
                 _router = 'articleManage';
                 break;
+            case 'comment':
+                _router = 'commentManage';
+                break;
             case 'anthor':
                 _router = 'anthorManage';
                 break;
@@ -37,6 +40,7 @@ class HeaderTabbar extends Component {
         return (
             <Menu theme="dark" className="top_header" onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal">
                 <Menu.Item key="article">文章管理</Menu.Item>
+                <Menu.Item key="comment">评论管理</Menu.Item>
                 <Menu.Item key="anthor">作者管理</Menu.Item>
                 <Menu.Item key="action">操作管理</Menu.Item>
                 <Menu.Item key="commodity">商品配置</Menu.Item>

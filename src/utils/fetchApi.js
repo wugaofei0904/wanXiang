@@ -15,6 +15,11 @@ export const articleExport = domain + '/article/article-export';
 //文章发布
 export const postArticle = domain + '/article/create';
 
+//评论列表
+export const commentList = domain + '/comment/list';
+
+export const deleteComment = domain + '/comment/delete';
+
 //作者列表页 分页
 export const authorList = domain + '/author/list-page';
 
