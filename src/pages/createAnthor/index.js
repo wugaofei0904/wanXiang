@@ -91,6 +91,11 @@ class CreateAnthor extends Component {
         try {
             let { data, edit } = _this.props.location.state;
             // debugger
+            if(data.name){
+                _this.setState({
+                    anthorName: data.name,
+                })
+            }
             if (edit) {
                 let _data = JSON.parse(data);
                 let _publicUrl = decodeURIComponent(_data.publicUrl)
@@ -364,7 +369,8 @@ class CreateAnthor extends Component {
     }
 
     onClose = () => {
-        this.props.history.push('anthorManage')
+        // this.props.history.push('anthorManage')
+        this.props.history.push('/anthorManage')
     }
 
 

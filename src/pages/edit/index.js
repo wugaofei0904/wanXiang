@@ -144,11 +144,18 @@ class EditForm extends Component {
 
     getImgurl = (item) => {
         let imgReg = /<img.*?(?:>|\/>)/gi //匹配图片中的img标签
-        let srcReg = / src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
         let str = item.content
         let arr = str.match(imgReg) || [];  //筛选出所有的img
         let srcArr = []
+        let gotSrc = new RegExp(" src=");
         for (let i = 0; i < arr.length; i++) {
+            let srcReg=''
+            if(gotSrc.test(arr[i])){ //有src标签
+                 srcReg = / src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
+
+            }else{
+                 srcReg = /data-src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的data-src
+            }
             let src = arr[i].match(srcReg)
             // 获取图片地址
             if (src[1].indexOf('http') == -1) {
@@ -217,7 +224,6 @@ class EditForm extends Component {
 
 
     filtImgArr = (arrImg = []) => {
-
         imgArrHasWH.length = 0
         arrImg.map((item) => {
             this.getImgWh(item)
@@ -626,6 +632,7 @@ class EditForm extends Component {
                             articleTitle: _data.title,
                             authorRadioValue: _data.isOwn == '1' ? 1 : 2,
                             textAreavalue: _data.corePoint,
+                            textNumber:_data.corePoint.length || 0,
                             tagList: new_list,
                             content: _data.body,
                             lastImgList: _data.picUrl.split(','),
@@ -670,6 +677,21 @@ class EditForm extends Component {
         };
 
     }
+    parse2dom(str){
+        let div = document.createElement("div");
+        if(typeof str == "string")
+            div.innerHTML = str;
+        return div.childNodes[0];
+    };
+
+    parse2Str(dom){
+        let tmpNode = document.createElement('div')
+        tmpNode.appendChild(dom)
+        let str = tmpNode.innerHTML
+        tmpNode = dom = null;
+        return str;
+    };
+
 
     setdefaultContent = (data) => {
 
@@ -706,6 +728,32 @@ class EditForm extends Component {
         }
     }
 
+
+    /**
+     * 获取宽高
+     * @param url
+     * @returns {Promise<any>}
+     */
+    getInchImg(url){
+        return new Promise((resolve, reject) => {
+            let img = new Image();
+            img.src = url;
+            img.onload = function () {
+                resolve({
+                    width: img.width,
+                    height: img.height
+                });
+            };
+            img.onerror = function () {
+                reject(new Error("图片加载错误！"));
+            }
+
+        });
+    }
+
+    /**
+     * 格式化图片
+     **/
     initBaseImgList = () => {
         let _this = this;
         this.props.form.validateFields((err, values) => {
@@ -717,6 +765,9 @@ class EditForm extends Component {
                     alert('暂无图片');
                 }
                 let _content = values.content;
+                let imgReg = /<img.*?(?:>|\/>)/gi //匹配图片中的img标签
+                let arr = _content.match(imgReg) || [];  //筛选出所有的img
+
                 var formdata = new FormData();
                 formdata.append("url", _arr.join(','));
                 // let _this = this;
@@ -729,8 +780,31 @@ class EditForm extends Component {
                     }).then(function (json) {
                         if (json.success) {
                             let data = json.data;
-                            for (var i = 0; i < data.length; i++) {
-                                _content = _content.replace(_arr[i], data[i] + '?time=' + new Date().valueOf()); //re:/w/g
+                            let gotSrc = new RegExp(" src=");
+                            for (let i = 0; i < data.length; i++) {
+                                if(gotSrc.test(arr[i])){ //有src标签
+                                    _content = _content.replace(_arr[i], data[i] + '?time=' + new Date().valueOf()); //re:/w/g
+
+                                }else{  //data-src
+                                    _this.getInchImg(data[i]).then(val=>{
+                                        let imgWidth=val.width
+                                        let imgHeight=val.height
+                                        if(imgWidth>720){  //大于editor宽度
+                                            let times=Number(imgWidth/720).toFixed(2);
+                                            let showHeight=Math.round(imgHeight/times)
+                                            let currentDom=_this.parse2dom(arr[i]);
+                                            currentDom.style.width='720px';
+                                            currentDom.style.height=showHeight+'px';
+                                            currentDom.setAttribute('src',data[i]+'?time='+new Date().valueOf())
+                                            let newDomStr=_this.parse2Str(currentDom)
+                                            _content = _content.replace(arr[i], newDomStr); //re:/w/g
+                                            _this.refs.content1.setVal(`${_content}`)
+                                        }else{
+                                            _content = _content.replace(_arr[i], _arr[i]+'" src="'+data[i] + '?time=' + new Date().valueOf()+'"'); //re:/w/g
+                                            _this.refs.content1.setVal(`${_content}`)
+                                        }
+                                    })
+                                }
                             }
                             _this.refs.content1.setVal(`${_content}`)
                         } else if (json.msg == '未登录') {

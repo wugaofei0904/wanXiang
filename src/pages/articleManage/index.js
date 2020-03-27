@@ -91,7 +91,6 @@ class ArticleManage extends Component {
   }
 
   searchList = (pageNumber) => {
-
     let { articleStatus, articleName, anthorName, startTime, endTime, pageSize, sxStatus } = this.state;
     let _this = this;
     let _url = `${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`
@@ -153,7 +152,6 @@ class ArticleManage extends Component {
 
   componentDidMount() {
 
-
     let _hasList = this.try_restore_component();
 
     if (!_hasList) {
@@ -174,26 +172,48 @@ class ArticleManage extends Component {
       }
     };
   }
+    refreshList = (pageNumber,callback) => {
+        let { articleStatus, articleName, anthorName, startTime, endTime, pageSize, sxStatus } = this.state;
+        let _url = `${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`
+        if (sxStatus != '-1') {
+            _url += `&isTop=${sxStatus}`
+        }
+        fetch(_url)
+            .then(function (response) {
+                return response.json()
+            }).then(function (json) {
+            if (json.success) {
+                callback && callback(json)
+            } else if (json.msg == '未登录') {
+                window.initLogin();
+            }
+        }).catch(function (ex) {
+            console.log('parsing failed', ex)
+        })
+
+    }
 
   try_restore_component(cb) {
     let data = window.sessionStorage.getItem("tmpdata");
     if (data) {
       data = JSON.parse(data);
-      this.setState(
-        {
-          listData: data.listData,
-          pageNumber: parseInt(data.pageNumber),
-          scrollpx: data.scrollpx,
-          total: data.total,
-        }
-      )
-      window.sessionStorage.setItem('tmpdata', '');
-
-      setTimeout(() => {
-        // debugger
-        window.scrollTo(0, data.scrollpx);
-      }, 10)
-      return 1
+      let _this=this;
+      this.refreshList(parseInt(data.pageNumber),(newJson)=>{  //获取当前页最新数据
+          _this.setState(
+              {
+                  listData: newJson.data,
+                  pageNumber: parseInt(data.pageNumber),
+                  scrollpx: data.scrollpx,
+                  total: newJson.total,
+              }
+          )
+          window.sessionStorage.setItem('tmpdata', '');
+          setTimeout(() => {
+              // debugger
+              window.scrollTo(0, data.scrollpx);
+          }, 10)
+          return 1
+      }); //刷新
     }
     return 0
   }
@@ -226,6 +246,7 @@ class ArticleManage extends Component {
                 <Option value="0">全部状态</Option>
                 <Option value="1">发布成功</Option>
                 <Option value="2">已删除</Option>
+                  <Option value="3">待发布</Option>
               </Select>
             </Col>
             <Col className="mr-12">
@@ -265,7 +286,7 @@ class ArticleManage extends Component {
           <div className="articleTable_table_list">
             {
               listData.map(item => {
-                return <ArticleItem key={item.id} data={item} />
+                return <ArticleItem key={item.id} searchListdata={this.searchList} pageNum={pageNumber} data={item} />
               })
             }
           </div>

@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import { LocaleProvider, Button, Row, Col, Select, Input, DatePicker, Pagination, Table, Popconfirm, Form } from 'antd';
+import { LocaleProvider, Button, Row, Col, Select, Input,message, DatePicker, Badge,Pagination, Table, Popconfirm, Form } from 'antd';
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
 import moment from 'moment';
 import fetchJsonp from 'fetch-jsonp';
-import { authorList, tagList, authorEdit } from './../../utils/fetchApi';
+import { authorList, tagList, authorEdit,getRedCount,grabData,stopGrab } from './../../utils/fetchApi';
 
 import GetTagList from './../hooks/useGetTagList';
 import { async } from 'q';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
 import { withRouter } from 'react-router-dom';
-
+import Request from '../../utils/request'
 
 const { Option } = Select;
 const { MonthPicker, RangePicker } = DatePicker;
@@ -237,6 +237,7 @@ class ArticleManage extends Component {
               <Popconfirm title="确认删除?" onConfirm={() => this.authorEditFuc(record.id, '0')}>
                 <Button type="danger">删除</Button>
               </Popconfirm>
+                {record.authorize && <Button onClick={()=>this.grabOrNot(record)} className="m_r_12" style={{marginTop:10,background:'#1988CB'}} type="primary">{!record.grab?'开始抓取':'停止抓取'}</Button>}
             </div>
           } else {
             return <div>
@@ -264,9 +265,25 @@ class ArticleManage extends Component {
       tagIdList: [],  //领域list
       anthorList: [],  //作者list
       total: 0,
+        redCount:0,
     };
   }
+    grabOrNot=(val)=>{
+        let authorId=val.id;
+        if(val.grab){     //默认为停止抓取状态,grab=true
+            Request.Get_Request(`${stopGrab}?id=${authorId}`,()=>{
+                message.success('停止抓取成功')
+            })
+        }else{
 
+            Request.Get_Request(`${grabData}?id=${authorId}`,()=>{
+                message.success('开始抓取成功')
+            })
+        }
+        setTimeout(()=>{
+            this.requestListData(1);
+        },100)
+    }
   handleDelete = key => {
     const anthorList = [...this.state.anthorList];
     this.setState({ anthorList: anthorList.filter(item => item.key !== key) });
@@ -414,6 +431,34 @@ class ArticleManage extends Component {
     this.isgetTagList();
 
     this.requestListData(1);
+    this.getAuthNum();
+  }
+
+  /**
+   * 获取红心
+   **/
+  getAuthNum=()=>{
+    let _this=this;
+      fetch(`${getRedCount}`)
+          .then(function (response) {
+              return response.json()
+          }).then(function (json) {
+
+          if (json.success) {
+              //更新当前列表
+              _this.setState({
+                  redCount: json.data
+              })
+          } else if (json.msg == '未登录') {
+              alert(json.msg)
+              window.initLogin();
+          } else {
+              alert(json.msg)
+          }
+
+      }).catch(function (ex) {
+          console.log('parsing failed', ex)
+      })
   }
 
   onChange = (pageNumber) => {
@@ -460,8 +505,13 @@ class ArticleManage extends Component {
     })
   }
 
+  jumpToAuth=()=>{
+      this.props.history.push('authManage')
+
+    }
+
   render() {
-    const { dataSource, tagIdList, anthorList, total } = this.state;
+    const { dataSource, tagIdList, anthorList, total, redCount } = this.state;
     const components = {
       body: {
         row: EditableFormRow,
@@ -483,7 +533,6 @@ class ArticleManage extends Component {
         }),
       };
     });
-
 
 
 
@@ -528,6 +577,13 @@ class ArticleManage extends Component {
             </Col>
             <Col className="mr-12"><Button onClick={this.search}>搜索</Button></Col>
             <Col ><Button onClick={this.addAuthor} type="primary">添加作者</Button></Col>
+              <Col className='auth-col'>
+                  <Badge count={redCount}
+                         offset={[-10,0]}
+                         showZero={true}>
+                      <Button className='auth-button' onClick={this.jumpToAuth}>授</Button>
+                  </Badge>
+              </Col>
           </Row>
         </div>
         <div className="articleTable m_t_16">

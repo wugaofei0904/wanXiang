@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
+import { Button,message } from 'antd';
 import './style.css';
 
 import { withRouter } from 'react-router-dom';
@@ -14,9 +14,18 @@ class ArticleItem extends Component {
         this.state = {
             itemData: this.props.data,
             adlist: this.props.data.ads,
-            status: 1,  //1 已发布 2 已删除
+            status: 1,  //1 已发布 2 已删除 3 待发布
             tagList: this.props.data.tags.split(',') || []  //领域list
         };
+
+    }
+
+    componentWillReceiveProps(props, oldProps){
+        this.setState({
+            itemData:props.data,
+            adlist:props.data.ads,
+            tagList: props.data.tags.split(',')
+        })
     }
 
     addTag = () => {
@@ -93,19 +102,26 @@ class ArticleItem extends Component {
         // debugger
         let _this = this;
         let { itemData } = this.state;
-        let _status = item.status == 1 ? 2 : 1;
+        let _status = (item.status == 1 || item.status==3 )? 2 : 1;
+
         fetch(`${articleEdit}?id=${item.id}&status=${_status}`)
             .then(function (response) {
                 return response.json()
             }).then(function (json) {
 
                 if (json.success) {
-                    _this.setState({
-                        itemData: {
-                            ...itemData,
-                            status: itemData.status == '1' ? '2' : '1'
-                        }
-                    })
+                    message.success('删除成功')
+                    if(item.status==3){        //如果是待发布 刷新列表
+                        let page=_this.props.pageNum
+                            _this.props.searchListdata(page)
+                    }else{
+                        _this.setState({
+                            itemData: {
+                                ...itemData,
+                                status: itemData.status == '1' ? '2' : '1'
+                            }
+                        })
+                    }
                 } else if (json.msg == '未登录') {
                     alert(json.msg)
                     window.initLogin();
@@ -151,7 +167,10 @@ class ArticleItem extends Component {
                         <img className="fm_logo" src={itemData.picUrl.split(',')[0]} />
                     </div>
                     <div className="articleTable_header_text w_160">{itemData.authorName}</div>
-                    <div className="articleTable_header_text w_160">{itemData.status == 1 ? '发布成功' : '已删除'}{itemData.isTop == undefined ? '' : (itemData.isTop == '1' ? ' | 时效' : ' | 非时效')} </div>
+                    {itemData.status == 3 ?
+                        <div className="articleTable_header_text w_160">待发布</div>
+                    :
+                    <div className="articleTable_header_text w_160">{itemData.status == 1 ? '发布成功' : '已删除'}{itemData.isTop == undefined ? '' : (itemData.isTop == '1' ? ' | 时效' : ' | 非时效')} </div>}
                     <div className="articleTable_header_text w_160">
                         <div>{itemData.publishTime}</div>
                         {/* <div>{itemData.updateTime.split('T')[1].split('.')[0]}</div> */}
@@ -161,7 +180,7 @@ class ArticleItem extends Component {
                             <Button onClick={this.editArticle.bind(null, data)} className="edit_article_btn">编辑</Button>
                         </div>
                         {
-                            itemData.status == 1 ? <div><Button onClick={this.articleEditFunc.bind(null, itemData)} type="danger">删除</Button></div> : <Button onClick={this.articleEditFunc.bind(null, itemData)} type="primary">还原</Button>
+                            (itemData.status == 1 || itemData.status == 3) ? <div><Button onClick={this.articleEditFunc.bind(null, itemData)} type="danger">删除</Button></div> : <Button onClick={this.articleEditFunc.bind(null, itemData)} type="primary">还原</Button>
                         }
                     </div>
                 </div>
