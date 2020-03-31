@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Button,message } from 'antd';
 import './style.css';
 
@@ -147,6 +148,9 @@ class ArticleItem extends Component {
         // })
     }
 
+    // Interactive(props)
+    // 跳转到评论列表
+
     render() {
 
         // console.log(this.props.data, '23')
@@ -161,7 +165,7 @@ class ArticleItem extends Component {
                 <div className="article_item_head">
                     <div className="articleTable_header_text w_280">
                         <p className="article_item_title">{itemData.title}</p>
-                        <div className="y_z_num">阅读：{itemData.readNum} 点赞：{itemData.likeNum}</div>
+                        <div className="y_z_num">阅读：{itemData.readNum} 点赞：{itemData.likeNum}  <Link to={`/commentManage?articleId=${itemData.id}&articleTitle=${encodeURIComponent(itemData.title)}`} className={`hudong ${itemData.commentNum>0?'active':''}`}>互动：{itemData.commentNum}</Link></div>
                     </div>
                     <div className="articleTable_header_text w_180">
                         <img className="fm_logo" src={itemData.picUrl.split(',')[0]} />

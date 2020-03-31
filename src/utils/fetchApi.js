@@ -18,7 +18,14 @@ export const postArticle = domain + '/article/create';
 //评论列表
 export const commentList = domain + '/comment/list';
 
+//评论导出excel
+export const commentExport = domain + '/comment/export';
+
+//评论删除
 export const deleteComment = domain + '/comment/delete';
+
+//评论恢复
+export const recoverComment = domain + '/comment/recover';
 
 //作者列表页 分页
 export const authorList = domain + '/author/list-page';

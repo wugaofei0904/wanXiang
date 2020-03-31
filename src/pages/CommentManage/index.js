@@ -8,9 +8,9 @@ import { withRouter } from 'react-router-dom';
 
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
-import { domain } from './../../utils/fetchApi';
+// import { domain } from './../../utils/fetchApi';
 
-import { commentList, articleExport } from './../../utils/fetchApi'
+import { commentList, commentExport,domain } from './../../utils/fetchApi'
 
 
 const { Option } = Select;
@@ -25,7 +25,7 @@ class CommentManage extends Component {
     super(props);
     this.state = {
       pageNumber: 1,
-      status: 0,  //状态筛选
+      status: '',  //状态筛选
       appType: '', // 平台筛选
       type: '',// 互动类型
       articleName: '',  //文章名
@@ -34,6 +34,9 @@ class CommentManage extends Component {
       startTime: '',
       endTime: '',
 
+      articleId:'',//文章id
+      // articleTitle: this.props.location.state.articleTitle, // 从文章列表页面传递的名称
+      // articleId:this.props.location.state.articleId,// 从文章列表页面传递的id
 
       modalVisible: false,
       articleStatus: '',
@@ -83,7 +86,8 @@ class CommentManage extends Component {
 
   articleNameChange = (e) => {
     this.setState({
-      articleName: e.target.value
+      articleName: e.target.value,
+      articleId:""
     })
   }
 
@@ -112,22 +116,24 @@ class CommentManage extends Component {
   searchList = (pageNumber) => {
 
 
-    let { status, appType, type, articleName, nickname, body, startTime, endTime, pageSize, sxStatus } = this.state;
+    let { status, appType, type, articleName, nickname, body, startTime, endTime, pageSize,articleId } = this.state;
     let _this = this;
-    let _url = `${commentList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${status}&appType=${appType}&type=${type}&articleName=${articleName}&nickname=${nickname}&body=${body}&startTime=${startTime}&endTime=${endTime}`
-    if (sxStatus != '-1') {
-      _url += `&isTop=${sxStatus}`
-    }
+    let _url = `${commentList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${status}&appType=${appType}&type=${type}&articleName=${articleName}&nickname=${nickname}&body=${body}&startTime=${startTime}&endTime=${endTime}&articleId=${articleId}`
+    // if (sxStatus != '-1') {
+    //   _url += `&isTop=${sxStatus}`
+    // }
     fetch(_url)
       // fetch(`${articleList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`)
       .then(function (response) {
         return response.json()
       }).then(function (json) {
+        console.log(json.data);
         if (json.success) {
           //更新当前列表
           _this.setState({
             total: json.total,
-            listData: json.data
+            listData: json.data,
+            pageNumber:pageNumber
           })
           window.scrollTo(0, 0);
         } else if (json.msg == '未登录') {
@@ -140,48 +146,43 @@ class CommentManage extends Component {
 
   }
 
-  exportExl = (pageNumber) => {
-    let { articleStatus, articleName, anthorName, startTime, endTime, pageSize, sxStatus } = this.state;
-    let _this = this;
-    // fetch(`${articleExport}?status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}&isTop=${sxStatus}`)
-    //   // fetch(`${articleExport}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`)
-    //   .then(function (response) {
-    //     return response.json()
-    //   }).then(function (json) {
-    //     if (json.success) {
-    //       //更新当前列表
-    //       _this.setState({
-    //         total: json.total,
-    //         listData: json.data
-    //       })
-    //       window.scrollTo(0, 0);
-    //     } else if (json.msg == '未登录') {
-    //       window.initLogin();
-    //     }
-
-    //   }).catch(function (ex) {
-    //     console.log('parsing failed', ex)
-    //   })
-    let _url = `${articleExport}?status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}`
-    if (sxStatus != '-1') {
-      _url += `&isTop=${sxStatus}`
-    }
-    // window.location.href = `${articleExport}?status=${articleStatus}&title=${articleName}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}&isTop=${sxStatus}`
+  exportExl = (e) => {
+    const pageNumber = this.state.pageNumber;
+    let { status, appType, type, articleName, nickname, body, startTime, endTime, pageSize,articleId} = this.state;
+    let _url = `${commentExport}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${status}&appType=${appType}&type=${type}&articleName=${articleName}&nickname=${nickname}&body=${body}&startTime=${startTime}&endTime=${endTime}&articleId=${articleId}`
     window.location.href = _url
   }
 
 
   componentDidMount() {
 
+    let search = this.props.location.search;
+    if(search.length>0){
+      let arr = search.substr(1).split("&");
+      let name = "";
+      let value = "";
+      let item = [];
+      let args = {};
+      for(let i = 0;i < arr.length;i++){
+        item = arr[i].split("=");
+        name = decodeURIComponent(item[0]);
+        value = decodeURIComponent(item[1]);
+        if(name.length){
+          args[name] = value;
+        }
+      }
+      this.setState({
+        articleId: args.articleId,
+        articleName: args.articleTitle,
+      })
+    }
 
-    // let _hasList = this.try_restore_component();
-    // console.log(_hasList);
+    // this.searchList(1);
+    let _hasList = this.try_restore_component();
 
-    // if (!_hasList) {
-    //   // debugger
-    //   this.searchList(1);
-    // }
-    this.searchList(1);
+    if (!_hasList) {
+      this.searchList(1);
+    }
 
     Array.prototype.indexOf = function (val) {
       for (var i = 0; i < this.length; i++) {
@@ -189,49 +190,99 @@ class CommentManage extends Component {
       }
       return -1;
     };
+    
     Array.prototype.remove = function (val) {
       var index = this.indexOf(val);
       if (index > -1) {
         this.splice(index, 1);
       }
     };
-
     const _this = this;
+    Array.prototype.changeDelete = function(data){
+      for(let i in this){
+        if(this[i].id == data.id){
+          this[i] = data;
+          break;
+        }
+      }
+      _this.setState({
+        listData: this
+      })
+    }
   }
 
-  // try_restore_component(cb) {
-  //   let data = window.sessionStorage.getItem("tmpdata");
-  //   if (data) {
-  //     data = JSON.parse(data);
-  //     this.setState(
-  //       {
-  //         listData: data.listData,
-  //         pageNumber: parseInt(data.pageNumber),
-  //         scrollpx: data.scrollpx,
-  //         total: data.total,
-  //       }
-  //     )
-  //     // window.sessionStorage.setItem('tmpdata', '');
+  refreshList = (pageNumber,callback) => {
+    let { status, appType, type, articleName, nickname, body, startTime, endTime, pageSize,articleId} = this.state;
+    let _url = `${commentList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${status}&appType=${appType}&type=${type}&articleName=${articleName}&nickname=${nickname}&body=${body}&startTime=${startTime}&endTime=${endTime}&articleId=${articleId}`
+    
+    fetch(_url)
+        .then(function (response) {
+            return response.json()
+        }).then(function (json) {
+        if (json.success) {
+            callback && callback(json)
+        } else if (json.msg == '未登录') {
+            window.initLogin();
+        }
+    }).catch(function (ex) {
+        console.log('parsing failed', ex)
+    })
 
-  //     setTimeout(() => {
-  //       // debugger
-  //       window.scrollTo(0, data.scrollpx);
-  //     }, 10)
-  //     return 1
-  //   }
-  //   return 0
-  // }
+  }
+
+  try_restore_component(cb) {
+    let data = window.sessionStorage.getItem("commentdata");
+    if (data) {
+      data = JSON.parse(data);
+      if(data.articleId && data.articleId == this.state.articleId){
+        return 0;
+      }
+      // console.log(data)
+
+      let _this=this;
+      this.refreshList(parseInt(data.pageNumber),(newJson)=>{  //获取当前页最新数据
+          _this.setState(
+              {
+                  listData: newJson.data,
+                  pageNumber: parseInt(data.pageNumber),
+                  scrollpx: data.scrollpx,
+                  total: newJson.total,
+              }
+          )
+          window.sessionStorage.setItem('commentdata', '');
+          setTimeout(() => {
+              // debugger
+              window.scrollTo(0, data.scrollpx);
+          }, 10)
+      }); 
+      return 1
+    }
+    return 0
+  }
 
   componentWillUnmount() {
     console.log('待保存的数据：', this.state.listData);
     console.log('保存滚动条位置：', window.scrollY);
+    
+    const {state} = this;
     let data = {
-      listData: this.state.listData,
+      
+      listData: state.listData,
       scrollpx: window.scrollY,
-      pageNumber: this.state.pageNumber,
-      total: this.state.total
+      pageNumber: state.pageNumber,
+      total: state.total,
+      
+      // status: state.status,  //状态筛选
+      // appType: state.appType, // 平台筛选
+      // type:  state.type,// 互动类型
+      // articleName: state.articleName,  //文章名
+      // nickname: state.nickname, // 用户
+      // body: state.body, // 评论内容
+      // startTime: state.startTime,
+      // endTime: state.endTime,
+      // articleId:state.articleId
     }
-    window.sessionStorage.setItem('tmpdata', JSON.stringify(data));
+    window.sessionStorage.setItem('commentdata', JSON.stringify(data));
   }
 
   render() {
@@ -243,14 +294,14 @@ class CommentManage extends Component {
         <div className="fiter-list">
           <Row className="row" type="flex">
             <Col className="mr-12">
-              <Select defaultValue="" style={{ width: 100 }} onChange={this.statusChange}>
+              <Select defaultValue={this.state.status} style={{ width: 100 }} onChange={this.statusChange}>
                 <Option value="">全部状态</Option>
                 <Option value="0">在线</Option>
                 <Option value="1">已下线</Option>
               </Select>
             </Col>
             <Col className="mr-12">
-              <Select defaultValue="" style={{ width: 100 }} onChange={this.appTypeChange}>
+              <Select defaultValue={this.state.appType} style={{ width: 100 }} onChange={this.appTypeChange}>
                 <Option value="">全部平台</Option>
                 <Option value="0">百度</Option>
                 <Option value="1">微信</Option>
@@ -258,7 +309,7 @@ class CommentManage extends Component {
               </Select>
             </Col>
             <Col className="mr-12">
-              <Select defaultValue="" style={{ width: 100 }} onChange={this.typeChange}>
+              <Select defaultValue={this.state.type} style={{ width: 100 }} onChange={this.typeChange}>
                 <Option value="">全部类型</Option>
                 <Option value="0">评论</Option>
                 <Option value="1">回复</Option>
@@ -266,20 +317,20 @@ class CommentManage extends Component {
             </Col>
             <Col >文章名：</Col>
             <Col className="mr-12">
-              <Input onChange={this.articleNameChange} style={{ width: 80 }} placeholder="" />
+              <Input value={this.state.articleName} onChange={this.articleNameChange} style={{ width: 80 }} placeholder="" />
             </Col>
             <Col >内容：</Col>
             <Col className="mr-12">
-              <Input onChange={this.bodyChange} placeholder="" style={{ width: 80 }} />
+              <Input value={this.state.body} onChange={this.bodyChange} placeholder="" style={{ width: 80 }} />
             </Col>
             <Col >用户：</Col>
             <Col className="mr-12">
-              <Input onChange={this.anthorChange} placeholder="" style={{ width: 80 }} />
+              <Input value={this.state.nickname} onChange={this.anthorChange} placeholder="" style={{ width: 80 }} />
             </Col>
             <Col >发布时间： </Col>
               <Col className="mr-12">
                 <LocaleProvider locale={zh_CN}>
-                  <RangePicker onChange={this.rangePickeronChange} />
+                  <RangePicker defaultValue={[this.state.startTime?moment(this.state.startTime, 'YYYY-MM-dd'):null,this.state.endTime?moment(this.state.endTime, 'YYYY-MM-dd'):null]} onChange={this.rangePickeronChange} />
                 </LocaleProvider>
               </Col>
               <Col className="mr-12"><Button onClick={this.searchList.bind(null, 1)}>查找</Button></Col>
@@ -292,7 +343,7 @@ class CommentManage extends Component {
             <div className="articleTable_header_text w_100">共{total}条</div>
             {/* <div className="articleTable_header_text w_180">评论者</div> */}
             <div className="articleTable_header_text w_100">类型</div>
-            <div className="articleTable_header_text w_280">互动内容</div>
+            <div className="articleTable_header_text w_400">互动内容</div>
             <div className="articleTable_header_text w_180">文章名</div>
             <div className="articleTable_header_text w_100">发布时间</div>
             <div className="articleTable_header_text w_100">认可数</div>
