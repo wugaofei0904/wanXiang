@@ -155,7 +155,7 @@ class CommentManage extends Component {
 
 
   componentDidMount() {
-
+    const _this = this;
     let search = this.props.location.search;
     if(search.length>0){
       let arr = search.substr(1).split("&");
@@ -171,18 +171,21 @@ class CommentManage extends Component {
           args[name] = value;
         }
       }
-      this.setState({
+      _this.setState({
         articleId: args.articleId,
         articleName: args.articleTitle,
-      })
+      },()=>{
+        this.searchList(1);
+      });
+      
+    }else{
+      let _hasList = this.try_restore_component();
+      if (!_hasList) {
+        this.searchList(1);
+      }
     }
-
     // this.searchList(1);
-    let _hasList = this.try_restore_component();
-
-    if (!_hasList) {
-      this.searchList(1);
-    }
+    
 
     Array.prototype.indexOf = function (val) {
       for (var i = 0; i < this.length; i++) {
@@ -197,7 +200,6 @@ class CommentManage extends Component {
         this.splice(index, 1);
       }
     };
-    const _this = this;
     Array.prototype.changeDelete = function(data){
       for(let i in this){
         if(this[i].id == data.id){
@@ -213,6 +215,7 @@ class CommentManage extends Component {
 
   refreshList = (pageNumber,callback) => {
     let { status, appType, type, articleName, nickname, body, startTime, endTime, pageSize,articleId} = this.state;
+    console.log(articleId);
     let _url = `${commentList}?pageSize=${pageSize}&pageNum=${pageNumber}&status=${status}&appType=${appType}&type=${type}&articleName=${articleName}&nickname=${nickname}&body=${body}&startTime=${startTime}&endTime=${endTime}&articleId=${articleId}`
     
     fetch(_url)
@@ -234,7 +237,7 @@ class CommentManage extends Component {
     let data = window.sessionStorage.getItem("commentdata");
     if (data) {
       data = JSON.parse(data);
-      if(data.articleId && data.articleId == this.state.articleId){
+      if(this.state.articleId){
         return 0;
       }
       // console.log(data)
@@ -294,14 +297,14 @@ class CommentManage extends Component {
         <div className="fiter-list">
           <Row className="row" type="flex">
             <Col className="mr-12">
-              <Select defaultValue={this.state.status} style={{ width: 100 }} onChange={this.statusChange}>
+              <Select defaultValue='' style={{ width: 100 }} onChange={this.statusChange}>
                 <Option value="">全部状态</Option>
                 <Option value="0">在线</Option>
                 <Option value="1">已下线</Option>
               </Select>
             </Col>
             <Col className="mr-12">
-              <Select defaultValue={this.state.appType} style={{ width: 100 }} onChange={this.appTypeChange}>
+              <Select defaultValue='' style={{ width: 100 }} onChange={this.appTypeChange}>
                 <Option value="">全部平台</Option>
                 <Option value="0">百度</Option>
                 <Option value="1">微信</Option>
@@ -309,7 +312,7 @@ class CommentManage extends Component {
               </Select>
             </Col>
             <Col className="mr-12">
-              <Select defaultValue={this.state.type} style={{ width: 100 }} onChange={this.typeChange}>
+              <Select defaultValue='' style={{ width: 100 }} onChange={this.typeChange}>
                 <Option value="">全部类型</Option>
                 <Option value="0">评论</Option>
                 <Option value="1">回复</Option>
@@ -321,7 +324,7 @@ class CommentManage extends Component {
             </Col>
             <Col >内容：</Col>
             <Col className="mr-12">
-              <Input value={this.state.body} onChange={this.bodyChange} placeholder="" style={{ width: 80 }} />
+              <Input value='' onChange={this.bodyChange} placeholder="" style={{ width: 80 }} />
             </Col>
             <Col >用户：</Col>
             <Col className="mr-12">
@@ -330,7 +333,7 @@ class CommentManage extends Component {
             <Col >发布时间： </Col>
               <Col className="mr-12">
                 <LocaleProvider locale={zh_CN}>
-                  <RangePicker defaultValue={[this.state.startTime?moment(this.state.startTime, 'YYYY-MM-dd'):null,this.state.endTime?moment(this.state.endTime, 'YYYY-MM-dd'):null]} onChange={this.rangePickeronChange} />
+                  <RangePicker onChange={this.rangePickeronChange} />
                 </LocaleProvider>
               </Col>
               <Col className="mr-12"><Button onClick={this.searchList.bind(null, 1)}>查找</Button></Col>
