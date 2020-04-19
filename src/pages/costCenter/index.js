@@ -3,7 +3,6 @@ import {Button, Row, Col, Select, Input, message, DatePicker, Pagination, Tabs, 
 
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
-import moment from 'moment';
 import {withRouter} from 'react-router-dom';
 import 'moment/locale/zh-cn';
 import Request from "../../utils/request";
@@ -316,7 +315,11 @@ class CostCenter extends Component {
     }
 
     goToPage=(type)=>{
-
+        if(type==1){
+            this.props.history.push('dayCost')
+        }else if(type==2){
+            this.props.history.push('monthCost')
+        }
     }
 
     render() {

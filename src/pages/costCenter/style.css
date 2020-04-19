@@ -79,3 +79,11 @@
 .cursor{
   cursor: pointer;
 }
+
+.relative-title{
+  position: relative;
+}
+.absolute-content{
+  position: absolute;
+  top:-25px
+}

@@ -13,6 +13,8 @@ import CommoditySet from './pages/commoditySet/index.js';
 import BannerManage from './pages/bannerManage';
 import AuthManage from './pages/authManage'
 import CostCenter from './pages/costCenter/index.js'
+import DayCost from "./pages/costCenter/components/DayCost";
+import MonthCost from "./pages/costCenter/components/MonthCost";
 // import OtherPage from './pages/otherPage/index.js';
 
 class App extends Component {
@@ -43,6 +45,8 @@ class App extends Component {
           <Route exact path="/bannerManage" component={BannerManage} />
             <Route exact path="/authManage" component={AuthManage} />
             <Route exact path="/costCenter" component={CostCenter} />
+            <Route exact path="/dayCost" component={DayCost} />
+            <Route exact path="/monthCost" component={MonthCost} />
           {/* <Route exact path="/createAnthor/:edit/:data" component={CreateAnthor} /> */}
           <Route component={ArticleManage} />
         </Switch>

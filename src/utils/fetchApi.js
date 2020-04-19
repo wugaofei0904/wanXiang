@@ -135,8 +135,12 @@ export const getDayCost =`${domain}/cost/dayCost`
 //月收益列表
 export const getMonthCost =`${domain}/cost/monthCost`
 
-//月收益列表
+//设置补贴
 export const updateSubsidy =`${domain}/cost/updateSubsidy`
+//日收益导出
+export const dayCostExport =`${domain}/cost/dayCostExport`
+//月导出
+export const monthCostExport =`${domain}/cost/monthCostExport`
 
 
 
