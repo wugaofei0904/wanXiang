@@ -1,0 +1,81 @@
+.flex_1 {
+  flex: 1;
+}
+.width_120 {
+  width: 220px;
+}
+
+
+.width_120_n {
+  width: 120px;
+}
+
+.w_150_n{
+  width: 150px;
+}
+
+.w_200_n{
+  width: 200px;
+}
+
+.width_80 {
+  width: 80px;
+  text-align: center;
+}
+.text_center{
+  text-align: center;
+}
+.text_right{
+  text-align: right;
+}
+
+.fabu_btn_2 {
+  position: absolute;
+  right: 16px;
+  top: -56px;
+}
+
+.content-area{
+  display: flex;
+  flex-direction: column;
+}
+.content-area-title{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content-area-content{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color:#000000;
+}
+.content-area-content-item{
+  display: flex;
+  flex-direction: column;
+}
+.content-area-font{
+  color:#000;
+  font-weight: bold;
+  font-size:15px ;
+}
+.content-area-content-itemFot{
+  font-size: 20px;
+}
+.content-area-content-itemBot{
+  margin-top: 20px;
+  font-size: 10px;
+}
+#main{
+  height:500px;
+  width:100%;
+}
+
+.cursor{
+  cursor: pointer;
+}
