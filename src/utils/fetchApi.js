@@ -123,6 +123,27 @@ export const wxAuthUrl =`${domain}/wx/op/authUrl`
 /**权限接口 */
 // 获取用户列表
 export const getUser = `${domain}/permission/user`
+//获取内容成本
+export const costBenifit =`${domain}/cost/benefit`
+
+//获取工单列表数据
+export const costList =`${domain}/cost/order`
+
+//支付工单
+export const costPay =`${domain}/cost/pay`
+
+//日收益列表
+export const getDayCost =`${domain}/cost/dayCost`
+
+//月收益列表
+export const getMonthCost =`${domain}/cost/monthCost`
+
+//设置补贴
+export const updateSubsidy =`${domain}/cost/updateSubsidy`
+//日收益导出
+export const dayCostExport =`${domain}/cost/dayCostExport`
+//月导出
+export const monthCostExport =`${domain}/cost/monthCostExport`
 
 //获取菜单列表
 export const getMenu = `${domain}/permission/menu`

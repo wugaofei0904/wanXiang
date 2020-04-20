@@ -27,10 +27,14 @@ class CreateAnthor extends Component {
             localImg: '',
             imgValue: '',
             qrCode: '',
-            wxIndexName: '',
             resultImg: '',
             qrResultImg: '',
-            tagIdList: []  //领域list
+            tagIdList: [],  //领域list
+            phone:'',
+            payee:'',
+            cardNo:'',
+            bank:''
+
         };
     }
 
@@ -98,7 +102,7 @@ class CreateAnthor extends Component {
             }
             if (edit) {
                 let _data = JSON.parse(data);
-                let _publicUrl = decodeURIComponent(_data.publicUrl)
+                // let _publicUrl = decodeURIComponent(_data.publicUrl)
                 _this.setState({
                     rank: _data.rank,
                     anthorName: _data.name,
@@ -111,7 +115,10 @@ class CreateAnthor extends Component {
                     qrResultImg: _data.qrCode,
                     edit: true,
                     id: _data.id,
-                    wxIndexName: _publicUrl
+                    phone:_data.phone || '',
+                    payee: _data.payee || '',
+                    cardNo: _data.cardNo || '',
+                    bank:_data.bank || ''
                 })
             }
         } catch (err) {
@@ -306,17 +313,17 @@ class CreateAnthor extends Component {
 
 
 
-    wxIndexNameChange = (e) => {
-        this.setState({
-            wxIndexName: e.target.value
-        })
-    }
+    // wxIndexNameChange = (e) => {
+    //     this.setState({
+    //         wxIndexName: e.target.value
+    //     })
+    // }
 
     submitData = () => {
 
-        let { id, edit, rank, anthorName, shenfenText, business, wxName, tagId, resultImg, qrResultImg, wxIndexName } = this.state;
+        let { id, edit, rank, anthorName, shenfenText, business, wxName, tagId, resultImg, qrResultImg, phone,payee,cardNo,bank } = this.state;
 
-        let _publicUrl = encodeURIComponent(wxIndexName)
+        // let _publicUrl = encodeURIComponent(wxIndexName)
 
         let _this = this;
         // console.log(rank, anthorName, shenfenText, wxName, tagId, resultImg);
@@ -326,11 +333,17 @@ class CreateAnthor extends Component {
             alert('商务信息字段不能超过3行')
             return false
         }
+        let reg = /^1[3-9][0-9]{9}$/;
+        if (phone && phone.length!=11 && !reg.test(phone)){
+            alert('手机号格式有误')
+            return false
+        }
+
 
         business = business.replace(/\r\n/g,'<br/>').replace(/\n/g,'<br/>').replace(/\s/g,' ')
 
         if (edit) {
-            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&business=${business}&qrCode=${qrResultImg}&headImg=${resultImg}&wxId=${wxName}&publicUrl=${_publicUrl}`)
+            fetch(`${authorEdit}?id=${id}&name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&business=${business}&qrCode=${qrResultImg}&headImg=${resultImg}&wxId=${wxName}&phone=${phone}&payee=${payee}&cardNo=${cardNo}&bank=${bank}`)
                 .then(function (response) {
                     return response.json()
                 }).then(function (json) {
@@ -348,7 +361,7 @@ class CreateAnthor extends Component {
                     console.log('parsing failed', ex)
                 })
         } else {
-            fetch(`${createAuthor}?name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&business=${business}&qrCode=${qrResultImg}&headImg=${resultImg}&wxId=${wxName}`)
+            fetch(`${createAuthor}?name=${anthorName}&rank=${rank}&tagId=${tagId}&detail=${shenfenText}&business=${business}&qrCode=${qrResultImg}&headImg=${resultImg}&wxId=${wxName}&phone=${phone}&payee=${payee}&cardNo=${cardNo}&bank=${bank}`)
                 .then(function (response) {
                     return response.json()
                 }).then(function (json) {
@@ -373,11 +386,19 @@ class CreateAnthor extends Component {
         this.props.history.push('/anthorManage')
     }
 
+    infoChange=(val,e)=>{
+        if(val=='cardNo'){
+            e.target.value=e.target.value.replace(/[^\-?\d.]/g,'')
+        }
+        this.setState({
+            [val]:e.target.value
+    })
 
+    }
 
     render() {
         // debugger
-        let { tagName, rank, tagId, wxName, shenfenText, business, tagIdList, localImg, imgValue, qrCode, resultImg, qrResultImg, anthorName, wxIndexName } = this.state;
+        let { tagName, rank, tagId, wxName, shenfenText, business, tagIdList, localImg, imgValue, qrCode, resultImg, qrResultImg, anthorName,phone,payee,cardNo,bank } = this.state;
         console.log(rank, tagId, wxName, shenfenText, business, tagIdList, localImg, imgValue, qrCode, resultImg, qrResultImg, anthorName)
 
         return (
@@ -484,9 +505,30 @@ class CreateAnthor extends Component {
                 </div>
 
                 <div className="form_item">
-                    <div className="item_title">公众号主页</div>
+                    <div className="item_title">手机号</div>
                     <div className="item_content">
-                        <Input value={wxIndexName} className="w_300" onChange={this.wxIndexNameChange} placeholder="请输入公众号主页" />
+                        <Input value={phone} className="w_300" onChange={this.infoChange.bind(this,'phone')} placeholder="请输入手机号" />
+                    </div>
+                </div>
+
+                <div className="form_item">
+                    <div className="item_title">收款人名称</div>
+                    <div className="item_content">
+                        <Input value={payee} className="w_300" onChange={this.infoChange.bind(this,'payee')} placeholder="请输入收款人名称" />
+                    </div>
+                </div>
+
+                <div className="form_item">
+                    <div className="item_title">银行卡</div>
+                    <div className="item_content">
+                        <Input value={cardNo} className="w_300" onChange={this.infoChange.bind(this,'cardNo')} placeholder="请输入银行卡" />
+                    </div>
+                </div>
+
+                <div className="form_item">
+                    <div className="item_title">开户行</div>
+                    <div className="item_content">
+                        <Input value={bank} className="w_300" onChange={this.infoChange.bind(this,'bank')} placeholder="请输入开户行" />
                     </div>
                 </div>
 
