@@ -27,8 +27,8 @@ class MonthCost extends Component {
             rank: '',
             startTime: '',
             endTime: '',
-            open:false
-
+            open:false,
+            value:[]
         };
         this.columns = [{
             title: '作者名',
@@ -196,11 +196,32 @@ class MonthCost extends Component {
             open:!boolean
         })
     }
+
+    // onOpenChangeSelect=(boolean,val)=>{
+    //     this.setState({
+    //         open:!boolean
+    //     })
+    // }
     rankChange = (value) => {
         this.setState({
             rank: value
         })
+        this.handlePanelChange(value)
     }
+    handleChange = value => {
+        this.setState({ value });
+        if(value[0] && value[1]){
+            this.setState({
+                startTime: value[0].format('YYYY-MM-DD'),
+                endTime: value[1].format('YYYY-MM-DD'),
+            })
+        }else{
+            this.setState({
+                startTime: '',
+                endTime: '',
+            })
+        }
+    };
     handlePanelChange = (value) => {
         this.setState({
             value,
@@ -210,10 +231,9 @@ class MonthCost extends Component {
             endTime: value[1].format('YYYY-MM-DD'),
         })
     };
-
-    renderButton=()=>{
-        return (<Button type={'primary'} onClick={()=>this.onOpenChange(true)} >确定</Button>)
-    }
+    // renderButton=(val)=>{
+    //     return (<Button type={'primary'} onClick={()=>this.onOpenChangeSelect(true,val)} >确定</Button>)
+    // }
     render() {
         let {total, dayList, pageNumber,value,open} = this.state;
         return (
@@ -247,9 +267,10 @@ class MonthCost extends Component {
                                              format="YYYY-MM"
                                              mode={mode}
                                              open={open}
+                                             allowClear={true}
+                                             onChange={this.handleChange}
                                              onOpenChange={()=>this.onOpenChange(open)}
                                              onPanelChange={this.handlePanelChange}
-                                             renderExtraFooter={this.renderButton}
 
                                 />
                             </LocaleProvider>
