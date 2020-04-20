@@ -10,7 +10,7 @@ import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
 // import { domain } from './../../utils/fetchApi';
 
-import { commentList, commentExport,domain } from './../../utils/fetchApi'
+import { commentList, commentExport,domain } from '../../utils/fetchApi'
 
 
 const { Option } = Select;
@@ -127,7 +127,7 @@ class CommentManage extends Component {
       .then(function (response) {
         return response.json()
       }).then(function (json) {
-        console.log(json.data);
+        // console.log(json.data);
         if (json.success) {
           //更新当前列表
           _this.setState({
@@ -324,7 +324,7 @@ class CommentManage extends Component {
             </Col>
             <Col >内容：</Col>
             <Col className="mr-12">
-              <Input value='' onChange={this.bodyChange} placeholder="" style={{ width: 80 }} />
+              <Input value={this.state.body} onChange={this.bodyChange} placeholder="" style={{ width: 80 }} />
             </Col>
             <Col >用户：</Col>
             <Col className="mr-12">

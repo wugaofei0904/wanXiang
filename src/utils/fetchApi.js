@@ -120,8 +120,24 @@ export const stopGrab =`${domain}/author/stop-grab`
 //获取二维码
 export const wxAuthUrl =`${domain}/wx/op/authUrl`
 
+/**权限接口 */
+// 获取用户列表
+export const getUser = `${domain}/permission/user`
 
+//获取菜单列表
+export const getMenu = `${domain}/permission/menu`
 
+//修改权限
+export const editMenu = `${domain}/permission/edit`
+
+//修改用户状态
+export const editUser = `${domain}/permission/editUser`
+
+//删除用户
+export const deleteUser = `${domain}/permission/deleteUser`
+
+//删除用户
+export const addUser = `${domain}/permission/addUser`
 
 
 

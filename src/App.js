@@ -3,9 +3,10 @@ import { Button } from 'antd';
 import './App.css';
 import { Route, Link, Switch, HashRouter as Router, withRouter } from 'react-router-dom';
 import ArticleManage from './pages/articleManage/index.js';
-import CommentManage from './pages/CommentManage/index.js'
+import CommentManage from './pages/commentManage/index.js'
 import AnthorManage from './pages/anthorManage/index.js';
 import ActionHistory from './pages/actionHistory/index.js';
+import AuthorityManage from './pages/authorityManage/index.js';
 import EditPage from './pages/edit/index.js';
 import LoginPage from './pages/login/index.js';
 import CreateAnthor from './pages/createAnthor/index.js';
@@ -35,12 +36,13 @@ class App extends Component {
           <Route exact path="/commoditySet" component={CommoditySet} />
           <Route exact path="/anthorManage" component={AnthorManage} />
           <Route exact path="/actionHistory" component={ActionHistory} />
+          <Route exact path="/authorityManage" component={AuthorityManage} />
           <Route exact path="/editPage" component={EditPage} />
           <Route exact path='/editPage/:edit' component={EditPage} />
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/createAnthor" component={CreateAnthor} />
           <Route exact path="/bannerManage" component={BannerManage} />
-            <Route exact path="/authManage" component={AuthManage} />
+          <Route exact path="/authManage" component={AuthManage} />
           {/* <Route exact path="/createAnthor/:edit/:data" component={CreateAnthor} /> */}
           <Route component={ArticleManage} />
         </Switch>

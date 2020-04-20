@@ -44,5 +44,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://www.jiandi.life:8081"
+  "proxy": "http://test.jiandi.life",
+  "proxy2": "http://www.jiandi.life:8081"
 }

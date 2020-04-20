@@ -1,0 +1,22 @@
+
+.authority-title{
+    font-size: 16px;
+    font-weight: 600;
+}
+.btn-wrap{
+    position: absolute;
+    right: 16px;
+}
+.edit-line{
+    margin-top: 15px;
+}
+.edit-line span{
+    width: 5em;
+    text-align: right;
+    vertical-align: middle;
+    line-height: 32px;
+}
+.edit-line input,.edit-line authority-list{
+    width: calc(100% - 5em);
+    flex: 1;
+}
