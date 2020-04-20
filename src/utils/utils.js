@@ -30,6 +30,18 @@ export function dateFtt(fmt,date)
     return fmt;
 }
 
+export function DateIsFS(){
+    let date=new Date();
+    let day=date.getDate();
+    let month=date.getMonth()+1;
+    let returnVal={
+        month:month,
+        day:day
+    }
+    return returnVal
+}
+
+
 function addZero(num) {
     return num < 10 ? '0' + num : num;
 }

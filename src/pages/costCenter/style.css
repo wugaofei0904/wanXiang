@@ -64,6 +64,9 @@
   font-weight: bold;
   font-size:15px ;
 }
+.ant-input-number-handler-wrap{
+  display:none
+}
 .content-area-content-itemFot{
   font-size: 20px;
 }

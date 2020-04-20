@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import {LocaleProvider, Button, Row, Col, Select, Input, DatePicker, Pagination, Badge, Table} from 'antd';
+import {LocaleProvider, Button, Row, Col, Select, Input,InputNumber, DatePicker, Pagination, message, Table} from 'antd';
 import HeaderTabbar from '../../../components/headTabBar/index';
 import {withRouter} from 'react-router-dom';
 import '../style.css'
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
-import {getMonthCost, monthCostExport} from "../../../utils/fetchApi";
+import {getMonthCost, monthCostExport,updateSubsidy} from "../../../utils/fetchApi";
 import Request from "../../../utils/request";
-
+import {DateIsFS} from '../../../utils/utils'
 
 const {Option} = Select;
 const {RangePicker} = DatePicker;
@@ -68,6 +68,7 @@ class MonthCost extends Component {
             dataIndex: 'month',
             key: 'month',
             render: (text, record) => {
+
                 return (<span>{text}月</span>)
             }
         }, {
@@ -85,7 +86,18 @@ class MonthCost extends Component {
         }, {
             title: '创作补贴',
             dataIndex: 'subsidy',
-            key: 'subsidy'
+            key: 'subsidy',
+            render:(text,record)=>{
+                let val=DateIsFS();
+                let firstProper=val.day==1 ||val.day==2;
+                let secondProper=((val.month-1)==Number(record.month)) || (val.month==1 && Number(record.month)==12)
+                if(firstProper && secondProper){ //本月的一号二号方可编辑上月补贴
+                    return (<InputNumber value={text} min={0} onBlur={this.changeSubsidy.bind(this,record.orderId,text)}  style={{ width: 80 }} />
+                    )
+                }else{
+                    return (<span>{text}</span>)
+                }
+            }
         }, {
             title: '税费',
             dataIndex: 'tax',
@@ -97,6 +109,27 @@ class MonthCost extends Component {
         }]
     }
 
+    changeSubsidy=(id,originalVal,e)=>{
+        let val=e.target.value;
+
+        if(!(/(^[1-9]\d*$)/.test(val))){
+            e.target.value=originalVal
+            message.error('请输入大于0的整数')
+        }else{
+            // orderId
+            // subsidy
+            let _this=this;
+            let {pageNumber}=this.state
+            Request.Get_Request(`${updateSubsidy}?orderId=${id}&subsidy=${val}`, () => {
+                // let data = res.data;
+                message.success('修改成功')
+                _this.requestListData(pageNumber)
+
+            },()=>{
+                e.target.value=originalVal
+            })
+        }
+    }
 
     onChange = (pageNumber) => {
         this.setState({
@@ -168,17 +201,10 @@ class MonthCost extends Component {
             rank: value
         })
     }
-    handlePanelChange = (value, mode) => {
+    handlePanelChange = (value) => {
         this.setState({
             value,
         });
-        // if(value[1])
-        // {
-        //     this.setState({
-        //         open:false,
-        //     });
-        // }
-        // console.log('vale',moment(value[0]).format('YYYY-MM-DD'))
         this.setState({
             startTime: value[0].format('YYYY-MM-DD'),
             endTime: value[1].format('YYYY-MM-DD'),
