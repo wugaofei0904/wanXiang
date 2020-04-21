@@ -4,8 +4,8 @@ import './style.css';
 
 import { withRouter } from 'react-router-dom';
 
-import ToastComponent from './../../../components/toastComponent';
-import { deleteComment,recoverComment } from './../../../utils/fetchApi';
+import ToastComponent from '../../../components/toastComponent';
+import { deleteComment,recoverComment } from '../../../utils/fetchApi';
 
 class CommentItem extends Component {
 

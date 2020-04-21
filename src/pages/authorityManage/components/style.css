@@ -1,0 +1,22 @@
+
+.authority_item{
+    height: 80px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-top: 20px;
+}
+.articleTable_header_text input{
+    border:none;
+    padding-left: 0;
+}
+.check_wrap{
+    padding-left: 1rem;
+    
+}
+.authority_item .articleTable_header_text{
+    display: flex;
+    align-items: center;
+}
+.display-flex{
+    display: flex;
+    align-items: center;
+}
