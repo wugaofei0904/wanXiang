@@ -64,7 +64,7 @@ class MonthCost extends Component {
                 )
             }
         }, {
-            title: '时间',
+            title: '结算时间',
             dataIndex: 'month',
             key: 'month',
             render: (text, record) => {
@@ -259,7 +259,7 @@ class MonthCost extends Component {
                         <Col className="mr-12">
                             <Input onChange={this.nameChange} style={{width: 100}} placeholder=""/>
                         </Col>
-                        <Col>发布时间： </Col>
+                        <Col>结算时间： </Col>
                         <Col className="mr-12 relative-title">
                             <LocaleProvider locale={zh_CN}>
                                 <RangePicker placeholder={['开始月份', '结束月份']}

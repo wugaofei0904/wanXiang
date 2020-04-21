@@ -61,7 +61,7 @@ class DayCost extends Component {
                 )
             }
         }, {
-            title: '时间段',
+            title: '结算时间',
             dataIndex: 'balanceTime',
             key: 'balanceTime',
         }, {
@@ -168,7 +168,7 @@ class DayCost extends Component {
                             <Col className="mr-12">
                                 <Input onChange={this.nameChange} style={{width: 100}} placeholder=""/>
                             </Col>
-                            <Col>发布时间： </Col>
+                            <Col>结算时间： </Col>
                             <Col className="mr-12 relative-title">
                                 <LocaleProvider locale={zh_CN}>
                                     <RangePicker onChange={this.rangePickeronChange}/>
