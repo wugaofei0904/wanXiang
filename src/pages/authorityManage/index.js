@@ -15,9 +15,13 @@ const { MonthPicker, RangePicker } = DatePicker;
 const dateFormat = 'YYYY/MM/DD';
 const monthFormat = 'YYYY/MM';
 const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
+const layout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 20 },
+};
 
 class AuhorityManage extends Component {
-
+  formRef = React.createRef();
   constructor(props) {
     super(props);
     this.state = {
@@ -229,8 +233,14 @@ class AuhorityManage extends Component {
       }
     })
   }
-  confirm = ()=>{
-    console.log("confirm")
+  confirm = async()=>{
+    console.log(this.props.basic)
+    console.log(this.formRef.current.validateFields);
+    // this.formRef.current.validateFields((value,err)=>{
+    //   console.log(value)
+    // })
+    // this.formRef.current.resetFields()
+    // const values = await form.validateFields();
   }
 
   render() {
@@ -283,16 +293,17 @@ class AuhorityManage extends Component {
           okText="确认"
           cancelText="取消"
         >
-          {/* <Form
-            
+          <Form
+            {...layout}
             name="basic"
+            ref={this.formRef}
             // onFinish={onFinish}
             // onFinishFailed={onFinishFailed}
           >
             <Form.Item
               label="账号"
               name="username"
-              rules={[{ required: true, message: 'Please input your username!' }]}
+              rules={[{ required: true, message: '请输入账号!' }]}
             >
               <Input autoComplete="false" />
             </Form.Item>
@@ -300,22 +311,22 @@ class AuhorityManage extends Component {
             <Form.Item
               label="密码"
               name="password"
-              rules={[{ required: true, message: 'Please input your password!' }]}
+              rules={[{ required: true, message: '请输入密码!' }]}
             >
               <Input.Password autoComplete="new-password"/>
             </Form.Item>
 
             
-          </Form> */}
+          </Form>
 
 
 
-          <Row type="flex" className="edit-line">
+          {/* <Row type="flex" className="edit-line">
             <span>账号：</span><Input/>
           </Row>
           <Row type="flex" className="edit-line">
-            <span>密码：</span><Input type="password"/>
-          </Row>
+            <span>密码：</span><Input type="password" autoComplete="new-password"/>
+          </Row> */}
         </Modal>
       </div>
       
