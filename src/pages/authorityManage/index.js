@@ -233,8 +233,9 @@ class AuhorityManage extends Component {
       }
     })
   }
-  confirm = async()=>{
-    console.log(this.props.basic)
+  confirm = ()=>{
+    console.log(this.props)
+    console.log(this.form)
     console.log(this.formRef.current.validateFields);
     // this.formRef.current.validateFields((value,err)=>{
     //   console.log(value)

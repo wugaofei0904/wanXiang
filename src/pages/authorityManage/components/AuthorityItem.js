@@ -70,7 +70,7 @@ class AuthorityItem extends Component {
                             })
                         }
                     </Checkbox.Group>
-                    <div className="articleTable_header_text w_160">{data.status?'正常':'下线'}</div>
+                    <div className="articleTable_header_text w_160">{data.status==1?'正常':'下线'}</div>
                     <div className="articleTable_header_text w_160">
                         <Button type={data.status==1?'danger':'primary'}  onClick={this.changeLine.bind(null, data.id,data.status)} className="delete_comment_btn m_r_12">{data.status==1?'下线':'上线'}</Button>
                         <Button type='danger'  onClick={this.deleteAuthority.bind(null, data.id)} className="delete_comment_btn">删除</Button>
