@@ -109,7 +109,7 @@ class ArticleManage extends Component {
             listData: json.data
           })
           window.scrollTo(0, 0);
-        } else if (json.msg == '未登录') {
+        } else if (json.code == '506') {
           window.initLogin();
         }
 
@@ -134,7 +134,7 @@ class ArticleManage extends Component {
     //         listData: json.data
     //       })
     //       window.scrollTo(0, 0);
-    //     } else if (json.msg == '未登录') {
+    //     } else if (json.code == '506') {
     //       window.initLogin();
     //     }
 
@@ -184,7 +184,7 @@ class ArticleManage extends Component {
             }).then(function (json) {
             if (json.success) {
                 callback && callback(json)
-            } else if (json.msg == '未登录') {
+            } else if (json.code == '506') {
                 window.initLogin();
             }
         }).catch(function (ex) {

@@ -340,7 +340,7 @@ class ArticleManage extends Component {
           _this.setState({
             anthorList: [...anthorList]
           })
-        } else if (json.msg == '未登录') {
+        } else if (json.code == '506') {
           alert(json.msg)
           window.initLogin();
         } else {
@@ -367,7 +367,7 @@ class ArticleManage extends Component {
           // _this.setState({
           //   anthorList: [...anthorList]
           // })
-        } else if (json.msg == '未登录') {
+        } else if (json.code == '506') {
           alert(json.msg)
           window.initLogin();
         } else {
@@ -408,7 +408,7 @@ class ArticleManage extends Component {
             anthorList: json.data,
             total: json.total
           })
-        } else if (json.msg == '未登录') {
+        } else if (json.code == '506') {
           alert(json.msg)
           window.initLogin();
         } else {
@@ -449,7 +449,7 @@ class ArticleManage extends Component {
               _this.setState({
                   redCount: json.data
               })
-          } else if (json.msg == '未登录') {
+          } else if (json.code == '506') {
               alert(json.msg)
               window.initLogin();
           } else {

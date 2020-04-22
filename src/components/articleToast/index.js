@@ -116,7 +116,7 @@ class ArticleToast extends React.Component {
                         articleListdata: json.data
                     })
                     // window.scrollTo(0, 0);
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     window.initLogin();
                 }
             }).catch(function (ex) {

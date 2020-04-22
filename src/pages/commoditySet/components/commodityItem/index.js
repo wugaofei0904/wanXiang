@@ -48,7 +48,7 @@ class CommodityItem extends Component {
                             status: itemData.status == '1' ? '0' : '1'
                         }
                     })
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     alert(json.msg)
                     window.initLogin();
                 } else {

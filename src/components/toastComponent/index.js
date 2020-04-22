@@ -108,7 +108,7 @@ class toastComponent extends React.Component {
                     _this.setState({
                         searchTagList: json.data
                     })
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     window.initLogin();
                 }
 

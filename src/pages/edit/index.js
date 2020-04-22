@@ -537,7 +537,7 @@ class EditForm extends Component {
                                     setTimeout(() => {
                                         _this.props.history.push('/articleManage')
                                     }, 1500)
-                                } else if (json.msg == '未登录') {
+                                } else if (json.code == '506') {
                                     alert(json.msg)
                                     window.initLogin();
                                 } else {
@@ -562,7 +562,7 @@ class EditForm extends Component {
                                     // }, 1500)
                                     //清空页面 保留作者
                                     _this.initEditPage();
-                                } else if (json.msg == '未登录') {
+                                } else if (json.code == '506') {
                                     alert(json.msg)
                                     window.initLogin();
                                 } else {
@@ -649,7 +649,7 @@ class EditForm extends Component {
                         })
 
                         _that.setdefaultContent(_data.body);
-                    } else if (json.msg == '未登录') {
+                    } else if (json.code == '506') {
                         alert(json.msg)
                         window.initLogin();
                     } else {
@@ -807,7 +807,7 @@ class EditForm extends Component {
                                 }
                             }
                             _this.refs.content1.setVal(`${_content}`)
-                        } else if (json.msg == '未登录') {
+                        } else if (json.code == '506') {
                             alert(json.msg)
                             window.initLogin();
                         } else {

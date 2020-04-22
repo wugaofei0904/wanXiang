@@ -173,7 +173,7 @@ class CreateAnthor extends Component {
                     _this.setState({
                         resultImg: json.data
                     })
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     window.initLogin();
                 }
                 //隐藏弹窗
@@ -205,7 +205,7 @@ class CreateAnthor extends Component {
                     _this.setState({
                         qrResultImg: json.data
                     })
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     window.initLogin();
                 }
                 //隐藏弹窗
@@ -353,7 +353,7 @@ class CreateAnthor extends Component {
                         setTimeout(() => {
                             _this.props.history.push('anthorManage')
                         }, 1500)
-                    } else if (json.msg == '未登录') {
+                    } else if (json.code == '506') {
                         window.initLogin();
                     }
 
@@ -371,7 +371,7 @@ class CreateAnthor extends Component {
                         setTimeout(() => {
                             _this.props.history.push('anthorManage')
                         }, 1500)
-                    } else if (json.msg == '未登录') {
+                    } else if (json.code == '506') {
                         window.initLogin();
                     }
 

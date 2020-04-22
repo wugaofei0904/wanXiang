@@ -61,7 +61,7 @@ class ArticleItem extends Component {
                     _this.setState({
                         tagList: tagList
                     })
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     alert(json.msg)
                     window.initLogin();
                 } else {
@@ -87,7 +87,7 @@ class ArticleItem extends Component {
                     _this.setState({
                         adlist: adlist
                     })
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     alert(json.msg)
                     window.initLogin();
                 } else {
@@ -123,7 +123,7 @@ class ArticleItem extends Component {
                             }
                         })
                     }
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     alert(json.msg)
                     window.initLogin();
                 } else {

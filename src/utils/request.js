@@ -13,7 +13,7 @@ const Get_Request=(url,success,fail)=>{
     }).then(function (json) {
         if (json.success) {
             success && success(json)
-        } else if (json.msg == '未登录') {
+        } else if (json.code == '506') {
             message.error(json.msg)
             window.initLogin();
         } else {

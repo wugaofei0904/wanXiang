@@ -80,7 +80,7 @@ class ActionHistory extends Component {
             actionList: json.data,
             total: json.total
           })
-        } else if (json.msg == '未登录') {
+        } else if (json.code == '506') {
           window.initLogin();
         }
       }).catch(function (ex) {

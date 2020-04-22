@@ -23,3 +23,26 @@
 .dispaly_flex{
     display: flex;
 }
+
+.authorityTable{
+    width: 100%;
+    overflow-x: auto;
+}
+.authorityTable .w_180{
+    min-width: 180px;
+}
+.authorityTable .w_120{
+    min-width: 120px;
+}
+.authorityTable .w_100{
+    min-width: 100px;
+}
+.authorityTable .w_80{
+    min-width: 80px;
+}
+.authorityTable .w_60{
+    min-width: 60px;
+}
+.authorityTable .w_40{
+    min-width: 40px;
+}

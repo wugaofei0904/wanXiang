@@ -2,26 +2,27 @@ import React, { Component } from 'react';
 import { LocaleProvider, Button, Row, Col, Select, Input, DatePicker, Pagination,Modal,message,Form } from 'antd';
 import './style.css';
 import HeaderTabbar from '../../components/headTabBar/index';
-import moment from 'moment';
+// import moment from 'moment';
 import AuthorityItem from './components/AuthorityItem'
 
 import { getUser,getMenu,editMenu,addUser } from './../../utils/fetchApi';
 
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
-import 'moment/locale/zh-cn';
+import WrappedNormalLoginForm from './components/form'
 
-const { Option } = Select;
-const { MonthPicker, RangePicker } = DatePicker;
-const dateFormat = 'YYYY/MM/DD';
-const monthFormat = 'YYYY/MM';
-const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
+// import zh_CN from 'antd/lib/locale-provider/zh_CN';
+// import 'moment/locale/zh-cn';
+
+// const { Option } = Select;
+// const { MonthPicker, RangePicker } = DatePicker;
+// const dateFormat = 'YYYY/MM/DD';
+// const monthFormat = 'YYYY/MM';
+// const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
 const layout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 20 },
 };
 
 class AuhorityManage extends Component {
-  formRef = React.createRef();
   constructor(props) {
     super(props);
     this.state = {
@@ -29,7 +30,7 @@ class AuhorityManage extends Component {
       people: '',  //作者名
       startTime: '',
       endTime: '',
-      pageSize: 10,
+      pageSize: 20,
       pageNumber: 1,
       authorityList: [],
       total: 0,
@@ -43,7 +44,6 @@ class AuhorityManage extends Component {
 
 
   onChange = (pageNumber) => {
-    // console.log('Page: ', pageNumber);
     this.searchData(pageNumber);
   }
 
@@ -163,14 +163,14 @@ class AuhorityManage extends Component {
         },()=>{
           this.searchData(1);
         })
-      }else if (json.msg == '未登录') {
+      }else if (json.code == '506') {
         window.initLogin();
       }
     })
   }
 
   searchData = (pageNumber = 1) => {
-    let {pageSize,menuList } = this.state;
+    let {pageSize } = this.state;
     let _this = this;
     // fetch(`http://open.suwenyj.xyz:8080/article/list-page?pageSize=10&pageNum=${pageNumber}&status=${articleStatus}&authorName=${anthorName}&startTime=${startTime}&endTime=${endTime}&articleName=${articleName}`)
     fetch(`${getUser}?pageSize=${pageSize}&pageNum=${pageNumber}`)
@@ -178,26 +178,13 @@ class AuhorityManage extends Component {
         return response.json()
       }).then(function (json) {
         if (json.success) {
-          for(let i in json.data){
-            json.data[i].menuList = JSON.parse(JSON.stringify(menuList));
-            // outermost:for(let j in json.data[i].menuList){
-            //   for(let k in json.data[i].menus){
-            //     console.log(json.data[i].menus[k]);
-            //     if(json.data[i].menuList[j].id === json.data[i].menus[k].menuId){
-            //       json.data[i].menuList[j].checked = true;
-            //       break ;
-            //     }
-            //   }
-            // }
-          }
-          // console.log(json.data);
           _this.setState({
             authorityList: json.data,
             total: json.total,
             changeMenuData: [],
             authorityChange: false
           })
-        } else if (json.msg == '未登录') {
+        } else if (json.code == '506') {
           window.initLogin();
         }
       }).catch(function (ex) {
@@ -226,22 +213,46 @@ class AuhorityManage extends Component {
       return response.json()
     }).then(json=>{
       if (json.success) {
-        console.log(json.data);
-        message.info("保存成功")
-      }else if (json.msg == '未登录') {
+        this.setState({
+          changeMenuData: [],
+          authorityChange: false
+        })
+        message.info("保存成功");
+      }else if (json.code == '506') {
         window.initLogin();
       }
     })
   }
   confirm = ()=>{
-    console.log(this.props)
-    console.log(this.form)
-    console.log(this.formRef.current.validateFields);
-    // this.formRef.current.validateFields((value,err)=>{
-    //   console.log(value)
-    // })
-    // this.formRef.current.resetFields()
-    // const values = await form.validateFields();
+    let form=this.refs.getFormVlaue;
+    form.validateFields((err,value)=>{
+        if(!err){
+          fetch(`${addUser}?username=${value.username}&password=${value.password}`)
+          .then(response=>{
+            return response.json();
+          })
+          .then(json=>{
+            if(json.success){
+              let { authorityList,total } = this.state;
+              let newData = {
+                id:json.data,
+                menus:[],
+                status:"1",
+                userName: value.username
+              }
+              let newArr = authorityList.concat();
+              newArr.unshift(newData);
+              this.setState({
+                authorityList: newArr,
+                total: total+1
+              })
+              message.info("新增成功")
+            }else{
+              message.error(json.msg)
+            }
+          })
+        }
+    })
   }
 
   render() {
@@ -265,21 +276,21 @@ class AuhorityManage extends Component {
             </Col>
           </Row>
         </div>
-        <div className="articleTable">
+        <div className="authorityTable">
           <div className="articleTable_header">
-            <div className="articleTable_header_text w_180">管理账号</div>
+            <div className="articleTable_header_text w_120">管理账号</div>
             {
               menuList.map(item => {
                 return <div className="articleTable_header_text w_100" key={item.id}>{item.menuName}</div>
               })
             }
-            <div className="articleTable_header_text w_160">状态</div>
-            <div className="articleTable_header_text w_160">操作</div>
+            <div className="articleTable_header_text w_60">状态</div>
+            <div className="articleTable_header_text w_100">操作</div>
           </div>
           <div className="articleTable_table_list">
             {
               authorityList.map(item => {
-                return <AuthorityItem key={item.id} data={item} onChange={this.changeMenu} changeStatus={this.changeStatus} deleteLine={this.deleteLine} />
+                return <AuthorityItem key={item.id} menuList={menuList} data={item} onChange={this.changeMenu} changeStatus={this.changeStatus} deleteLine={this.deleteLine} />
               })
             }
           </div>
@@ -294,7 +305,7 @@ class AuhorityManage extends Component {
           okText="确认"
           cancelText="取消"
         >
-          <Form
+          {/* <Form
             {...layout}
             name="basic"
             ref={this.formRef}
@@ -318,8 +329,8 @@ class AuhorityManage extends Component {
             </Form.Item>
 
             
-          </Form>
-
+          </Form> */}
+         <WrappedNormalLoginForm ref="getFormVlaue" />
 
 
           {/* <Row type="flex" className="edit-line">

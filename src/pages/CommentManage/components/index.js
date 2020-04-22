@@ -30,7 +30,7 @@ class CommentItem extends Component {
                 if (json.success) {
                     data.status = 1;
                     commentList.changeDelete(JSON.parse(JSON.stringify(data)));
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     alert(json.msg)
                     window.initLogin();
                 } else {
@@ -47,7 +47,7 @@ class CommentItem extends Component {
                 if (json.success) {
                     data.status = 0;
                     commentList.changeDelete(JSON.parse(JSON.stringify(data)));
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     alert(json.msg)
                     window.initLogin();
                 } else {

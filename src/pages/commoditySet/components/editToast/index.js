@@ -194,7 +194,7 @@ class CommpToast extends React.Component {
                         //清空页面 保留作者
                         _this.initEditPage();
 
-                    } else if (json.msg == '未登录') {
+                    } else if (json.code == '506') {
                         alert(json.msg)
                         window.initLogin();
                     } else {
@@ -222,7 +222,7 @@ class CommpToast extends React.Component {
                         //清空页面 保留作者
                         _this.initEditPage();
 
-                    } else if (json.msg == '未登录') {
+                    } else if (json.code == '506') {
                         alert(json.msg)
                         window.initLogin();
                     } else {
@@ -509,7 +509,7 @@ class CommpToast extends React.Component {
                     _this.setState({
                         resultImg: json.data
                     })
-                } else if (json.msg == '未登录') {
+                } else if (json.code == '506') {
                     window.initLogin();
                 }
                 //隐藏弹窗

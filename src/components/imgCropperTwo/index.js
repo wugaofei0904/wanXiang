@@ -86,7 +86,7 @@ export default class ImgCropperTwo extends React.Component {
                     if (json.success) {
                         _this.props.getCropData(json.data);
                         message.success('上传成功');
-                    } else if (json.msg == '未登录') {
+                    } else if (json.code == '506') {
                         window.initLogin();
                     }
                 }).catch(function (ex) {

@@ -16,7 +16,7 @@ class AuthorityItem extends Component {
         }).then(json => {
         if (json.success) {
             this.props.changeStatus(userId,Math.abs(status-1))
-        }else if (json.msg == '未登录') {
+        }else if (json.code == '506') {
             window.initLogin();
         }
         })
@@ -35,7 +35,7 @@ class AuthorityItem extends Component {
                 }).then(json => {
                     if (json.success) {
                         this.props.deleteLine(userId)
-                    }else if (json.msg == '未登录') {
+                    }else if (json.code == '506') {
                         window.initLogin();
                     }
                 })
@@ -49,13 +49,13 @@ class AuthorityItem extends Component {
         this.props.onChange(userid,e)
     }
     render() {
-        let { data } = this.props;
+        let { data,menuList } = this.props;
 
 
         return (
             <div className="authority_item">
                 <div className="article_item_head">
-                    <div className="articleTable_header_text w_180">
+                    <div className="articleTable_header_text w_120">
                     {data.userName}
                     </div>
                     <Checkbox.Group className="display-flex"  onChange={this.menuChange.bind(this,data.id)} name={String(data.id)} defaultValue={
@@ -65,13 +65,13 @@ class AuthorityItem extends Component {
                     }
                     >
                         {
-                            data.menuList.map(manu=>{
+                            menuList.map(manu=>{
                                 return <div className="articleTable_header_text w_100 check_wrap" key={manu.id}><Checkbox value={String(manu.id)}/></div>
                             })
                         }
                     </Checkbox.Group>
-                    <div className="articleTable_header_text w_160">{data.status==1?'正常':'下线'}</div>
-                    <div className="articleTable_header_text w_160">
+                    <div className="articleTable_header_text w_60">{data.status==1?'正常':'下线'}</div>
+                    <div className="articleTable_header_text w_100">
                         <Button type={data.status==1?'danger':'primary'}  onClick={this.changeLine.bind(null, data.id,data.status)} className="delete_comment_btn m_r_12">{data.status==1?'下线':'上线'}</Button>
                         <Button type='danger'  onClick={this.deleteAuthority.bind(null, data.id)} className="delete_comment_btn">删除</Button>
                     </div>
