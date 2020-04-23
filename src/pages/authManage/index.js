@@ -169,7 +169,7 @@ class AuthManage extends Component {
 
     return (
       <div className="appPage">
-        <HeaderTabbar current='anthor' />
+        <HeaderTabbar current='anthorManage' />
           <div style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',width:'100%'}}>
               <h2 style={{marginTop:20,display:'inline-block'}}>授权管理</h2>
                  <Button onClick={()=>this.jumpToWX()}

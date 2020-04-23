@@ -135,7 +135,7 @@ class BannerManage extends Component {
     const { changeBannerItem } = this
     return (
       <div className="appPage">
-        <HeaderTabbar current="banner" />
+        <HeaderTabbar current="bannerManage" />
         <div class="bannerManage">
           <div className="addBanner_btn">
             <Button onClick={this.showBannerModal} type="primary" disabled={ bannerList.length >= 8 }>

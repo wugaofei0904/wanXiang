@@ -229,7 +229,7 @@ class CommoditySet extends Component {
         let { total, listData, pageNumber } = this.state;
         return (
             <div className="appPage">
-                <HeaderTabbar current='commodity' />
+                <HeaderTabbar current='commoditySet' />
 
                 <Tabs defaultActiveKey="1" onChange={this.callback}>
                     <TabPane tab="见地X京东" key="1">

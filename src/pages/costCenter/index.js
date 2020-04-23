@@ -326,7 +326,7 @@ class CostCenter extends Component {
         let {benefitData,monthData, zeroCostList, fiveCostList, nineCostList, zeroTotal, fiveTotal, nineTotal, fivePageNum, ninePageNum, zeroPageNum} = this.state
         return (
             <div className="appPage">
-                <HeaderTabbar current='cost'/>
+                <HeaderTabbar current='costCenter'/>
 
                 <Tabs defaultActiveKey="1" onChange={this.callback}>
                     <TabPane tab="内容成本" key="1">

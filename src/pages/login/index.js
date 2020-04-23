@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Modal, Form, Icon, Input, Button, Checkbox, message } from 'antd';
-import { withRouter } from 'react-router-dom';
+import { withRouter,HashRouter as Router } from 'react-router-dom';
 import './style.css';
 import { login } from './../../utils/fetchApi';
 
@@ -58,9 +58,14 @@ class LoginPageForm extends Component {
                 .then(function (response) {
                     return response.json()
                 }).then(function (json) {
-
                     if (json.success) {
-                        _this.props.history.push('articleManage');
+                        sessionStorage.setItem("authority",JSON.stringify(json.data));
+                        for(let i in json.data){
+                            if(json.data[0].status == 1){
+                                _this.props.history.push(json.data[i].menuIndex);
+                                break;
+                            }
+                        }
                     } else {
                         message.error(json.msg);
                     }
@@ -86,7 +91,6 @@ class LoginPageForm extends Component {
     render() {
 
         const { getFieldDecorator } = this.props.form;
-
         return (
             <div className="loginPage">
                 <img className="bg_img" alt="" src="/open/public/img/login_bg.jpg" />

@@ -293,7 +293,7 @@ class CommentManage extends Component {
     return (
       <div className="appPage">
 
-        <HeaderTabbar current='comment' />
+        <HeaderTabbar current='commentManage' />
         <div className="fiter-list">
           <Row className="row" type="flex">
             <Col className="mr-12">

@@ -538,7 +538,7 @@ class ArticleManage extends Component {
 
     return (
       <div className="appPage">
-        <HeaderTabbar current='anthor' />
+        <HeaderTabbar current='anthorManage' />
         <div className="fiter-list">
           <Row className="row" type="flex">
             <Col >作者名：</Col>

@@ -157,7 +157,12 @@ class AuhorityManage extends Component {
       return response.json()
     }).then(json => {
       if (json.success) {
-        // console.log(json.data);
+        for(let i in json.data){
+          if(json.data[i].menuIndex === '/authorityManage'){
+            json.data.splice(i,1);
+            break;
+          }
+        }
         this.setState({
           menuList:json.data
         },()=>{
@@ -260,7 +265,7 @@ class AuhorityManage extends Component {
     let { total, authorityList,menuList } = this.state;
     return (
       <div className="appPage">
-        <HeaderTabbar current='action' />
+        <HeaderTabbar current='actionHistory' />
         <div className="fiter-list">
           <Row className="row" type="flex">
             <Col className="authority-title">

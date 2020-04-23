@@ -235,7 +235,7 @@ class ArticleManage extends Component {
     return (
       <div className="appPage">
 
-        <HeaderTabbar current='article' />
+        <HeaderTabbar current='articleManage' />
         <div className="fiter-list">
           <div className="fabu_btn">
             <Button onClick={this.fabuwenzhang} type="primary">发布文章</Button>

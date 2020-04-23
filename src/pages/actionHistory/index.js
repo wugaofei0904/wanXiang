@@ -50,7 +50,6 @@ class ActionHistory extends Component {
     this.setState({
       people: e.target.value
     })
-    console.log(e.target.value)
   }
 
   rangePickeronChange = (date, dateString) => {
@@ -96,13 +95,24 @@ class ActionHistory extends Component {
   render() {
 
     let { total, actionList } = this.state;
+    let showAuthority = false;
+    let authority = JSON.parse(sessionStorage.getItem("authority"))
+        for(let i in authority){
+            if(authority[i].menuIndex === '/authorityManage'){
+              showAuthority = true;
+              break;
+            }
+        }
     return (
       <div className="appPage">
-        <HeaderTabbar current='action' />
+        <HeaderTabbar current='actionHistory' />
         <div className="fiter-list">
-          <div className="fabu_btn">
-            <Button onClick={this.toAuthority} type="primary">权限管理</Button>
-          </div>
+          {
+            showAuthority?<div className="fabu_btn">
+              <Button onClick={this.toAuthority} type="primary">权限管理</Button>
+            </div>:''
+          }
+          
           <Row className="row" type="flex">
             <Col className="mr-12">
               <Select defaultValue="0" style={{ width: 120 }} onChange={this.handleChange}>
