@@ -16,6 +16,8 @@ import AuthManage from './pages/authManage'
 import CostCenter from './pages/costCenter/index.js'
 import DayCost from "./pages/costCenter/components/DayCost";
 import MonthCost from "./pages/costCenter/components/MonthCost";
+import HocPrivateRoute from './HocPrivateRoute.js';
+let  PrivateRoute =  HocPrivateRoute(Route);
 // import OtherPage from './pages/otherPage/index.js';
 
 class App extends Component {
@@ -34,22 +36,24 @@ class App extends Component {
         <Switch>
           {/* <Route exact path="/" component={OtherPage} /> */}
           <Route exact path="/" component={LoginPage} />
-          <Route exact path="/articleManage" component={ArticleManage} />
-          <Route exact path="/commentManage" component={CommentManage} />
-          <Route exact path="/commoditySet" component={CommoditySet} />
-          <Route exact path="/anthorManage" component={AnthorManage} />
-          <Route exact path="/actionHistory" component={ActionHistory} />
-          <Route exact path="/authorityManage" component={AuthorityManage} />
-          <Route exact path="/editPage" component={EditPage} />
+
+          {/* 权限路由 */}
+          <PrivateRoute path="/articleManage"  component={ArticleManage} />
+          <PrivateRoute path="/commentManage"  component={CommentManage} />
+          <PrivateRoute exact path="/commoditySet" component={CommoditySet} />
+          <PrivateRoute exact path="/anthorManage" component={AnthorManage} />
+          <PrivateRoute exact path="/actionHistory" component={ActionHistory} />
+          <PrivateRoute exact path="/authorityManage" component={AuthorityManage} />
+          <PrivateRoute exact path="/bannerManage" component={BannerManage} />
+          <PrivateRoute exact path="/authManage" component={AuthManage} />
+          <PrivateRoute exact path="/costCenter" component={CostCenter} />
+
+          {/* <Route exact path="/editPage" component={EditPage} /> */}
           <Route exact path='/editPage/:edit' component={EditPage} />
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/createAnthor" component={CreateAnthor} />
-          <Route exact path="/bannerManage" component={BannerManage} />
-          <Route exact path="/authManage" component={AuthManage} />
-            <Route exact path="/authManage" component={AuthManage} />
-            <Route exact path="/costCenter" component={CostCenter} />
-            <Route exact path="/dayCost" component={DayCost} />
-            <Route exact path="/monthCost" component={MonthCost} />
+          <Route exact path="/dayCost" component={DayCost} />
+          <Route exact path="/monthCost" component={MonthCost} />
           {/* <Route exact path="/createAnthor/:edit/:data" component={CreateAnthor} /> */}
           <Route component={ArticleManage} />
         </Switch>

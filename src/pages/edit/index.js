@@ -694,9 +694,9 @@ class EditForm extends Component {
 
 
     setdefaultContent = (data) => {
-
-        this.refs['content1'].setVal(data)
-
+        setTimeout(res=>{
+            this.refs['content1'].setVal(data)
+        },300)
     }
 
     imgChange(e) {

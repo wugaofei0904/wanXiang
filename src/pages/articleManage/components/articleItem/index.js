@@ -111,7 +111,7 @@ class ArticleItem extends Component {
             }).then(function (json) {
 
                 if (json.success) {
-                    message.success('删除成功')
+                    message.success(_status===2?'删除成功':'还原成功')
                     if(item.status==3){        //如果是待发布 刷新列表
                         let page=_this.props.pageNum
                             _this.props.searchListdata(page)

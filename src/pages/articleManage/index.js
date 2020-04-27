@@ -195,25 +195,30 @@ class ArticleManage extends Component {
 
   try_restore_component(cb) {
     let data = window.sessionStorage.getItem("tmpdata");
+    console.log(data);
     if (data) {
       data = JSON.parse(data);
+      console.log(data)
       let _this=this;
-      this.refreshList(parseInt(data.pageNumber),(newJson)=>{  //获取当前页最新数据
-          _this.setState(
-              {
-                  listData: newJson.data,
-                  pageNumber: parseInt(data.pageNumber),
-                  scrollpx: data.scrollpx,
-                  total: newJson.total,
-              }
-          )
-          window.sessionStorage.setItem('tmpdata', '');
-          setTimeout(() => {
-              // debugger
-              window.scrollTo(0, data.scrollpx);
-          }, 10)
-          return 1
-      }); //刷新
+      _this.setState(
+        {
+            listData: data.listData,
+            pageNumber: parseInt(data.pageNumber),
+            scrollpx: data.scrollpx,
+            total: data.total,
+        }
+      )
+      window.sessionStorage.setItem('tmpdata', '');
+      setTimeout(() => {
+          // debugger
+          window.scrollTop = data.scrollpx;
+      }, 100)
+      sessionStorage.setItem("tmpdata",null);
+      return 1
+      
+      // this.refreshList(parseInt(data.pageNumber),(newJson)=>{  //获取当前页最新数据
+          
+      // }); //刷新
     }
     return 0
   }

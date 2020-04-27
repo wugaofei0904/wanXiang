@@ -46,3 +46,6 @@
 .authorityTable .w_40{
     min-width: 40px;
 }
+.authorityModel .ant-modal-body{
+    padding: 24px;
+}

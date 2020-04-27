@@ -249,7 +249,8 @@ class AuhorityManage extends Component {
               newArr.unshift(newData);
               this.setState({
                 authorityList: newArr,
-                total: total+1
+                total: total+1,
+                modalVisible:false
               })
               message.info("新增成功")
             }else{
@@ -309,6 +310,8 @@ class AuhorityManage extends Component {
           onOk={this.confirm}
           okText="确认"
           cancelText="取消"
+          className="authorityModel"
+          width="450px"
         >
           {/* <Form
             {...layout}
